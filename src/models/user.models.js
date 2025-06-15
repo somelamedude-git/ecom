@@ -71,18 +71,21 @@ const buyerSchema = BaseUser.discriminator('Buyer', new mongoose.Schema({
 }, options));
 
 const sellerSchema = BaseUser.discriminator('Seller', new mongoose.Schema({
-  selling_products : [
-    {
+ selling_products: [
+  {
+    product: {
       type: mongoose.Schema.Types.ObjectId,
-      ref : "Product",
-      status:{
-        required:true,
-        type: String, 
-        enum: ['sold out', 'in stock'],
-        default: 'in stock'
-      }
+      ref: "Product"
+    },
+    status: {
+      type: String,
+      enum: ['sold out', 'in stock'],
+      default: 'in stock',
+      required: true
     }
-  ],
+  }
+],
+
 
   store_information: {
     type: mongoose.Schema.Types.ObjectId,
