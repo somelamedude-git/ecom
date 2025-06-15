@@ -109,8 +109,6 @@ const sellerSchema = BaseUser.discriminator('Seller', new mongoose.Schema({
   ]
 }, options));
 
-const Buyer = mongoose.model('Buyer');
-const Seller = mongoose.model('Seller');
 
 module.exports = {
   BaseUser,
