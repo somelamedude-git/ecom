@@ -1,7 +1,23 @@
 const mongoose = require('mongoose');
-const hashPassword = require('../utils/hash_password');
+const options = {discriminatorKey: 'kind', timestamps:true};
 
-const userSchema = new mongoose.Schema({
+const addressSchema = new mongoose.Schema({
+  pincode: {
+    type: Number,
+    required: true
+  },
+  address_line_one: {
+    type: String,
+    required: true
+  },
+  address_line_two: String,
+  landmark: {
+    type: String,
+    required: true
+  }
+});
+
+const BaseUserSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
@@ -15,14 +31,86 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true, 
     unique: true
+  },
+  address:{
+    type: addressSchema,
+    required:true
   }
-}, { timestamps: true });
+}, options);
 
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
-  this.password = await hashPassword(this.password);
-  next();
-});
+const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
 
-const User = mongoose.model('User', userSchema);
-module.exports = { User };
+const buyerSchema = BaseUser.discriminator('Buyer', new mongoose.Schema({
+  wishlist: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product"
+    }
+  ],
+
+  orderHistory:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order"
+    }
+  ],
+
+  cart:[
+    {
+      type:mongoose.Schema.Types.ObjectId,
+      ref: "Product"
+    }
+  ],
+
+  reviews_left:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review"
+    }
+  ]
+}, options));
+
+const sellerSchema = BaseUser.discriminator('Seller', new mongoose.Schema({
+  selling_products : [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref : "Product",
+      status:{
+        required:true,
+        type: String, 
+        enum: ['sold out', 'in stock'],
+        default: 'in stock'
+      }
+    }
+  ],
+
+  store_information: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "StoreInfo"
+  },
+
+  average_rating:{
+    type:Number,
+    default:0
+  },
+
+  isVerified:{
+    type:Boolean,
+    default:false
+  },
+
+  verification_documents:[
+    {
+      type:String
+    }
+  ]
+}, options));
+
+const Buyer = mongoose.model('Buyer');
+const Seller = mongoose.model('Seller');
+
+module.exports = {
+  BaseUser,
+  Buyer,
+  Seller
+};

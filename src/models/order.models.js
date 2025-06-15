@@ -11,21 +11,6 @@ const preorderSchema = new mongoose.Schema({
   }
 });
 
-const addressSchema = new mongoose.Schema({
-  pincode: {
-    type: Number,
-    required: true
-  },
-  address_line_one: {
-    type: String,
-    required: true
-  },
-  address_line_two: String,
-  landmark: {
-    type: String,
-    required: true
-  }
-});
 
 const orderSchema = new mongoose.Schema({
   customer: { 
@@ -38,8 +23,8 @@ const orderSchema = new mongoose.Schema({
   },
   orderItems: [preorderSchema],
   address: {
-    type: addressSchema,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "BaseUser.address"
   },
   status: {
     type: String,
