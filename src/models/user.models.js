@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
 const options = {discriminatorKey: 'kind', timestamps:true};
+const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
+const { hashPasswords } = require('../utils/password.util');
+const bcrypt = require('bcrypt');
 
 const addressSchema = new mongoose.Schema({
   pincode: {
@@ -12,7 +15,7 @@ const addressSchema = new mongoose.Schema({
   },
   address_line_two:{
     type:String,
-    defaut: ""
+    default: ""
   },
   landmark: {
     type: String,
@@ -60,9 +63,27 @@ const BaseUserSchema = new mongoose.Schema({
   }
 }, options);
 
+BaseUserSchema.pre("save", async function(next){
+  if(!this.isModified("password")) return next();
+  else{
+    try{
+    this.password = await hashPasswords(this.password);
+    next();
+  }
+  catch(error){
+    console.log(error);
+    next(error);
+  }
+  }
+});
+
+BaseUserSchema.methods.isPasswordCorrect = async function(password){
+  return await bcrypt.compare(password, this.password);
+}
+
 const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
 
-const buyerSchema = BaseUser.discriminator('Buyer', new mongoose.Schema({
+const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
   wishlist: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -92,7 +113,7 @@ const buyerSchema = BaseUser.discriminator('Buyer', new mongoose.Schema({
   ]
 }, options));
 
-const sellerSchema = BaseUser.discriminator('Seller', new mongoose.Schema({
+const Seller = BaseUser.discriminator('Seller', new mongoose.Schema({
  selling_products: [
   {
     product: {
@@ -132,6 +153,7 @@ const sellerSchema = BaseUser.discriminator('Seller', new mongoose.Schema({
 }, options));
 
 const Address = mongoose.model('Address', addressSchema);
+
 
 module.exports = {
   BaseUser,
