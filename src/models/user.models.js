@@ -69,7 +69,7 @@ const buyerSchema = BaseUser.discriminator('Buyer', new mongoose.Schema({
   reviews_left:[
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Review"
+      ref: "Product"
     }
   ]
 }, options));

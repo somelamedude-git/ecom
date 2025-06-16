@@ -30,9 +30,16 @@ const productSchema = new mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Seller',
     required: true
+  },
+
+ reviews: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Review'
   }
+]
 }, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);
