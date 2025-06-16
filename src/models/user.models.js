@@ -10,7 +10,10 @@ const addressSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  address_line_two: String,
+  address_line_two:{
+    type:String,
+    defaut: ""
+  },
   landmark: {
     type: String,
     required: true
@@ -20,17 +23,23 @@ const addressSchema = new mongoose.Schema({
 const BaseUserSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true,
-    unique: true
+    required: [true, "Username is required"],
+    unique: true,
+    trim:true,
+    index:true,
+    lowercase:true
   },
   password: {
     type: String,
-    required: true
+    required: [true, "Password is required"],
+    trim:true
   },
   email: {
     type: String,
-    required: true, 
-    unique: true
+    required: [true, 'Email is required'],
+    unique: true,
+    trim:true,
+    lowercase:true
   },
   address:{
     type: addressSchema,
@@ -38,7 +47,16 @@ const BaseUserSchema = new mongoose.Schema({
   },
   name:{
     type:String,
-    required:true
+    required:true,
+    trim:true
+  },
+
+  coverImage:{
+    type:String
+  },
+
+  refreshToken:{
+    type:String
   }
 }, options);
 
