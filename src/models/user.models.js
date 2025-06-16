@@ -3,6 +3,7 @@ const options = {discriminatorKey: 'kind', timestamps:true};
 const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
 const { hashPasswords } = require('../utils/password.util');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const addressSchema = new mongoose.Schema({
   pincode: {
