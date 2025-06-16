@@ -35,6 +35,10 @@ const BaseUserSchema = new mongoose.Schema({
   address:{
     type: addressSchema,
     required:true
+  },
+  name:{
+    type:String,
+    required:true
   }
 }, options);
 
@@ -89,7 +93,7 @@ const sellerSchema = BaseUser.discriminator('Seller', new mongoose.Schema({
 
   store_information: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "StoreInfo"
+    ref: "Store"
   },
 
   average_rating:{
@@ -109,9 +113,11 @@ const sellerSchema = BaseUser.discriminator('Seller', new mongoose.Schema({
   ]
 }, options));
 
+const Address = mongoose.model('Address', addressSchema);
 
 module.exports = {
   BaseUser,
   Buyer,
-  Seller
+  Seller,
+  Address
 };
