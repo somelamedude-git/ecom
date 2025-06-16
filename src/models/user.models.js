@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const options = {discriminatorKey: 'kind', timestamps:true};
-const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
 const { hashPasswords } = require('../utils/password.util');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -34,9 +33,17 @@ const BaseUserSchema = new mongoose.Schema({
     index:true,
     lowercase:true
   },
+
+  googleLogin:{
+    type:Boolean,
+    default:false
+  },
+
   password: {
     type: String,
-    required: [true, "Password is required"],
+    required: function(){
+      return !this.googleLogin;
+    },
     trim:true
   },
   email: {
@@ -66,6 +73,7 @@ const BaseUserSchema = new mongoose.Schema({
 }, options);
 
 BaseUserSchema.pre("save", async function(next){
+  if(this.googleLogin) return next();
   if(!this.isModified("password")) return next();
   else{
     try{
