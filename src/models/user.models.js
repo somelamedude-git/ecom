@@ -4,6 +4,7 @@ const mongooseAggregatePaginate = require('mongoose-aggregate-paginate-v2');
 const { hashPasswords } = require('../utils/password.util');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: '../.env' });
 
 const addressSchema = new mongoose.Schema({
   pincode: {
@@ -80,7 +81,25 @@ BaseUserSchema.pre("save", async function(next){
 
 BaseUserSchema.methods.isPasswordCorrect = async function(password){
   return await bcrypt.compare(password, this.password);
-}
+};
+
+BaseUserSchema.methods.generateAccessToken = function(){
+ return jwt.sign({
+    _id:this._id,
+    email:this.email,
+    role: this.kind
+  }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+  })
+};
+
+BaseUserSchema.methods.generateRefreshAccessToken = function(){
+ return jwt.sign({
+    _id:this._id
+  }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+  })
+};
 
 const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
 
