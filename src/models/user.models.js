@@ -180,6 +180,24 @@ const Seller = BaseUser.discriminator('Seller', new mongoose.Schema({
   ]
 }, options));
 
+const Admin = BaseUser.discriminator('Admin', new mongoose.Schema({
+
+  product_management: [{
+    type: String,
+    enum: ['edit_product', 'delete_product']
+  }],
+
+  user_management: [{
+    type: String,
+    enum: ['ban_user', 'unban_user', 'delete_user']
+  }],
+
+  review_management: [{
+    type: String,
+    enum: ['delete_review']
+  }]
+}, options))
+
 const Address = mongoose.model('Address', addressSchema);
 
 
@@ -187,5 +205,6 @@ module.exports = {
   BaseUser,
   Buyer,
   Seller,
-  Address
+  Address,
+  Admin
 };
