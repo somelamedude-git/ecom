@@ -1,6 +1,7 @@
 const { body } = require('express-validator');
 const { SafebaseValidator } = require('../utils/ValidationUtility');
 
+
 const addressValidator = [
   SafebaseValidator('address_line_one', 'This field cannot be empty', true),
   SafebaseValidator('address_line_two', '', true, true),
