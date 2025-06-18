@@ -182,8 +182,6 @@ const Admin = BaseUser.discriminator('Admin', new mongoose.Schema({
   }]
 }, options))
 
-const Address = mongoose.model('Address', addressSchema);
-
 
 module.exports = {
   BaseUser,
