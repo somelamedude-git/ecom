@@ -5,24 +5,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
 
-const addressSchema = new mongoose.Schema({
-  pincode: {
-    type: Number,
-    required: true
-  },
-  address_line_one: {
-    type: String,
-    required: true
-  },
-  address_line_two:{
-    type:String,
-    default: ""
-  },
-  landmark: {
-    type: String,
-    required: true
-  }
-});
+
 
 const BaseUserSchema = new mongoose.Schema({
   username: {
@@ -54,7 +37,8 @@ const BaseUserSchema = new mongoose.Schema({
     lowercase:true
   },
   address:{
-    type: addressSchema,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Address",
     required:true
   },
   name:{
@@ -205,6 +189,5 @@ module.exports = {
   BaseUser,
   Buyer,
   Seller,
-  Address,
   Admin
 };
