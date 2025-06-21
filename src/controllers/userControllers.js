@@ -77,6 +77,39 @@ const getUser = async(req, res) => {
     }
 }
 
+const updateUser = async (req, res) => {
+    try {
+        const { username, email, address, name, coverImage } = req.body
+        let user
+        if(username)
+            user = await BaseUserUser.findOne({username})
+        else if (email)
+            user = await BaseUserUser.findOne({email})
+
+        if(!user)
+            return res.status(400).json({status: false, message: "User not found"})
+
+        if(!address && !name && !coverImage)
+            return res.status(400).json({status: false, message: "No updates provided"})
+
+        if(address)
+            user.address = address
+        if(name)
+            user.name = name
+        if(coverImage)
+            user.coverImage = coverImage
+
+        await user.save()
+
+        return res.status(200).json({status: true, message: "Changes made successfully"})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({status: false, message: "Internal server error"})
+    }
+}
+
 module.exports = {
     createUser,
+    getUser,
+    updateUser
 }
