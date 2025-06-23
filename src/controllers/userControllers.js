@@ -1,15 +1,14 @@
-const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models')
-const {hashPasswords} = require('../utils/password.util')
-const {OAuth2Client} = require('google-auth-library')
-const {verifyEmail} = require('../utils/verification.util')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models');
+const {OAuth2Client} = require('google-auth-library');
+const { asyncHandler } = require("../utils/asyncHandler");
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const {verifyEmail} = require('../utils/verification.util');
 require('dotenv').config()
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const createUser = async (req, res) => {
-    try{
+const createUser = asyncHandler(async (req, res) => {
 
         const {kind, username, email, password, name, address, googleLogin, coverImage} = req.body;
 
@@ -24,9 +23,8 @@ const createUser = async (req, res) => {
         if(!UserKind)
             return res.status(400).json({status: false, message: "User kind not found"})
 
-        const hashedPassword = hashPasswords(password)
 
-        const user = new UserKind({username, email, password: hashedPassword, name, address, googleLogin, coverImage});
+        const user = new UserKind({username, email, password, name, address, googleLogin, coverImage});
         const refreshToken = user.generateRefreshAccessToken();
         user.refreshToken = refreshToken;
 
@@ -40,16 +38,12 @@ const createUser = async (req, res) => {
                                         email: user.email,
                                         name: user.name,
                                         kind: user.kind
-                                    }})
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({status: false, message: "Internal server error"})
-    }
-}
+                                 }})
+});
 
-const getUser = async(req, res) => {
-    try{
-        const {googleLogin, token, email, username, password} = req.body;
+const getUser = asyncHandler(async(req, res) => {
+        const {googleLogin, token, email, password} = req.body;
+        let user = await BaseUser.findOne({email});
 
         if(googleLogin){
             try{
@@ -61,39 +55,30 @@ const getUser = async(req, res) => {
                 const payload = ticket.getPayload()
                 const {email} = payload
 
-                const user = await BaseUser.findOne({email})
+                user = await BaseUser.findOne({email})
                 if(user)
                     return res.status(200).json({status: true, message: "User found"})
                 return res.status(401).json({status: false, message: "User credentials incorrect"})
             } catch (err) {
-                console.error("Google login error:", error);
+                console.error("Google login error:", err);
                 return res.status(401).json({ message: "Invalid Google token" });
             }
         }
+        if(!user){
+            return res.status(401).json({
+                status: false,
+                message: "Invalid email or password"
+            });
+        }
 
-        let user
+        const isValid = await user.isPasswordCorrect(password);
 
-        if(email)
-            user = await BaseUser.findOne({email})
-        else if (username)
-            user = await BaseUser.findOne({username})
-
-        if(!user)
-            return res.status(404).json({status: false, message: "User not found"})
-
-        const isMatch = await bcrypt.compare(password, user.password)
-
-        if(isMatch)
+        if(isValid)
             return res.status(200).json({status: true, message: "User found successfully"});
         return res.status(401).json({status: false, message: "Invalid credentials"});
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({status: false, message: "Internal server error"})
-    }
-}
+});
 
-const updateUser = async (req, res) => {
-    try {
+const updateUser = asyncHandler(async (req, res) => {
         const { username, email, address, name, coverImage } = req.body
         let user
         if(username)
@@ -102,7 +87,7 @@ const updateUser = async (req, res) => {
             user = await BaseUser.findOne({email})
 
         if(!user)
-            return res.status(400).json({status: false, message: "User not found"})
+            return res.status(400).json({status: false, message: "Invalid email or password"})
 
         if(!address && !name && !coverImage)
             return res.status(400).json({status: false, message: "No updates provided"})
@@ -116,15 +101,11 @@ const updateUser = async (req, res) => {
 
         await user.save()
 
-        return res.status(200).json({status: true, message: "Changes made successfully"})
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({status: false, message: "Internal server error"})
-    }
-}
+        return res.status(200).json({status: true, message: "Changes made successfully"});
+});
 
-const deleteUser = async(req, res) => {
-    try {
+const deleteUser = asyncHandler(async(req, res) => {
+    
         const {email, token} = req.body;
 
         const user = await BaseUser.findOne({email})
@@ -154,15 +135,9 @@ const deleteUser = async(req, res) => {
         }
 
         await verifyEmail(user)
+});
 
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({status: false, message: "Internal server error"})
-    }
-}
-
-const verifyUser = async (req, res) => {
-    try {
+const verifyUser = asyncHandler(async (req, res) => {
         const {token} = req.query
         const decoded = jwt.verify(token, process.env.EMAIL_VERIFY_SECRET)
         const user = await BaseUser.findOne({email: decoded.email})
@@ -173,16 +148,12 @@ const verifyUser = async (req, res) => {
         user.isVerified = true;
         await user.save()
         return res.status(200).json({status: true, message: "Email verified successfully"})
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({status: false, message: "Internal server error"})
-    }
-}
+})
 
 module.exports = {
     createUser,
     getUser,
     updateUser,
-    deleteUser,
-    verifyUser
+  deleteUser,
+  VerifyUser
 }
