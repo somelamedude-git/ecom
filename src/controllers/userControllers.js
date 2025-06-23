@@ -70,7 +70,7 @@ const getUser = async(req, res) => {
         if(!user){
             return res.status(401).json({
                 status: false,
-                message: "User not found"
+                message: "Invalid email or password"
             });
         }
 
@@ -95,7 +95,7 @@ const updateUser = async (req, res) => {
             user = await BaseUser.findOne({email})
 
         if(!user)
-            return res.status(400).json({status: false, message: "User not found"})
+            return res.status(400).json({status: false, message: "Invalid email or password"})
 
         if(!address && !name && !coverImage)
             return res.status(400).json({status: false, message: "No updates provided"})
