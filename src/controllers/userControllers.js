@@ -1,5 +1,4 @@
 const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models')
-const {hashPasswords, comaprePassword} = require('../utils/password.util')
 const {OAuth2Client} = require('google-auth-library')
 require('dotenv').config()
 
@@ -21,9 +20,8 @@ const createUser = async (req, res) => {
         if(!UserKind)
             return res.status(400).json({status: false, message: "User kind not found"})
 
-        const hashedPassword = hashPassword(password)
 
-        const user = new UserKind({username, email, password: hashedPassword, name, address, googleLogin, coverImage});
+        const user = new UserKind({username, email, password, name, address, googleLogin, coverImage});
         const refreshToken = user.generateRefreshAccessToken();
         user.refreshToken = refreshToken;
 
@@ -47,6 +45,7 @@ const createUser = async (req, res) => {
 const getUser = async(req, res) => {
     try{
         const {googleLogin, token, email, password} = req.body;
+        let user = await BaseUser.findOne({email});
 
         if(googleLogin){
             try{
@@ -58,17 +57,26 @@ const getUser = async(req, res) => {
                 const payload = ticket.getPayload()
                 const {email} = payload
 
-                const user = await User.findOne({email})
+                user = await BaseUser.findOne({email})
                 if(user)
                     return res.status(200).json({status: true, message: "User found"})
                 return res.status(401).json({status: false, message: "User credentials incorrect"})
             } catch (err) {
-                console.error("Google login error:", error);
+                console.error("Google login error:", err);
                 return res.status(401).json({ message: "Invalid Google token" });
             }
         }
 
-        if(comaprePassword(password,email))
+        if(!user){
+            return res.status(401).json({
+                status: false,
+                message: "User not found"
+            });
+        }
+
+        const isValid = await user.isPasswordCorrect(password);
+
+        if(isValid)
             return res.status(200).json({status: true, message: "User found successfully"});
         return res.status(401).json({status: false, message: "Invalid credentials"});
     } catch (err) {
@@ -82,9 +90,9 @@ const updateUser = async (req, res) => {
         const { username, email, address, name, coverImage } = req.body
         let user
         if(username)
-            user = await BaseUserUser.findOne({username})
+            user = await BaseUser.findOne({username})
         else if (email)
-            user = await BaseUserUser.findOne({email})
+            user = await BaseUser.findOne({email})
 
         if(!user)
             return res.status(400).json({status: false, message: "User not found"})
