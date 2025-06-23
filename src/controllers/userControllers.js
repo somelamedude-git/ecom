@@ -1,6 +1,9 @@
 const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models')
-const {hashPasswords, comaprePassword} = require('../utils/password.util')
+const {hashPasswords} = require('../utils/password.util')
 const {OAuth2Client} = require('google-auth-library')
+const {verifyEmail} = require('../utils/verification.util')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 require('dotenv').config()
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -21,7 +24,7 @@ const createUser = async (req, res) => {
         if(!UserKind)
             return res.status(400).json({status: false, message: "User kind not found"})
 
-        const hashedPassword = hashPassword(password)
+        const hashedPassword = hashPasswords(password)
 
         const user = new UserKind({username, email, password: hashedPassword, name, address, googleLogin, coverImage});
         const refreshToken = user.generateRefreshAccessToken();
@@ -46,7 +49,7 @@ const createUser = async (req, res) => {
 
 const getUser = async(req, res) => {
     try{
-        const {googleLogin, token, email, password} = req.body;
+        const {googleLogin, token, email, username, password} = req.body;
 
         if(googleLogin){
             try{
@@ -58,7 +61,7 @@ const getUser = async(req, res) => {
                 const payload = ticket.getPayload()
                 const {email} = payload
 
-                const user = await User.findOne({email})
+                const user = await BaseUser.findOne({email})
                 if(user)
                     return res.status(200).json({status: true, message: "User found"})
                 return res.status(401).json({status: false, message: "User credentials incorrect"})
@@ -68,7 +71,19 @@ const getUser = async(req, res) => {
             }
         }
 
-        if(comaprePassword(password,email))
+        let user
+
+        if(email)
+            user = await BaseUser.findOne({email})
+        else if (username)
+            user = await BaseUser.findOne({username})
+
+        if(!user)
+            return res.status(404).json({status: false, message: "User not found"})
+
+        const isMatch = await bcrypt.compare(password, user.password)
+
+        if(isMatch)
             return res.status(200).json({status: true, message: "User found successfully"});
         return res.status(401).json({status: false, message: "Invalid credentials"});
     } catch (err) {
@@ -82,9 +97,9 @@ const updateUser = async (req, res) => {
         const { username, email, address, name, coverImage } = req.body
         let user
         if(username)
-            user = await BaseUserUser.findOne({username})
+            user = await BaseUser.findOne({username})
         else if (email)
-            user = await BaseUserUser.findOne({email})
+            user = await BaseUser.findOne({email})
 
         if(!user)
             return res.status(400).json({status: false, message: "User not found"})
@@ -108,8 +123,66 @@ const updateUser = async (req, res) => {
     }
 }
 
+const deleteUser = async(req, res) => {
+    try {
+        const {email, token} = req.body;
+
+        const user = await BaseUser.findOne({email})
+
+        if(!user)
+            return res.status(404).json({status: false, message: "User not found"})
+
+        if(user.googleLogin){
+            const ticket = await client.verifyIdToken({
+                idToken: token,
+                audience: process.env.GOOGLE_CLIENT_ID
+            })
+
+            const payload = ticket.getPayload()
+            const {email: tokenEmail} = payload
+
+            if(tokenEmail === user.email){
+                await BaseUser.deleteOne({email})
+                return res.status(200).json({status: true, message: "User deleted successfully"})
+            }
+            return res.status(401).json({status: false, message: "Invalid Token"})
+        }
+
+        if(user.isVerified){
+            await BaseUser.deleteOne({email})
+            return res.status(200).json({status: true, message: "User deleted successfully"})
+        }
+
+        await verifyEmail(user)
+
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({status: false, message: "Internal server error"})
+    }
+}
+
+const verifyUser = async (req, res) => {
+    try {
+        const {token} = req.query
+        const decoded = jwt.verify(token, process.env.EMAIL_VERIFY_SECRET)
+        const user = await BaseUser.findOne({email: decoded.email})
+
+        if(!user)
+            return res.status(400).json({status: false, message: "Invalid link"})
+
+        user.isVerified = true;
+        await user.save()
+        return res.status(200).json({status: true, message: "Email verified successfully"})
+    } catch (err) {
+        console.log(err)
+        return res.status(500).json({status: false, message: "Internal server error"})
+    }
+}
+
 module.exports = {
     createUser,
     getUser,
-    updateUser
+    updateUser,
+    deleteUser,
+    verifyUser
 }

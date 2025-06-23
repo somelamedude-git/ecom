@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const { BaseUser } = require('../models/user.models');
 
  const hashPasswords = async (password)=>{
     const saltRounds = 10;
@@ -13,14 +12,6 @@ const { BaseUser } = require('../models/user.models');
     }
 }
 
-const comaprePassword = async (password, email) => {
-    const user = BaseUser.findOne(email);
-    if(!user)
-        return false
-    return bcrypt.compare(password, user.password);
-}
-
 module.exports = { 
-    hashPasswords,
-    comaprePassword
+    hashPasswords
  };
