@@ -1,11 +1,11 @@
-const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models')
-const {OAuth2Client} = require('google-auth-library')
+const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models');
+const {OAuth2Client} = require('google-auth-library');
+const { asyncHandler } = require("../utils/asyncHandler");
 require('dotenv').config()
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-const createUser = async (req, res) => {
-    try{
+const createUser = asyncHandler(async (req, res) => {
 
         const {kind, username, email, password, name, address, googleLogin, coverImage} = req.body;
 
@@ -35,15 +35,10 @@ const createUser = async (req, res) => {
                                         email: user.email,
                                         name: user.name,
                                         kind: user.kind
-                                    }})
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({status: false, message: "Internal server error"})
-    }
-}
+                                 }})
+});
 
-const getUser = async(req, res) => {
-    try{
+const getUser = asyncHandler(async(req, res) => {
         const {googleLogin, token, email, password} = req.body;
         let user = await BaseUser.findOne({email});
 
@@ -66,7 +61,6 @@ const getUser = async(req, res) => {
                 return res.status(401).json({ message: "Invalid Google token" });
             }
         }
-
         if(!user){
             return res.status(401).json({
                 status: false,
@@ -79,14 +73,9 @@ const getUser = async(req, res) => {
         if(isValid)
             return res.status(200).json({status: true, message: "User found successfully"});
         return res.status(401).json({status: false, message: "Invalid credentials"});
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({status: false, message: "Internal server error"})
-    }
-}
+});
 
-const updateUser = async (req, res) => {
-    try {
+const updateUser = asyncHandler(async (req, res) => {
         const { username, email, address, name, coverImage } = req.body
         let user
         if(username)
@@ -109,12 +98,8 @@ const updateUser = async (req, res) => {
 
         await user.save()
 
-        return res.status(200).json({status: true, message: "Changes made successfully"})
-    } catch (err) {
-        console.log(err)
-        return res.status(500).json({status: false, message: "Internal server error"})
-    }
-}
+        return res.status(200).json({status: true, message: "Changes made successfully"});
+});
 
 module.exports = {
     createUser,
