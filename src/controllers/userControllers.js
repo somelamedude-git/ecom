@@ -155,5 +155,5 @@ module.exports = {
     getUser,
     updateUser,
   deleteUser,
-  VerifyUser
+  verifyUser
 }
