@@ -1,5 +1,4 @@
 const bcrypt = require('bcrypt');
-const { BaseUser } = require('../models/user.models');
 
  const hashPasswords = async (password)=>{
     const saltRounds = 10;
@@ -12,7 +11,6 @@ const { BaseUser } = require('../models/user.models');
         throw error;
     }
 }
-
 
 module.exports = { 
     hashPasswords

@@ -3,6 +3,7 @@ const options = {discriminatorKey: 'kind', timestamps:true};
 const { hashPasswords } = require('../utils/password.util');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { boolean } = require('joi');
 require('dotenv').config({ path: '../.env' });
 
 
@@ -53,6 +54,11 @@ const BaseUserSchema = new mongoose.Schema({
 
   refreshToken:{
     type:String
+  },
+
+  isVerified: {
+    type: boolean,
+    default: false
   }
 }, options);
 
