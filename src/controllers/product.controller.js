@@ -10,7 +10,7 @@ const addProduct = asyncHandler(async(req, res)=>{
     const user_ = await Seller.findById(userId);
 
     if(!user_){
-        throw new ApiError(401, "User not found");
+        throw new ApiError(404, "Seller not found");
     }
     const { description, name, price, stock, category } = req.body;
     const productImages = [];
@@ -39,10 +39,38 @@ const addProduct = asyncHandler(async(req, res)=>{
 
     res.status(201).send({
         success:true,
-        message: "Product created successfully"
+        message: "Product created successfully",
+        data:{
+            _id:newProduct._id,
+            name: newProduct.name,
+            stock: newProduct.stock
+        }
     });
 });
 
+const updateProductDetails  = asyncHandler(async(req, res)=>{
+    const userId = req.user._id;
+    const user = await Seller.findById(userId);
+
+    if(!user){
+        throw new ApiError(404, "Seller Not Found");
+    }
+
+    for(const key in req.body){
+        if(req.body[key] !== undefined){
+            user.Product[key] = req.body[key];
+        }
+    }
+
+    await user.save();
+
+    res.status(201).send({
+        success:true,
+        message: "Product Information updated successfully"
+    });
+})
+
 module.exports = {
-    addProduct
+    addProduct,
+    updateProductDetails
 }
