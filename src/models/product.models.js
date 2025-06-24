@@ -7,6 +7,7 @@ const productSchema = new mongoose.Schema({
   },
   name: {
     type: String,
+    lowecase:true,
     required: true
   },
   productImages: [
@@ -28,18 +29,18 @@ const productSchema = new mongoose.Schema({
     ref: 'Category',
     required: true
   },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Seller',
-    required: true
-  },
 
  reviews: [
   {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Review'
   }
-]
+],
+
+owner: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Seller"
+}
 }, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);
