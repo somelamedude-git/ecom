@@ -2,7 +2,6 @@ const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models');
 const {OAuth2Client} = require('google-auth-library');
 const { asyncHandler } = require("../utils/asyncHandler");
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const {verifyEmail} = require('../utils/verification.util');
 require('dotenv').config()
 
@@ -154,6 +153,6 @@ module.exports = {
     createUser,
     getUser,
     updateUser,
-  deleteUser,
-  verifyUser
+    deleteUser,
+    verifyUser
 }
