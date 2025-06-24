@@ -2,7 +2,6 @@ const { Product }  = require("../models/product.models");
 const { asyncHandler } = require("../utils/asyncHandler");
 const { Seller } = require("../models/user.models");
 const { ApiError } = require("../utils/ApiError");
-const {checkProductSimilarity} = require("../utils/product.utils");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 
 const addProduct = asyncHandler(async(req, res)=>{
@@ -12,7 +11,7 @@ const addProduct = asyncHandler(async(req, res)=>{
     if(!user_){
         throw new ApiError(404, "Seller not found");
     }
-    const { description, name, price, stock, category } = req.body;
+    const { description, name, price, stock, status, category } = req.body;
     const productImages = [];
 
     for(const file of req.files){
@@ -29,8 +28,8 @@ const addProduct = asyncHandler(async(req, res)=>{
         productImages:productImages,
         price,
         stock,
+        status,
         category,
-        reviews : [],
         owner: user_._id
     });
 
@@ -50,23 +49,33 @@ const addProduct = asyncHandler(async(req, res)=>{
 
 const updateProductDetails  = asyncHandler(async(req, res)=>{
     const userId = req.user._id;
+    const {productId, ...updateFields} = req.body;
     const user = await Seller.findById(userId);
 
     if(!user){
         throw new ApiError(404, "Seller Not Found");
     }
 
-    for(const key in req.body){
+    const ownsProduct = user.selling_products.some(p => p.product.toString() === productId);
+    if(!ownsProduct) throw new ApiError(404, "You don't own this product");
+
+    const product = await Product.findById(productId);
+
+    for(const key in updateFields){
         if(req.body[key] !== undefined){
-            user.Product[key] = req.body[key];
+            product[key] = updateFields[key];
         }
     }
 
-    await user.save();
+    await product.save();
 
     res.status(201).send({
         success:true,
-        message: "Product Information updated successfully"
+        message: "Product Information updated successfully",
+        data:{
+            _id:product._id,
+            name:product.name
+        }
     });
 })
 
