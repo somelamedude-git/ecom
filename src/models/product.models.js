@@ -35,8 +35,15 @@ const productSchema = new mongoose.Schema({
   {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Review'
-  }
+  },
 ],
+
+ status: {
+      type: String,
+      enum: ['sold out', 'in stock'],
+      default: 'in stock',
+      required: true
+    },
 
 owner: {
   type: mongoose.Schema.Types.ObjectId,

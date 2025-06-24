@@ -3,7 +3,6 @@ const options = {discriminatorKey: 'kind', timestamps:true};
 const { hashPasswords } = require('../utils/password.util');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { boolean } = require('joi');
 require('dotenv').config({ path: '../.env' });
 
 
@@ -57,7 +56,7 @@ const BaseUserSchema = new mongoose.Schema({
   },
 
   isVerified: {
-    type: boolean,
+    type: Boolean,
     default: false
   }
 }, options);
@@ -137,14 +136,9 @@ const Seller = BaseUser.discriminator('Seller', new mongoose.Schema({
     product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product"
-    },
-    status: {
-      type: String,
-      enum: ['sold out', 'in stock'],
-      default: 'in stock',
-      required: true
     }
   }
+  
 ],
 
 
