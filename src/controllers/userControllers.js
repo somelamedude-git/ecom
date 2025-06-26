@@ -7,8 +7,6 @@ const { generateAccessAndRefreshTokens, generateAcessAndRefreshTokens } = requir
 const axios = require('axios');
 require('dotenv').config({ path: '../.env' });
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
 const createUser = asyncHandler(async (req, res) => {
 
         const {kind, username, email, password, name, googleLogin, coverImage} = req.body;
@@ -117,8 +115,6 @@ const verifyUser = asyncHandler(async (req, res) => {
 
 module.exports = {
     createUser,
-    googleLogin,
-    getUser,
     updateUser,
     deleteUser,
     verifyUser
