@@ -3,6 +3,7 @@ const {OAuth2Client} = require('google-auth-library');
 const { asyncHandler } = require("../utils/asyncHandler");
 const jwt = require('jsonwebtoken');
 const {verifyEmail} = require('../utils/verification.util');
+const { Response, Request, CookieOptions } = require('express');
 require('dotenv').config()
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
