@@ -38,8 +38,7 @@ const BaseUserSchema = new mongoose.Schema({
   },
   address:{
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Address",
-    required:true
+    ref: "Address"
   },
   name:{
     type:String,

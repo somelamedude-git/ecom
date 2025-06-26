@@ -9,7 +9,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const createUser = asyncHandler(async (req, res) => {
 
-        const {kind, username, email, password, name, address, googleLogin, coverImage} = req.body;
+        const {kind, username, email, password, name, googleLogin, coverImage} = req.body;
 
         const existingUser = await BaseUser.findOne({email: email.toLowerCase().trim()})
 
