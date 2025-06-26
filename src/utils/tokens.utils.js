@@ -1,4 +1,4 @@
-const { ApiError } = require('ApiError');
+const { ApiError } = require('./ApiError');
 const { BaseUser } = require('../models/user.models')
 
 const generateAcessAndRefreshTokens = async(userId)=>{
