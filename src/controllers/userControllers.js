@@ -161,11 +161,35 @@ const verifyUser = asyncHandler(async (req, res) => {
         return res.status(200).json({status: true, message: "Email verified successfully"})
 })
 
+const banUser = asyncHandler(async(req, res) => {
+    const {id} = req.query;
+    const user = BaseUser.findOne({_id: id})
+    if(user && user.kind !== 'Admin'){
+        user.isBan = true;
+        await user.save()
+        return res.status(200).json({status: true, message: "User banned"})
+    }
+    return res.status(400).json({status: false, message: "User not found"})
+})
+
+const unbanUser = asyncHandler(async(req, res) => {
+    const {id} = req.query;
+    const user = BaseUser.findOne({_id: id})
+    if(user && user.kind !== 'Admin'){
+        user.isBan  = false
+        await user.save()
+        return res.status(200).json({status: true, message: "User unbanned"})
+    }
+    return res.status(400).json({status: false, message: "User not found"})
+})
+
 module.exports = {
     createUser,
     googleLogin,
     manualLogin,
     updateUser,
     deleteUser,
-    verifyUser
+    verifyUser,
+    banUser,
+    unbanUser
 }

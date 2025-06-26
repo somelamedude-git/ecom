@@ -1,5 +1,6 @@
-const { createUser, googleLogin, manualLogin, deleteUser, verifyUser} = require('../controllers/userControllers');
+const userControllers = require('../controllers/userControllers');
 const express = require('express');
+const { route } = require('./userRoutes');
 require('dotenv').config({ path: '../.env' });
 const router = express.Router();
 
@@ -8,15 +9,19 @@ router.get('/auth/google', (req, res) => {
   res.redirect(url);
 });
 
-router.post('/login', manualLogin);
+router.post('/login', userControllers.manualLogin);
 
-router.get('/auth/google/callback', googleLogin);
+router.get('/auth/google/callback', userControllers.googleLogin);
 
-router.post('/register', createUser);
+router.post('/register', userControllers.createUser);
 
-router.delete('/delete_account/:id', deleteUser);
+router.delete('/delete_account/:id', userControllers.deleteUser);
 
-router.get('/verify-email/:id', verifyUser);
+router.get('/verify-email/:id', userControllers.verifyUser);
+
+router.patch('/ban_user/:id', userControllers.banUser)
+
+router.patch('/unban_user/:id', userControllers.unbanUser)
 
 module.exports = {
     router
