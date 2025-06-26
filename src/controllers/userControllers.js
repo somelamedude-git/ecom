@@ -1,5 +1,4 @@
 const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models');
-const {OAuth2Client} = require('google-auth-library');
 const { asyncHandler } = require("../utils/asyncHandler");
 const jwt = require('jsonwebtoken');
 const {verifyEmail} = require('../utils/verification.util');

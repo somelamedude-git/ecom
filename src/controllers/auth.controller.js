@@ -1,4 +1,3 @@
-const {OAuth2Client} = require('google-auth-library');
 const axios = require('axios');
 const { BaseUser } = require('../models/user.models');
 const { generateAccessAndRefreshTokens } = require('../utils/tokens.utils');
