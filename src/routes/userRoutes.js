@@ -1,10 +1,11 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
+const { createUser, getUser, updateUser, deleteUser, verifyUser } = require('../controllers/userControllers')
 
-router.post('/register', userController.createUser)
-router.post('/login', userController.getUser)
-router.patch('/update/:id', userController.updateUser)
-router.delete('/delete_account/:id', userController.deleteUser)
-router.get('/verify-email/:id', userController.verifyUser)
+router.post('/register', createUser)
+router.post('/login', getUser)
+router.patch('/update/:id', updateUser)
+router.delete('/delete_account/:id', deleteUser)
+router.get('/verify-email/:id', verifyUser)
 
 module.exports = router
