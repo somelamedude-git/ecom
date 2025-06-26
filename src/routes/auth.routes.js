@@ -1,6 +1,5 @@
 const userControllers = require('../controllers/userControllers');
 const express = require('express');
-const { route } = require('./userRoutes');
 require('dotenv').config({ path: '../.env' });
 const router = express.Router();
 
