@@ -4,7 +4,8 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const jwt = require('jsonwebtoken');
 const {verifyEmail} = require('../utils/verification.util');
 const { Response, Request, CookieOptions } = require('express');
-require('dotenv').config()
+const { generateAccessAndRefreshTokens, generateAcessAndRefreshTokens } = require('../utils/tokens.utils');
+require('dotenv').config({ path: '../.env' });
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -43,7 +44,6 @@ const createUser = asyncHandler(async (req, res) => {
 
 const getUser = asyncHandler(async(req, res) => {
         const {googleLogin, token, email, password} = req.body;
-        let user = await BaseUser.findOne({email});
 
         if(googleLogin){
             try{
@@ -52,13 +52,15 @@ const getUser = asyncHandler(async(req, res) => {
                     audience: process.env.GOOGLE_CLIENT_ID
                 })
 
-                const payload = ticket.getPayload()
-                const {email} = payload
+                const payload = ticket.getPayload();
+                const {email} = payload;
 
-                user = await BaseUser.findOne({email})
-                if(user)
-                    return res.status(200).json({status: true, message: "User found"})
-                return res.status(401).json({status: false, message: "User credentials incorrect"})
+                let google_user = await BaseUser.findOne({email});
+
+                if(google_user){
+                    ;
+                }
+                else return res.status(401).json({status: false, message: "User credentials incorrect"});
             } catch (err) {
                 console.error("Google login error:", err);
                 return res.status(401).json({ message: "Invalid Google token" });
@@ -73,8 +75,9 @@ const getUser = asyncHandler(async(req, res) => {
 
         const isValid = await user.isPasswordCorrect(password);
 
-        if(isValid)
-            return res.status(200).json({status: true, message: "User found successfully"});
+        if(isValid){
+            const { accessToken, refreshToken } = await generateAcessAndRefreshTokens(user._id);
+        }
         return res.status(401).json({status: false, message: "Invalid credentials"});
 });
 
