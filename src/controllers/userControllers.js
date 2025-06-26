@@ -3,7 +3,6 @@ const {OAuth2Client} = require('google-auth-library');
 const { asyncHandler } = require("../utils/asyncHandler");
 const jwt = require('jsonwebtoken');
 const {verifyEmail} = require('../utils/verification.util');
-const { Response, Request, CookieOptions } = require('express');
 const { generateAccessAndRefreshTokens, generateAcessAndRefreshTokens } = require('../utils/tokens.utils');
 const axios = require('axios');
 require('dotenv').config({ path: '../.env' });
@@ -43,46 +42,7 @@ const createUser = asyncHandler(async (req, res) => {
                                  }})
 });
 
-
-const getUser = asyncHandler(async(req, res) => {
-        const {googleLogin, token, email, password} = req.body;
-
-        if(googleLogin){
-            try{
-                const ticket = await client.verifyIdToken({
-                    idToken: token,
-                    audience: process.env.GOOGLE_CLIENT_ID
-                })
-
-                const payload = ticket.getPayload();
-                const {email} = payload;
-
-                let google_user = await BaseUser.findOne({email});
-
-                if(google_user){
-                    ;
-                }
-                else return res.status(401).json({status: false, message: "User credentials incorrect"});
-            } catch (err) {
-                console.error("Google login error:", err);
-                return res.status(401).json({ message: "Invalid Google token" });
-            }
-        }
-        if(!user){
-            return res.status(401).json({
-                status: false,
-                message: "Invalid email or password"
-            });
-        }
-
-        const isValid = await user.isPasswordCorrect(password);
-
-        if(isValid){
-            const { accessToken, refreshToken } = await generateAcessAndRefreshTokens(user._id);
-        }
-        return res.status(401).json({status: false, message: "Invalid credentials"});
-});
-
+                           
 const updateUser = asyncHandler(async (req, res) => {
         const { username, email, address, name, coverImage } = req.body
         let user

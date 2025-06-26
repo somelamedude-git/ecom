@@ -3,6 +3,7 @@ const axios = require('axios');
 const { BaseUser } = require('../models/user.models');
 const { generateAccessAndRefreshTokens } = require('../utils/tokens.utils');
 const asyncHandler = require('../utils/asyncHandler');
+const { ApiError } = require('../utils/ApiError');
 
 
 const googleLogin = asyncHandler(async (req, res) => {
@@ -35,3 +36,30 @@ const googleLogin = asyncHandler(async (req, res) => {
         .status(200)
         .json({ success: true, userId: user._id, email: user.email });
 });
+
+const manualLogin = asyncHandler(async (req, res)=>{
+    const { email, password } = req.body;
+    
+    if(!email) throw new ApiError(400, "Email is required to log in");
+
+    const user = await BaseUser.findOne({email: email});
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+
+    const isPasswordVerified = await user.isPasswordCorrect(password);
+    if(!isPasswordVerified) throw new ApiError(401, "Invalid user credentials");
+
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+    res
+        .cookie('accessToken', accessToken, { httpOnly: true, secure: true })
+        .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
+        .status(200)
+        .json({ success: true, userId: user._id, email: user.email });
+
+})
+
+module.exports = {
+    googleLogin,
+    manualLogin
+}
