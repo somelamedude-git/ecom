@@ -22,6 +22,4 @@ router.patch('/ban_user/:id', userControllers.banUser)
 
 router.patch('/unban_user/:id', userControllers.unbanUser)
 
-module.exports = {
-    router
-}
+module.exports = router;
