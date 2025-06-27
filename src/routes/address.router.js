@@ -5,6 +5,4 @@ const {addressValidator } = require('../middlewares/address.validator');
 
 router.post('/ChangeAddress', addressValidator, addressHandler);
 
-module.exports = {
-    router
-}
+module.exports = router;

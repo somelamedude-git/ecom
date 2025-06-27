@@ -1,6 +1,5 @@
 const userControllers = require('../controllers/userControllers');
 const express = require('express');
-const { route } = require('./userRoutes');
 require('dotenv').config({ path: '../.env' });
 const router = express.Router();
 
@@ -23,6 +22,4 @@ router.patch('/ban_user/:id', userControllers.banUser)
 
 router.patch('/unban_user/:id', userControllers.unbanUser)
 
-module.exports = {
-    router
-}
+module.exports = router;
