@@ -7,7 +7,7 @@ const fetchProducts = asyncHandler(async (req, res)=>{
     const products = await Product.find().limit(limit). populate('category').populate('owner', 'name email');
 
     if(products.length == 0){
-        throw new ApiError('404', "Products not found");
+        throw new ApiError(404, "Products not found");
     }
 
     res.status(200).json({
