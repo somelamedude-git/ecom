@@ -20,3 +20,7 @@ const verifyJWT = asyncHandler(async(req, res, next)=>{
    next();
 
 })
+
+module.exports = {
+    verifyJWT
+} 
