@@ -1,4 +1,4 @@
-const { BaseUser, Buyer } = require('../models/user.models');
+const { Buyer } = require('../models/user.models');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
 const { Product } = require('../models/product.models');
