@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const userRoutes = require('./routes/auth.routes');
 const addressRoutes = require('./routes/address.router');
+const productDisplayRouters = require('./routes/productDisplay.router');
 const app = express();
 
 app.use(cors({ //Yet to render the frontend, so origin is denoted through a placeholder for once
@@ -21,6 +22,8 @@ app.use(express.json({
 app.use('/user', userRoutes);
 
 app.use('/edit', addressRoutes);
+
+app.use('/api/products', productDisplayRouters);
 
 app.use(rateLimit({
     windowMs: 1*60*1000,
