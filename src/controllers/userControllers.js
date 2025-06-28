@@ -90,18 +90,15 @@ const manualLogin = asyncHandler(async (req, res)=>{
 
                            
 const updateUser = asyncHandler(async (req, res) => {
-        const { username, email, address, name, coverImage } = req.body
-        let user
-        if(username)
-            user = await BaseUser.findOne({username})
-        else if (email)
-            user = await BaseUser.findOne({email})
-
+    const user_id = req.user._id;
+        const { address, name, coverImage } = req.body
+        let user = await BaseUser.findById(user_id);
+    
         if(!user)
-            return res.status(400).json({status: false, message: "Invalid email or password"})
+            throw new ApiError(404, "User not found");
 
         if(!address && !name && !coverImage)
-            return res.status(400).json({status: false, message: "No updates provided"})
+            return res.status(400).json({status: false, message: "No updates provided"});
 
         if(address)
             user.address = address
