@@ -15,6 +15,8 @@ const fetchProducts = asyncHandler(async (req, res)=>{
     });
 });
 
+//Use this for dashboard, search, wishlist and cart
+
 module.exports = {
     fetchProducts
 }
