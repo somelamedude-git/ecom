@@ -39,7 +39,7 @@ const addToBag = asyncHandler(async(req, res)=>{ // user kind must be buyer, we 
         message:"Product added to cart",
         count_bought: existingItem.quantity || 1
     });
-})
+}) //Use the same function for wishlist
 
 module.exports = {
     addToBag
