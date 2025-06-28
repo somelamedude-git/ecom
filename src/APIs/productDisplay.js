@@ -3,7 +3,7 @@ const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
 
 const fetchProducts = asyncHandler(async (req, res)=>{
-    const limit = Number(req.query.limit) || 100;
+    const limit = Math.min((Number(req.query.limit) || 100), 100);
     const products = await Product.find().limit(limit). populate('category').populate('owner', 'name email');
 
     if(products.length == 0){
