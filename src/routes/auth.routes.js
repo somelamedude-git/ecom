@@ -1,6 +1,7 @@
 const userControllers = require('../controllers/userControllers');
 const express = require('express');
 require('dotenv').config({ path: '../.env' });
+const { fetchUserData } = require('../APIs/fetchProfile')
 const router = express.Router();
 
 router.get('/auth/google', (req, res) => {
@@ -18,8 +19,10 @@ router.delete('/delete_account/:id', userControllers.deleteUser);
 
 router.get('/verify-email/:id', userControllers.verifyUser);
 
-router.patch('/ban_user/:id', userControllers.banUser)
+router.patch('/ban_user/:id', userControllers.banUser);
 
-router.patch('/unban_user/:id', userControllers.unbanUser)
+router.patch('/unban_user/:id', userControllers.unbanUser);
+
+router.get('/api/profile', fetchUserData); //To fetch ser's profile, middleware yet to be injected
 
 module.exports = router;
