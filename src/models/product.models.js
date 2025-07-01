@@ -45,6 +45,11 @@ const productSchema = new mongoose.Schema({
       required: true
     },
 
+    tags:{
+      type:[String],
+      defaut:[]
+    },
+
 owner: {
   type: mongoose.Schema.Types.ObjectId,
   ref: "Seller"

@@ -12,6 +12,7 @@ const addProduct = asyncHandler(async(req, res)=>{
         throw new ApiError(404, "Seller not found");
     }
     const { description, name, price, stock, status, category } = req.body;
+    let tags = req.body.tags || [];
     const productImages = [];
 
     for(const file of req.files){
@@ -22,6 +23,14 @@ const addProduct = asyncHandler(async(req, res)=>{
         productImages.push(image_url);
     }
 
+    if(typeof tags === "string"){
+        tags = tags.split(',').map(t=>t.trim().toLowerCase())
+    }
+    else if (Array.isArray(tags)) {
+  tags = tags.map(t => t.trim().toLowerCase());
+}
+
+
     const newProduct = await Product.create({
         description,
         name,
@@ -30,6 +39,7 @@ const addProduct = asyncHandler(async(req, res)=>{
         stock,
         status,
         category,
+        tags:tags,
         owner: user_._id
     });
 
