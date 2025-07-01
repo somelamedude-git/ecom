@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 
-const preorderSchema = new mongoose.Schema({
-  order_item: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Product'
-  },
-  order_amount: {
-    type: Number,
-    required: true
-  }
-});
+// const preorderSchema = new mongoose.Schema({
+//   order_item: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: 'Product'
+//   },
+//   order_amount: {
+//     type: Number,
+//     required: true
+//   }
+// });
 
 
 const orderSchema = new mongoose.Schema({
@@ -21,14 +21,31 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  orderItems: [preorderSchema],
+  orderItems: [
+      {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        default: 1
+      },
+      price: {
+        type: Number,
+        required: true
+      }
+    }
+  ],
   address: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "BaseUser.address"
   },
   status: {
     type: String,
-    enum: ['pending', 'delivered', 'cancelled'],
+    enum: ['pending', 'delivered', 'cancelled', 'returned'],
     default: 'pending'
   }
 }, { timestamps: true });
