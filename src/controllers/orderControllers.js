@@ -1,48 +1,54 @@
 const {asyncHandler} = require('../utils/asyncHandler')
 const Order = require('../models/order.models')
+const {Buyer} = require('../models/user.models')
 
-const addOrder = asyncHandler (async(req, res) => {
-    const {customer, orderItems, address} = req.body;
+const addOrder = asyncHandler(async (req, res) => {
+  const { customerId } = req.query;
 
-    if(!orderItems)
-        return res.status(400).json({status: false, message: "No order added"})
+  const customer = await Buyer.findById(customerId).populate('cart.product');
 
-    let price = 0
-    for(let i of orderItems)
-        price += i.order_amount
+  if (!customer)
+    return res.status(400).json({ status: false, message: "No Buyer found" });
 
-    const order = new Order({customer, price, orderItems, address})
+  if (customer.cart.length === 0)
+    return res.status(400).json({ status: false, message: "Cart is empty" });
 
-    await order.save()
-    return res.status(201).json({status: true, message: "Order created successfully"})
+ 
+  const orderItems = customer.cart.map(item => ({
+    product: item.product._id,       
+    quantity: item.quantity,
+    price: item.product.price        
+  }));
 
-})
+  
+  const totalPrice = orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity, 0
+  );
 
-const deleteOrder = asyncHandler(async (req, res) => {
-    const {orderId, itemId} = req.body;
+  
+  const order = new Order({
+    customer: customer._id,
+    price: totalPrice,
+    orderItems,
+    address: customer.address, 
+    status: 'pending'
+  });
 
-    const order = await Order.findOne({_id: orderId})
+  await order.save();
 
-    if(!order)
-        return res.status(400).json({status: false, message: "Order not found"})
+  
+  customer.orderHistory.push(order._id);
+  customer.cart = [];
+  await customer.save();
 
-    const originalLength = order.orderItems.length
-    order.orderItems = order.orderItems.filter(item => item._id.toString() !== itemId)
+  return res.status(201).json({
+    status: true,
+    message: "Order added successfully",
+    order
+  });
+});
 
-    if (order.orderItems.length === originalLength) 
-        return res.status(404).json({ status: false, message: "Item not found in order" });
-
-    await order.save()
-
-    return res.status(200).json({
-        status: true,
-        message: "Item removed from order",
-        updatedOrder: order
-    });
-
-})
 
 module.exports = {
     addOrder,
-    deleteOrder
 }
