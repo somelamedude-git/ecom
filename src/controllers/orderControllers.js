@@ -1,5 +1,5 @@
 const {asyncHandler} = require('../utils/asyncHandler')
-const Order = require('../models/order.models')
+const { Order }= require('../models/order.models')
 const {Buyer} = require('../models/user.models')
 const { ApiError } = require('../utils/ApiError')
 
@@ -50,19 +50,25 @@ const addOrder = asyncHandler(async (req, res) => {
 });
 
 const returnOrder = asyncHandler(async (req, res) => {
-    const {customerId, orderId} = req.query
+  const customerId = req.user._id;
+  const { orderId } = req.params;
 
-    const order = await Order.findById(orderId)
-    if(order.customer !== customerId)
-        return res.status(404).json({status: false, message: "Order not found"})
+  const order = await Order.findById(orderId);
+  if (!order || !order.customer.equals(customerId)) {
+    throw new ApiError(404, 'Order not found');
+  }
 
-    order.status = 'returned'
-    await order.save()
+  order.status = 'returned';
+  await order.save();
 
-    return res.status(200).json({status: true, message: "Order returned", order})
-    
-})
+  return res.status(200).json({
+    status: true,
+    message: 'Order marked as returned',
+    order
+  });
+});
 
+//Feature left: stock handeling
 
 module.exports = {
     addOrder,
