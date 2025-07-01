@@ -42,33 +42,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
 
 })
 
-const updateOrderItemCount = asyncHandler(async (req, res) => {
-    const {orderId, itemId, count} = req.body
-    const order = await Order.findOne({_id: orderId})
-
-    if(!order)
-        return res.status(400).json({status: false, message: "Order not found"})
-    const item = order.orderItems.find(
-        item => item._id.toString() === itemId
-    );
-
-    if (!item) {
-        return res.status(404).json({ status: false, message: "Item not found in order" });
-    }
-
-    item.count = count;
-
-    await order.save();
-
-    return res.status(200).json({
-        status: true,
-        message: "Item count updated successfully",
-        updatedOrder: order
-    });
-})
-
 module.exports = {
     addOrder,
-    deleteOrder,
-    updateOrderItemCount
+    deleteOrder
 }
