@@ -53,7 +53,13 @@ const searchProduct = asyncHandler(async(req,res)=>{
         tags: {$in: similarTags}
     }).limit(limit).skip((page-1)*limit).sort({createdAt: -1});
 
-    return res.status(200).json({ products });
+    return res.status(200).json({
+  success: true,
+  currentPage: page,
+  totalPages: number_of_pages,
+  totalProducts: length,
+  products
+});
 
 })
 
