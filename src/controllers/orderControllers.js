@@ -48,7 +48,22 @@ const addOrder = asyncHandler(async (req, res) => {
   });
 });
 
+const returnOrder = asyncHandler(async (req, res) => {
+    const {customerId, orderId} = req.query
+
+    const order = await Order.findById(orderId)
+    if(order.customer !== customerId)
+        return res.status(404).json({status: false, message: "Order not found"})
+
+    order.status = 'returned'
+    await order.save()
+
+    return res.status(200).json({status: true, message: "Order returned", order})
+    
+})
+
 
 module.exports = {
     addOrder,
+    returnOrder
 }
