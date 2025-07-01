@@ -3,7 +3,7 @@ const Order = require('../models/order.models')
 const {Buyer} = require('../models/user.models')
 
 const addOrder = asyncHandler(async (req, res) => {
-  const { customerId } = req.query;
+  const customerId = req.user._id;
 
   const customer = await Buyer.findById(customerId).populate('cart.product');
 
