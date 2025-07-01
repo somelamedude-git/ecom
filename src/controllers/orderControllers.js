@@ -1,6 +1,7 @@
 const {asyncHandler} = require('../utils/asyncHandler')
 const Order = require('../models/order.models')
 const {Buyer} = require('../models/user.models')
+const { ApiError } = require('../utils/ApiError')
 
 const addOrder = asyncHandler(async (req, res) => {
   const customerId = req.user._id;
@@ -8,10 +9,10 @@ const addOrder = asyncHandler(async (req, res) => {
   const customer = await Buyer.findById(customerId).populate('cart.product');
 
   if (!customer)
-    return res.status(400).json({ status: false, message: "No Buyer found" });
+    throw new ApiError(404, 'User not found');
 
   if (customer.cart.length === 0)
-    return res.status(400).json({ status: false, message: "Cart is empty" });
+    return res.status(204).json({ status: false, message: "Cart is empty" });
 
  
   const orderItems = customer.cart.map(item => ({
