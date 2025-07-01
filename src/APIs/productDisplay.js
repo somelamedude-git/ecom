@@ -20,7 +20,13 @@ const fetchProducts = asyncHandler(async(req, res)=>{
     
     const products = await Product.find().limit(limit).skip((page-1)*limit).sort({ createdAt: -1 });
     if(products.length===0) throw new ApiError(404, "Products not found");
-    res.status(200).json({ products });
+    res.status(200).json({ 
+        success: true,
+        currentPage: page,
+        totalPages: number_of_pages,
+        totalProducts: number_of_products,
+        products 
+    });
 });
 
 //Use this for dashboard, wishlist and cart
