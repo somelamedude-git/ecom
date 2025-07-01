@@ -27,10 +27,10 @@ const fetchProducts = asyncHandler(async(req, res)=>{
 
 const searchProduct = asyncHandler(async(req,res)=>{
     const rawQuery = req.query.q?.toLowerCase();
-    query_tokenized = rawQuery.split(" ");
     if(!rawQuery){
-        throw new ApiError(400, "Search query is required");
+      throw new ApiError(400, "Search query is required");
     }
+    const query_tokenized = rawQuery.split(" ");
     const allTags = await Product.distinct('tags');
     const similarTags = allTags.filter((tag)=>{
         const tagLower = tag.toLowerCase();
@@ -45,7 +45,13 @@ const searchProduct = asyncHandler(async(req,res)=>{
         tags: {$in: similarTags}
     });
 
-    if(length===0) throw new ApiError(404, 'Seems like what you are looking for is not available');
+   if (similarTags.length === 0) {
+  return res.status(200).json({
+    success: true,
+    products: [],
+    suggestion: "No similar tags found. Try a different keyword?"
+  });
+}
 
     const number_of_pages = Math.ceil(length/limit);
     const page = Math.min((Number(req.query.page) || 1), number_of_pages); 
