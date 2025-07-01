@@ -22,11 +22,10 @@ const fetchProducts = asyncHandler(async(req, res)=>{
     res.status(200).json({ products });
 });
 
-
 //Use this for dashboard, wishlist and cart
 
 const searchProduct = asyncHandler(async(req,res)=>{
-
+    
 })
 
 module.exports = {
