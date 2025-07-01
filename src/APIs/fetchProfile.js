@@ -13,3 +13,5 @@ const fetchUserData =  asyncHandler(async(req, res)=>{
 module.exports = {
     fetchUserData
 }
+
+//After this we have update user data
