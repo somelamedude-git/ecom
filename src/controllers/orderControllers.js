@@ -64,6 +64,22 @@ const addOrder = asyncHandler(async (req, res) => {
   });
 });
 
+const schedule_return = asyncHandler(async(req, res) => {
+    const {orderId, customerId} = req.query
+    const order = await Order.findById(orderId)
+
+    if(!order)
+        throw new ApiError(404, `Order not found`)
+
+    if(order.customer !== customerId)
+        throw new ApiError(400, `Order not found for this customer`);
+
+    order.status = 'schedule_return'
+    order.save()
+
+    return res.status(200).json({status: true, message: `Order id ${orderId} scheduled for return`})
+}) //approve return in seller controllers
+
 const returnOrder = asyncHandler(async (req, res) => {
   const customerId = req.user._id;
   const { orderId } = req.params;
@@ -87,5 +103,6 @@ const returnOrder = asyncHandler(async (req, res) => {
 
 module.exports = {
     addOrder,
-    returnOrder
+    returnOrder,
+    schedule_return
 }
