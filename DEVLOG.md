@@ -4,3 +4,4 @@
 # Yet to update render an api for category frontend
 # Stock handeling left
 # Payment methods to be handled
+# Handle race conditions
