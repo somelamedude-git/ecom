@@ -31,12 +31,20 @@ const productSchema = new mongoose.Schema({
     required: true
   },
 
- reviews: [
-  {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Review'
+  views:{
+    type: Number,
+    default:0
   },
-],
+
+  reviews:{
+    type: Number,
+    default:0   //This is just for ratings
+  },
+
+  popularity:{
+    type:Number,
+    default: 0
+  },
 
  status: {
       type: String,
@@ -47,7 +55,7 @@ const productSchema = new mongoose.Schema({
 
     tags:{
       type:[String],
-      defaut:[]
+      default:[]
     },
 
 owner: {
@@ -56,5 +64,13 @@ owner: {
 }
 }, { timestamps: true });
 
+productSchema.pre('save', function(next) {
+  if (typeof this.reviews === 'number' && typeof this.views === 'number') {
+    this.popularity = parseFloat(((this.reviews + this.views) / 2).toFixed(1));
+  } else {
+    this.popularity = 0;
+  }
+  next();
+});
 const Product = mongoose.model('Product', productSchema);
 module.exports = { Product };
