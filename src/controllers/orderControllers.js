@@ -2,6 +2,7 @@ const {asyncHandler} = require('../utils/asyncHandler')
 const { Order }= require('../models/order.models')
 const {Buyer} = require('../models/user.models')
 const { ApiError } = require('../utils/ApiError')
+const {Product} = require('../models/product.models')
 
 const addOrder = asyncHandler(async (req, res) => {
   const customerId = req.user._id;
@@ -12,7 +13,7 @@ const addOrder = asyncHandler(async (req, res) => {
     throw new ApiError(404, 'User not found');
 
   if (customer.cart.length === 0)
-    return res.status(204).json({ status: false, message: "Cart is empty" });
+    return res.status(400).json({ status: false, message: "Cart is empty" });
 
  
   const orderItems = customer.cart.map(item => ({
@@ -26,6 +27,20 @@ const addOrder = asyncHandler(async (req, res) => {
     (sum, item) => sum + item.price * item.quantity, 0
   );
 
+  await Promise.all(orderItems.map(async (item) => {
+    const product = await Product.findById(item.product);
+
+    if (!product) {
+        throw new ApiError(404, `product with id ${item.product} not found`);
+    }
+
+    if (product.stock < item.quantity) {
+        throw new ApiError(409, `product with id ${item.product} out of stock`)
+    }
+
+    product.stock -= item.quantity;
+    await product.save();
+  }));
   
   const order = new Order({
     customer: customer._id,
