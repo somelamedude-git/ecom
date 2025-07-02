@@ -5,3 +5,5 @@
 # Stock handeling left
 # Payment methods to be handled
 # Handle race conditions
+# return window of seven days
+# seller controllers

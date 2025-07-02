@@ -85,9 +85,24 @@ const returnOrder = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
 
   const order = await Order.findById(orderId);
+
+  if(order.status === 'returned')
+    throw new ApiError(400, `order ${orderId} already returned`)
+
   if (!order || !order.customer.equals(customerId)) {
     throw new ApiError(404, 'Order not found');
   }
+
+  await Promise.all(order.orderItems.map(async (item) => {
+    const product = await Product.findById(item.product);
+
+    if (!product) {
+        throw new ApiError(404, `product with id ${item.product} not found`);
+    }
+
+    product.stock += item.quantity;
+    await product.save();
+  }));
 
   order.status = 'returned';
   await order.save();
@@ -98,8 +113,6 @@ const returnOrder = asyncHandler(async (req, res) => {
     order
   });
 });
-
-//Feature left: stock handeling
 
 module.exports = {
     addOrder,
