@@ -2,7 +2,7 @@ const {asyncHandler} = require('../utils/asyncHandler')
 const { Order }= require('../models/order.models')
 const {Buyer} = require('../models/user.models')
 const { ApiError } = require('../utils/ApiError')
-const {Product} = require('../models/product.models')
+
 
 const addOrder = asyncHandler(async (req, res) => {
   const customerId = req.user._id;
