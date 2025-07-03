@@ -29,7 +29,8 @@ const payment_db_save = asyncHandler(async(req, res)=>{
         amount:response.amount,
         key: process.env.razor_key
     });
-})
+});
+
 
 module.exports = {
     payment_db_save
