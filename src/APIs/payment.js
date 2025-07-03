@@ -2,6 +2,7 @@ const { razorpay } = require('../config/razorpay');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { Order } = require('../models/order.models');
 require('dotenv').config({ path: '../.env' });
+const crypto = require('crypto');
 
 const payment_db_save = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
@@ -31,7 +32,25 @@ const payment_db_save = asyncHandler(async(req, res)=>{
     });
 });
 
+const webHook = asyncHandler(async (req, res) => {
+  const secret = process.env.razor_secret;
+  
+  const expectedSignature = crypto
+    .createHmac('sha256', secret)
+    .update(req.rawBody)
+    .digest('hex');
+
+  const razorSignature = req.headers['x-razorpay-signature'];
+
+  if (expectedSignature === razorSignature) {
+    res.status(200).json({ success: true });
+  } else {
+    res.status(400).json({ success: false, message: 'Invalid signature' });
+  }
+});
+
 
 module.exports = {
-    payment_db_save
+    payment_db_save,
+    webHook
 }
