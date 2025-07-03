@@ -45,7 +45,7 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'delivered', 'cancelled', 'returned'],
+    enum: ['pending', 'delivered', 'cancelled', 'schedule_return', 'returned', 'approve_return'],
     default: 'pending'
   }
 }, { timestamps: true });
