@@ -25,10 +25,10 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  address: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "BaseUser.address"
-  },
+  // address: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: "BaseUser.address"
+  // },
   status: {
     type: String,
     enum: ['pending', 'delivered', 'cancelled', 'schedule_return', 'returned', 'approve_return'],
