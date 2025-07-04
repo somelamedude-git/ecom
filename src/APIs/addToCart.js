@@ -25,7 +25,7 @@ const addToBag = asyncHandler(async(req, res)=>{ // user kind must be buyer, we 
     const existingItem = user_.cart.find(item=>item.product.toString() == product._id.toString());
 
     if(existingItem){
-        existingItem.quantity += 1;
+        existingItem.quantity += 1; //test comment
     }
 
     else{
