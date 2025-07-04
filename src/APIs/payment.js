@@ -50,13 +50,23 @@ const webHook = asyncHandler(async (req, res) => {
 });
 
 const refund = asyncHandler(async(req, res)=>{
-  const options={
-    payment_id: req.body.paymentId,
-    amount: req.body.amount
+  const {paymentId, amount} = req.body;
+  if(!paymentId) throw new ApiError(400, 'Bad request');
+  const options = {};
+
+  if(!amount){
+    options.amount = amount*100
   }
 
-  const response = await razorpay.refund(options);
-  res.send('successful refund') //Modify this function more
+  const refundResponse = await razorpay.payments.refund(paymentId, options);
+  
+  res.status(200).json({
+      success: true,
+      message: 'Refund initiated successfully.',
+      refundId: refundResponse.id,
+      status: refundResponse.status,
+      refundDetails: refundResponse,
+    });
 })
 
 
