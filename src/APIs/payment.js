@@ -62,5 +62,6 @@ const refund = asyncHandler(async(req, res)=>{
 
 module.exports = {
     payment_db_save,
-    webHook
+    webHook,
+    refund
 }
