@@ -49,6 +49,16 @@ const webHook = asyncHandler(async (req, res) => {
   }
 });
 
+const refund = asyncHandler(async(req, res)=>{
+  const options={
+    payment_id: req.body.paymentId,
+    amount: req.body.amount
+  }
+
+  const response = await razorpay.refund(options);
+  res.send('successful refund') //Modify this function more
+})
+
 
 module.exports = {
     payment_db_save,
