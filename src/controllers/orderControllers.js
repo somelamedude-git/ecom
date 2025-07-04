@@ -4,7 +4,8 @@ const { Order } = require('../models/order.models')
 const { Product } = require('../models/product.models')
 
 const addOrder = asyncHandler(async(req, res) => {
-    const {customerId, productId, quantity} = req.body;
+    const { productId, quantity} = req.body;
+    const customerId = req.user._id
 
     if(!customerId || !productId)
         return res.status(400).json({status: false, message: "Bad request"})
@@ -66,7 +67,7 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
       errors.push({ product: item.product, message: err.message });
     }
   }));
-  
+
   customer.cart = [];
   await customer.save();
 
@@ -79,8 +80,53 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
   });
 });
 
+const cancelOrder = asyncHandler(async(req, res) => {
+    const {orderId} = req.query.orderId;
+    const customerId = req.user._id;
+
+    const order = await Order.findById(orderId)
+    const customer = await Buyer.findById(customerId)
+
+    if(!order || !customer || order.customer.toString() !== customerId.toString())
+        return res.status(404).json({status: false, message: "Order not found"})
+    if(order.status !== 'pending')
+        return res.status(400).json({status: false, message: "Bad request"})
+    order.status = 'cancelled'
+    await order.save()
+
+    const product = await Product.findById(order.product)
+    if(!product)
+        return res.status(400).json({status: false, message: "Product not found"})
+    product.stock += order.quantity
+
+    await product.save()
+
+    return res.status(200).json({status: true, message: "Order cancelled"})
+
+})
+
+const schedule_return = asyncHandler(async(req, res) => {
+    const {orderId} = req.query;
+    const customerId = req.user._id;
+
+    const order = await Order.findById(orderId)
+    const customer = await Buyer.findById(customerId)
+
+    if(!order || !customer || order.customer.toString() !== customerId.toString())
+        return res.status(404).json({status: false, message: "Order not found"})
+
+    if(order.status !== 'pending')
+        return res.status(400).json({status: false, message: "Bad request"})
+
+    order.status = 'schedule_return'
+    await order.save()
+
+})
+
 
 module.exports = {
     addOrder,
-    addOrderFromCart
+    addOrderFromCart,
+    cancelOrder,
+    schedule_return
 }
