@@ -121,12 +121,72 @@ const schedule_return = asyncHandler(async(req, res) => {
     order.status = 'schedule_return'
     await order.save()
 
+    return res.status(200).json({status: false, message: `Order ${orderId} scheduled for return`})
+
 })
 
+const approve_return = asyncHandler(async (req, res) => {
+    const {orderId} = req.query;
+
+    const order = await Order.findById(orderId)
+
+    if(!order)
+        return res.status(404).json({status: false, message: "Order not found"})
+
+    if(order.status !== 'schedule_return')
+        return res.status(400).json({status: false, message: "Bad request"})
+
+    order.status = 'approve_return'
+    await order.save()
+
+    return res.status(200).json({status: true, message: `Order ${orderId} approved for return`})
+})
+
+const returned = asyncHandler(async(req, res) => {
+    const {orderId} = req.query;
+
+    const order = await Order.findById(orderId)
+
+    if(!order)
+        return res.status(404).json({status: false, message: "Order not found"})
+
+    if(order.status !== 'approve_return')
+        return res.status(400).json({status: false, message: "Bad request"})
+
+    order.status = 'returned'
+    await order.save()
+
+    return res.status(200).json({status: true, message: `Order ${orderId} returned`})
+}) //for delivery partners
+
+const reached_return = asyncHandler(async(req, res) => {
+    const {orderId} = req.query;
+
+    const order = await Order.findById(orderId)
+
+    if(!order)
+        return res.status(404).json({status: false, message: "Order not found"})
+
+    if(order.status !== 'returned')
+        return res.status(400).json({status: false, message: "Bad request"})
+
+    order.status = 'reached_return'
+    await order.save()
+
+    const product = await Product.findById(order.product)
+    product.stock += order.quantity
+
+    await product.save()
+
+    return res.status(200).json({status: true, message: `Order ${orderId} reached`})
+})//for seller
 
 module.exports = {
     addOrder,
     addOrderFromCart,
     cancelOrder,
-    schedule_return
+    schedule_return,
+    approve_return,
+    returned,
+    reached_return
 }
