@@ -21,7 +21,7 @@ const verifyJWT = asyncHandler(async(req, res, next)=>{
    const user =  await BaseUser.findById(decoded?._id).select("-password -refreshToken");
    if(!user) throw new ApiError(401, "Invalid access token");
 
-   if(user.kind !== 'Admin' && user.profstatus === 'Banned')
+   if(user.kind !== 'Admin' && user.isBan === true)
     throw new ApiError(409, "Account is banned")
 
    req.user = user;
