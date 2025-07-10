@@ -11,8 +11,9 @@ const verifyJWT = asyncHandler(async(req, res, next)=>{
         throw new ApiError(401, "Unauthorized Request");
     }
 
+    let decoded
     try {
-        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
     } catch (err) {
         throw ApiError(401, "Invalid or expired token")
     }
@@ -26,7 +27,7 @@ const verifyJWT = asyncHandler(async(req, res, next)=>{
    req.user = user;
    next();
 
-})
+}) //to be used with each and every route except login and register
 
 module.exports = {
     verifyJWT
