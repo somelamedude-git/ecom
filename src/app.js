@@ -21,9 +21,9 @@ app.use(express.json({
 
 app.use('/user', userRoutes);
 
-app.use('/edit', addressRoutes);
+// app.use('/edit', addressRoutes);
 
-app.use('/api/products', productDisplayRouters);
+// app.use('/api/products', productDisplayRouters);
 
 app.use(rateLimit({
     windowMs: 1*60*1000,
