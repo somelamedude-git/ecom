@@ -60,16 +60,19 @@ const addProduct = asyncHandler(async(req, res)=>{
 const updateProductDetails  = asyncHandler(async(req, res)=>{
     const userId = req.user._id;
     const {productId, ...updateFields} = req.body;
+
+    const product = await Product.findById(productId);
+    if(!product) throw new ApiError(404, 'Product not found');
     const user = await Seller.findById(userId);
 
     if(!user){
         throw new ApiError(404, "Seller Not Found");
     }
-
-    const ownsProduct = user.selling_products.some(p => p.product.toString() === productId);
+    
+    
+    const ownsProduct = user._id.equals(product.owner)
     if(!ownsProduct) throw new ApiError(404, "You don't own this product");
 
-    const product = await Product.findById(productId);
 
     for(const key in updateFields){
         if(req.body[key] !== undefined){
@@ -88,6 +91,7 @@ const updateProductDetails  = asyncHandler(async(req, res)=>{
         }
     });
 })
+
 
 module.exports = {
     addProduct,
