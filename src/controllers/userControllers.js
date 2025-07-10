@@ -10,6 +10,9 @@ require('dotenv').config({ path: '../.env' });
 const createUser = asyncHandler(async (req, res) => {
 
         const {kind, username, email, password, name} = req.body;
+        if(!kind || !username || !email || !password || !name){
+            throw new ApiError(500, 'Bad request');
+        }
 
         const existingUser = await BaseUser.findOne({email: email.toLowerCase().trim()})
 

@@ -10,7 +10,7 @@ const router = express.Router();
 //   res.redirect(url);
 // });
 
-// router.post('/login', userControllers.manualLogin);
+router.post('/login', userControllers.manualLogin);
 
 // router.get('/auth/google/callback', userControllers.googleLogin);
 

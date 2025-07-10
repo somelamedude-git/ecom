@@ -5,7 +5,7 @@ const cookieParser = require('cookie-parser');
 const rateLimit = require('express-rate-limit');
 const userRoutes = require('./routes/auth.routes');
 const addressRoutes = require('./routes/address.router');
-const productDisplayRouters = require('./routes/productDisplay.router');
+const productRouters = require('./routes/products.router');
 const helmet = require('helmet')
 const compression = require('compression')
 const hpp = require('hpp')
@@ -40,7 +40,6 @@ app.use(rateLimit({
     message: "Too many requests, stop or get flagged"
 }));
 
-app.use('/user', userRoutes);
 
 // app.use('/edit', addressRoutes);
 
@@ -54,6 +53,7 @@ app.use(cookieParser())
 
 const csrfprotection = csrf({cookie: true})
 app.use(csrfprotection)
-
+app.use('/user', userRoutes);
+app.use('/product', productRouters)
 
 module.exports = { app };
