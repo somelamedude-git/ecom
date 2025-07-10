@@ -13,3 +13,5 @@ const storeInfoSchema = new mongoose.Schema({
 }, {timestamps:true})
 
 const Store = mongoose.model("Store", storeInfoSchema)
+
+module.exports = Store
