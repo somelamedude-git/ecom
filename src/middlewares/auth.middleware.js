@@ -11,15 +11,23 @@ const verifyJWT = asyncHandler(async(req, res, next)=>{
         throw new ApiError(401, "Unauthorized Request");
     }
 
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    let decoded
+    try {
+        decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    } catch (err) {
+        throw ApiError(401, "Invalid or expired token")
+    }
 
    const user =  await BaseUser.findById(decoded?._id).select("-password -refreshToken");
    if(!user) throw new ApiError(401, "Invalid access token");
 
+   if(user.kind !== 'Admin' && user.isBan === true)
+    throw new ApiError(409, "Account is banned")
+
    req.user = user;
    next();
 
-})
+}) //to be used with each and every route except login and register
 
 module.exports = {
     verifyJWT

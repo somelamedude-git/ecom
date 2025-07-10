@@ -105,10 +105,6 @@ BaseUserSchema.methods.generateRefreshAccessToken = function(){
 const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
 
 const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
-  profstatus: {
-    type: String,
-    enum: ['Banned', 'Unbanned']
-  },
   wishlist: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -140,10 +136,6 @@ const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
 }, options));
 
 const Seller = BaseUser.discriminator('Seller', new mongoose.Schema({
-  profstatus: {
-    type: String,
-    enum: ['Banned', 'Unbanned']
-  },
  selling_products: [
   {
     product: {
