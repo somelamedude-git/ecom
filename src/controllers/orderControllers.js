@@ -28,9 +28,12 @@ const addOrder = asyncHandler(async(req, res) => {
     customer.cart = customer.cart.filter(item => item._id.toString() !== productId)
     await customer.save()
 
-    await order.save()
+    await order.save();
+    customer.orderHistory.push(order._id);
     return res.status(201).json({status: true, message: `Order ${order._id} placed`, order})
 })//to be only use with "buy now"
+
+//Push back into orderHistory on the customer's end for recommendation system
 
 const addOrderFromCart = asyncHandler(async (req, res) => {
   const customerId = req.user._id;
