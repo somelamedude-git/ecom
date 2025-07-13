@@ -53,14 +53,21 @@ const productSchema = new mongoose.Schema({
       required: true
     },
 
-    tags:{
-      type:[String],
-      default:[]
-    },
+    tags:[
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tag'
+      }
+    ],
 
 owner: {
   type: mongoose.Schema.Types.ObjectId,
   ref: "Seller"
+},
+
+bitmask:{
+  type:Number,
+  required:true // we are gonna be smart here, storing a string is dumb
 }
 }, { timestamps: true });
 
