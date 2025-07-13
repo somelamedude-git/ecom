@@ -4,7 +4,6 @@ const { Seller } = require("../models/user.models");
 const { ApiError } = require("../utils/ApiError");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 const { Tag } = require('../models/tags.model');
-const { default: API } = require("razorpay/dist/types/api");
 
 const addProduct = asyncHandler(async(req, res)=>{
     const userId = req.user._id;
