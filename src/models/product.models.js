@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { asyncHandler } = require('../utils/asyncHandler');
 
 const productSchema = new mongoose.Schema({
 
@@ -55,8 +56,8 @@ const productSchema = new mongoose.Schema({
 
     tags:[
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Tag'
+        type:Number,
+        required:true
       }
     ],
 
@@ -66,8 +67,8 @@ owner: {
 },
 
 bitmask:{
-  type:Number,
-  required:true // we are gonna be smart here, storing a string is dumb
+  type:String,
+  required:true 
 }
 }, { timestamps: true });
 
@@ -79,5 +80,9 @@ productSchema.pre('save', function(next) {
   }
   next();
 });
+
+productSchema.pre('save', function(next){
+
+})
 const Product = mongoose.model('Product', productSchema);
 module.exports = { Product };
