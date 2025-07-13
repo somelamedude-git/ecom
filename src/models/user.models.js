@@ -127,13 +127,6 @@ const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
 
   ],
 
-  reviews_left:[
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product"
-    }
-  ],
-
   age:{
     type:Number,
     required:true
@@ -141,6 +134,11 @@ const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
 
   ageBucket:{
     type:Number
+  },
+
+  recommend_masking:{
+    type:String,
+    required:true
   }
 }, options));
 
