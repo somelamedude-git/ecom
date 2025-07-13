@@ -10,3 +10,4 @@ function createBitMask(indexes = []){
 module.exports = {
     createBitMask
 }
+

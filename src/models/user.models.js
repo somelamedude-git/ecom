@@ -132,8 +132,23 @@ const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product"
     }
-  ]
+  ],
+
+  age:{
+    type:Number,
+    required:true
+  },
+
+  ageBucket:{
+    type:Number
+  }
 }, options));
+
+Buyer.pre('save', function(next){
+  this.ageBucket = Math.floor(this.age/10);
+  this.ageBucket*=10; //We take a margin of 10, because im lazy and 26 is basically 20 ;)
+  next();
+})
 
 const Seller = BaseUser.discriminator('Seller', new mongoose.Schema({
  selling_products: [
