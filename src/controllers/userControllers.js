@@ -9,8 +9,8 @@ require('dotenv').config({ path: '../.env' });
 
 const createUser = asyncHandler(async (req, res) => {
 
-        const {kind, username, email, password, name} = req.body;
-        if(!kind || !username || !email || !password || !name){
+        const {kind, username, email, password, name, age} = req.body;
+        if(!kind || !username || !email || !password || !name || !age){
             throw new ApiError(500, 'Bad request');
         }
 
@@ -25,7 +25,7 @@ const createUser = asyncHandler(async (req, res) => {
         if(!UserKind)
             throw new ApiError(400, "User kind not found")
 
-        const user = new UserKind({username:username, email:email, password:password, name:name});
+        const user = new UserKind({username:username, email:email, password:password, name:name, age:age});
         await user.save();
 
         const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
