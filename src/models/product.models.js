@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { asyncHandler } = require('../utils/asyncHandler');
+const { createBitMask } = require('../utils/bitmask.util');
 
 const productSchema = new mongoose.Schema({
 
@@ -82,7 +83,8 @@ productSchema.pre('save', function(next) {
 });
 
 productSchema.pre('save', function(next){
-
+  let mask = createBitMask(this.tags);
+  this.bitmask = mask;
 })
 const Product = mongoose.model('Product', productSchema);
 module.exports = { Product };
