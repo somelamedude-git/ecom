@@ -3,6 +3,8 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const { Seller } = require("../models/user.models");
 const { ApiError } = require("../utils/ApiError");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
+const { Tag } = require('../models/tags.model');
+const { default: API } = require("razorpay/dist/types/api");
 
 const addProduct = asyncHandler(async(req, res)=>{
     const userId = req.user._id;
@@ -12,7 +14,13 @@ const addProduct = asyncHandler(async(req, res)=>{
         throw new ApiError(404, "Seller not found");
     }
     const { description, name, price, stock, status, category } = req.body;
-    let tags = req.body.tags || [];
+    let tagNames = req.body.tagNames || [];
+    const Tags = await Tag.find({name:{$in: tagNames}});
+    if(Tags.length != tagNames.length){
+        throw new ApiError(400, 'Some tags are invalid');
+    }
+    const tagIndexes = Tags.map(tag=>tag.index);
+
     const productImages = [];
 
     for(const file of req.files){
@@ -23,13 +31,6 @@ const addProduct = asyncHandler(async(req, res)=>{
         productImages.push(image_url);
     }
 
-    if(typeof tags === "string"){
-        tags = tags.split(',').map(t=>t.trim().toLowerCase())
-    }
-    else if (Array.isArray(tags)) {
-  tags = tags.map(t => t.trim().toLowerCase());
-}
-
 
     const newProduct = await Product.create({
         description,
@@ -39,7 +40,7 @@ const addProduct = asyncHandler(async(req, res)=>{
         stock,
         status,
         category,
-        tags:tags,
+        tags:tagIndexes,
         owner: user_._id
     });
 

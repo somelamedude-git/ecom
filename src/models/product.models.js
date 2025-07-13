@@ -85,6 +85,7 @@ productSchema.pre('save', function(next) {
 productSchema.pre('save', function(next){
   let mask = createBitMask(this.tags);
   this.bitmask = mask;
+  next();
 })
 const Product = mongoose.model('Product', productSchema);
 module.exports = { Product };
