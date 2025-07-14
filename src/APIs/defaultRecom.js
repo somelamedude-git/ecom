@@ -35,6 +35,16 @@ async function updateMask(user){ //This happens everytime a user adds an order, 
         }
         user.recommend_masking = mask.toString();
     }
+
+    else if(user.orderHistory.length ===2){
+        let mask = BigInt(user.recommend_masking);
+        current_order = user.orderHistory[user.orderHistory.length-1];
+        const orders = await Order.find({ _id: { $in: current_order } }).populate('product', 'bitmask');
+        for(const order of orders){
+            mask = mask | BigInt(order.product.bitmask || '0');
+        }
+        user.recommend_masking = mask.toString();
+    }
 }
 
 module.exports = {
