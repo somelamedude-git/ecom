@@ -1,3 +1,5 @@
+const { Order } = require('../models/order.models');
+
 async function initializeRecommendMask(user) {
   const peers = await Buyer.find({ ageBucket: user.ageBucket }).limit(10); //This size decreases as the database gets heavier, will figure out a function for this
   let recommend_mask = 0n;
@@ -18,10 +20,22 @@ async function initializeRecommendMask(user) {
 //The logic to this will be explained in the documentation
 
 async function updateMask(user){ //This happens everytime a user adds an order, kinda like sliding window
-    
+    // Most likely, for users who just began, unka 1n hoga bitmask, so now we find common shit in ordersm and delete some tags
+    //We don't want faaltu ka overhead and tags, orderhistory is also needed, we flip the bits in the last one and then proceed with the next one
+    //Depending on the window size
+    let current_order;
+
+    if(user.orderHistory.length === 1){ // We turn te mask to 0 again, we need or conditions not and, optimal
+        let recommend_mask = 0;
+        // Now we dive into well, the array of arrays
+        current_order = user.orderHistory[user.orderHistory.length-1];
+        const orders = await Order.find({ _id: { $in: current_order } }).populate('product', 'tagMask');
+
+    }
 }
 
 module.exports = {
-    initializeRecommendMask
+    initializeRecommendMask,
+    updateMask
 }
 
