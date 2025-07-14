@@ -59,7 +59,7 @@ async function updateMask(user) {
     .map(peer => {
       const bitmask = BigInt(peer.recommend_masking || '0');
       const union = bitmask | BigInt(user.recommend_masking);
-      const intersection = bitmask ^ BigInt(user.recommend_masking);
+      const intersection = ~(bitmask ^ BigInt(user.recommend_masking));
       const ratio = union === 0n ? 1 : Number(countSetBits(intersection)) / Number(countSetBits(union));
       return [ratio, bitmask];
     });
