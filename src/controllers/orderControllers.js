@@ -29,7 +29,7 @@ const addOrder = asyncHandler(async(req, res) => {
     await customer.save()
 
     await order.save();
-    customer.orderHistory.push(order._id);
+    customer.orderHistory.push([order._id]);
     return res.status(201).json({status: true, message: `Order ${order._id} placed`, order})
 })//to be only use with "buy now"
 
@@ -72,7 +72,7 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
   }));
 
   customer.cart = [];
-  customer.orderHistory = successOrders;
+  customer.orderHistory.push(successOrders);
   await customer.save();
 
   return res.status(201).json({
