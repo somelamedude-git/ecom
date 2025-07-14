@@ -148,7 +148,21 @@ Buyer.pre('save', function(next){
   this.ageBucket = Math.floor(this.age/10);
   this.ageBucket*=10; //We take a margin of 10, because im lazy and 26 is basically 20 ;)
   next();
+});
+
+Buyer.pre('save', async function(next){
+if(this.orderHistory.length===0){
+  const peers= await Buyer.find({ageBucket:this.ageBucket}).limit(3); //Limited tags to be shown
+  let recommend_mask = 0n;
+  for(const peer of peers){
+    recommend_mask = recommend_mask | BigInt(peer.recommend_masking || '0');
+  }
+
+  this.recommend_masking = recommend_mask.toString();
+}
+
 })
+Buyer.index({"ageBucket":1});
 
 const Seller = BaseUser.discriminator('Seller', new mongoose.Schema({
  selling_products: [
