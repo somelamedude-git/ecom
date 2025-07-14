@@ -37,13 +37,19 @@ async function updateMask(user){ //This happens everytime a user adds an order, 
     }
 
     else if(user.orderHistory.length ===2){
-        let mask = BigInt(user.recommend_masking);
-        current_order = user.orderHistory[user.orderHistory.length-1];
+        let mask_one = BigInt(user.recommend_masking); // This already consists of the OR of those orders
+        current_order = user.orderHistory[user.orderHistory.length-1]; 
         const orders = await Order.find({ _id: { $in: current_order } }).populate('product', 'bitmask');
+        let mask_two = 0n;
         for(const order of orders){
-            mask = mask | BigInt(order.product.bitmask || '0');
+            mask_two = mask_two | BigInt(order.product.bitmask || '0'); // Or condition for latest orders, combine them
         }
-        user.recommend_masking = mask.toString();
+        const final_mask = mask_one & mask_two;
+        user.recommend_masking = (final_mask === 0n ? mask_two : final_mask).toString();
+    }
+
+    else if(user.orderHistory.length >2){
+        
     }
 }
 
