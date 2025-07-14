@@ -113,10 +113,12 @@ const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
   ],
 
   orderHistory:[
+    [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order"
     }
+  ]
   ],
 
   cart:[

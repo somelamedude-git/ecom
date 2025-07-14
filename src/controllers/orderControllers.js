@@ -72,6 +72,7 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
   }));
 
   customer.cart = [];
+  customer.orderHistory = successOrders;
   await customer.save();
 
   return res.status(201).json({
