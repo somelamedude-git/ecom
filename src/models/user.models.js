@@ -141,6 +141,10 @@ const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
   recommend_masking:{
     type:String,
     required:true
+  },
+
+  prev_order_bit:{
+    type:String
   }
 }, options));
 

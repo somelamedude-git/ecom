@@ -23,33 +23,25 @@ async function updateMask(user){ //This happens everytime a user adds an order, 
     // Most likely, for users who just began, unka 1n hoga bitmask, so now we find common shit in ordersm and delete some tags
     //We don't want faaltu ka overhead and tags, orderhistory is also needed, we flip the bits in the last one and then proceed with the next one
     //Depending on the window size
-    let current_order;
-
-    if(user.orderHistory.length === 1){ // We turn te mask to 0 again, we need or conditions not and, optimal
-        // Now we dive into well, the array of arrays
-        current_order = user.orderHistory[user.orderHistory.length-1];
+        let current_order = user.orderHistory[user.orderHistory.length-1];
         const orders = await Order.find({ _id: { $in: current_order } }).populate('product', 'bitmask');
         let mask = 0n;
+
         for(const order of orders){
             mask = mask|BigInt(order.product.bitmask || '0');
         }
+
+    if(user.orderHistory.length === 1){ // We turn te mask to 0 again, we need or conditions not and, optimal
+        // Now we dive into well, the array of arrays
+        user.prev_order_bit=mask.toString();
         user.recommend_masking = mask.toString();
     }
 
-    else if(user.orderHistory.length ===2){
-        let mask_one = BigInt(user.recommend_masking); // This already consists of the OR of those orders
-        current_order = user.orderHistory[user.orderHistory.length-1]; 
-        const orders = await Order.find({ _id: { $in: current_order } }).populate('product', 'bitmask');
-        let mask_two = 0n;
-        for(const order of orders){
-            mask_two = mask_two | BigInt(order.product.bitmask || '0'); // Or condition for latest orders, combine them
-        }
-        const final_mask = mask_one & mask_two;
-        user.recommend_masking = (final_mask === 0n ? mask_two : final_mask).toString();
-    }
+    else if(user.orderHistory.length>=2){
+        const final_mask = BigInt(user.prev_order_bit || '0') & mask; // A common ground between past 2 orders
+        user.prev_order_bit = mask.toString();
+        user.recommend_masking = final_mask.toString();
 
-    else if(user.orderHistory.length >2){
-        
     }
 }
 
