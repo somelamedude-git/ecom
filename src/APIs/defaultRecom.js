@@ -1,8 +1,15 @@
-// const { asyncHandler } = require('../utils/asyncHandler');
-// const { ApiError } = require('../utils/ApiError');
+async function initializeRecommendMask(user) {
+  const peers = await Buyer.find({ ageBucket: user.ageBucket }).limit(3);
+  let recommend_mask = 0n;
 
-// // This is to be used when the user is new i.e their orderHistory is blank, you know what? do an if else condition
+  for (const peer of peers) {
+    const peerMask = peer.recommend_masking || '0';
+    recommend_mask |= BigInt(peerMask);
+  }
 
-// const Recommendation_default = asyncHandler(async(user_id)=>{ // The datatype here will be of seller id, this._id woohoo
+  user.recommend_masking = recommend_mask.toString();
+}
 
-// })
+module.exports = {
+    initializeRecommendMask
+}
