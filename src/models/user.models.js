@@ -104,7 +104,7 @@ BaseUserSchema.methods.generateRefreshAccessToken = function(){
 
 const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
 
-const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
+const BuyerSchema = new mongoose.Schema({
   wishlist: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -146,17 +146,19 @@ const Buyer = BaseUser.discriminator('Buyer', new mongoose.Schema({
   prev_order_bit:{
     type:String
   }
-}, options));
+}, options);
 
-Buyer.pre('save', function(next){
+BuyerSchema.pre('save', function(next){
   this.ageBucket = Math.floor(this.age/10);
   this.ageBucket*=10; //We take a margin of 10, because im lazy and 26 is basically 20 ;)
   next();
 });
 
-Buyer.index({"ageBucket":1});
+BuyerSchema.index({"ageBucket":1});
 
-const Seller = BaseUser.discriminator('Seller', new mongoose.Schema({
+const Buyer = BaseUser.discriminator('Buyer', BuyerSchema);
+
+const SellerSchema =  new mongoose.Schema({
  selling_products: [
   {
     product: {
@@ -188,9 +190,11 @@ const Seller = BaseUser.discriminator('Seller', new mongoose.Schema({
       type:String
     }
   ]
-}, options));
+}, options);
 
-const Admin = BaseUser.discriminator('Admin', new mongoose.Schema({
+const Seller = BaseUser.discriminator('Seller', SellerSchema);
+
+const AdminSchema = new mongoose.Schema({
 
   product_management: [{
     type: String,
@@ -206,7 +210,9 @@ const Admin = BaseUser.discriminator('Admin', new mongoose.Schema({
     type: String,
     enum: ['delete_review']
   }]
-}, options))
+}, options)
+
+const Admin = BaseUser.discriminator('Admin', AdminSchema);
 
 
 module.exports = {
