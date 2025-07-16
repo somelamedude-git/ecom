@@ -116,7 +116,13 @@ const updateUser = asyncHandler(async (req, res) => {
 });
 
 const deleteUser = asyncHandler(async(req, res) => {
-    
+        const user_id = req.user._id;
+        const admin = Admin.findById(user_id);
+
+        if(!admin){
+            throw new ApiError(500, 'You are not authorized to perform this action');
+           }
+
         const {email, token} = req.body;
 
         const user = await BaseUser.findOne({email})
