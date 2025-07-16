@@ -6,6 +6,8 @@ const rateLimit = require('express-rate-limit');
 const userRoutes = require('./routes/auth.routes');
 const addressRoutes = require('./routes/address.router');
 const productRouters = require('./routes/products.router');
+const adminRoutes = require('./routes/admin.routes');
+
 const helmet = require('helmet')
 const compression = require('compression')
 const hpp = require('hpp')
@@ -54,6 +56,7 @@ app.use(cookieParser())
 const csrfprotection = csrf({cookie: true})
 app.use(csrfprotection)
 app.use('/user', userRoutes);
-app.use('/product', productRouters)
+app.use('/product', productRouters);
+app.use('/admin', adminRoutes);
 
 module.exports = { app };
