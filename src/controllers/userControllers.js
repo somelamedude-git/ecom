@@ -117,7 +117,7 @@ const updateUser = asyncHandler(async (req, res) => {
 
 const deleteUser = asyncHandler(async(req, res) => {
         const user_id = req.user._id;
-        const admin = Admin.findById(user_id);
+        const admin =await  Admin.findById(user_id);
 
         if(!admin){
             throw new ApiError(500, 'You are not authorized to perform this action');
@@ -168,8 +168,14 @@ const verifyUser = asyncHandler(async (req, res) => {
 })
 
 const banUser = asyncHandler(async(req, res) => {
+    const user_id = req.user._id;
+    const admin = await Admin.findById(user_id);
+
+    if(!admin){
+        throw new ApiError(500, 'You are not authorized to perform this action');
+       }
     const {id} = req.query;
-    const user = BaseUser.findOne({_id: id})
+    const user = await  BaseUser.findOne({_id: id})
     if(user && user.kind !== 'Admin'){
         user.isBan = true;
         await user.save()
