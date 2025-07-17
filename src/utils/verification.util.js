@@ -16,15 +16,19 @@ const verifyEmail = async (user) => {
         {expiresIn: '1h'}
     )
 
-    const verificationLink = `http://localhost:${process.env.PORT}/verify-email?verificationToken=${verificationToken}`
+    await user.save({validateBeforeSave:false});
+
+    const verificationLink = `http://localhost:${process.env.PORT}/verify-email?verificationToken=${verificationToken}`;
 
     await transporter.sendMail({
         from: `ECOM ${process.env.EMAIL_USER}`,
         to: user.email,
         subject: `Verify Email`,
         html: `<p>Click the link below to verify your email:</p>
-         <a href="${verificationLink}">${verificationLink}</a>`
-    })
+         <a href="${verificationLink}">Verify to continue<a>`
+    });
+
+    
 }
 
 module.exports = {

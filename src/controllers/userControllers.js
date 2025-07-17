@@ -5,38 +5,68 @@ const {verifyEmail} = require('../utils/verification.util');
 const { ApiError } = require('../utils/ApiError');
 const { generateAccessAndRefreshTokens } = require('../utils/tokens.utils');
 const axios = require('axios');
+const { verifyEmail } = require('../utils/verification.util');
 require('dotenv').config({ path: '../.env' });
 
 const createUser = asyncHandler(async (req, res) => {
+    const { kind, username, email, password, name, age } = req.body;
 
-        const {kind, username, email, password, name, age} = req.body;
-        if(!kind || !username || !email || !password || !name || !age){
-            throw new ApiError(500, 'Bad request');
-        }
+    if (!kind || !username || !email || !password || !name || !age) {
+        throw new ApiError(400, "All fields are required");
+    }
 
-        const existingUser = await BaseUser.findOne({email: email.toLowerCase().trim()})
+    const existingUser = await BaseUser.findOne({ email: email.toLowerCase().trim() });
+    if (existingUser) {
+        throw new ApiError(409, "User already registered");
+    }
 
-        if(existingUser)
-            throw new ApiError(409, "You are already registered");
-        
-        const userKinds = {Buyer, Seller, Admin};
-        const UserKind = userKinds[kind];
+    const userKinds = { Buyer, Seller, Admin };
+    const UserKind = userKinds[kind];
+    if (!UserKind) {
+        throw new ApiError(400, "Invalid user type");
+    }
 
-        if(!UserKind)
-            throw new ApiError(400, "User kind not found")
+    const user = new UserKind({
+        username,
+        email,
+        password,
+        name,
+        age,
+        isVerified: false,
+    });
 
-        const user = new UserKind({username:username, email:email, password:password, name:name, age:age});
-        await user.save();
+    const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
 
-        const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
+    const verificationToken = user.getVerificationToken();
+    await user.save({ validateBeforeSave: false });
 
-         res
-        .cookie('accessToken', accessToken, { httpOnly: true, secure: true })
-        .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
-        .status(200)
-        .json({ success: true, userId: user._id, email: user.email, message:"User created successfully" });
+    const verificationURL = `${req.protocol}://${req.get('host')}/api/auth/verifyEmail/${verificationToken}`;
+    const message = `Please verify your email by clicking the following link: ${verificationURL}`;
 
+    await sendEmail({
+        email: user.email,
+        subject: "Email Verification",
+        message,
+    });
+
+    res
+        .cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+        })
+        .status(201)
+        .json({
+            success: true,
+            userId: user._id,
+            email: user.email,
+            message: "User created successfully. Verification email sent.",
+        });
 });
+
 
 const googleLogin = asyncHandler(async (req, res) => {
     const { code } = req.query;

@@ -16,7 +16,7 @@ const csrf = require('csurf')
 const app = express();
 
 app.use(cors({ //Yet to render the frontend, so origin is denoted through a placeholder for once
-    origin: process.env.CORS_ORIGIN,
+    origin: 'http://localhost:3002',
     credentials:true,
     preflightContinue: false
 }));
@@ -53,8 +53,8 @@ app.use(express.static("public"));
 
 app.use(cookieParser())
 
-const csrfprotection = csrf({cookie: true})
-app.use(csrfprotection)
+// const csrfprotection = csrf({cookie: true})
+// app.use(csrfprotection)
 app.use('/user', userRoutes);
 app.use('/product', productRouters);
 app.use('/admin', adminRoutes);

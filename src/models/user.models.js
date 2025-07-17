@@ -140,7 +140,7 @@ const BuyerSchema = new mongoose.Schema({
 
   recommend_masking:{
     type:String,
-    required:true
+    // required:true, to be added again when you figure out the tafs
   },
 
   prev_order_bit:{
