@@ -1,7 +1,6 @@
 const { BaseUser, Buyer, Seller, Admin } = require('../models/user.models');
 const { asyncHandler } = require("../utils/asyncHandler");
 const jwt = require('jsonwebtoken');
-const {verifyEmail} = require('../utils/verification.util');
 const { ApiError } = require('../utils/ApiError');
 const { generateAccessAndRefreshTokens } = require('../utils/tokens.utils');
 const axios = require('axios');
