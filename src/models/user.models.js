@@ -103,6 +103,17 @@ BaseUserSchema.methods.generateRefreshAccessToken = function(){
   })
 };
 
+BaseUserSchema.methods.getVerificationToken = function(){
+  const token = crypto.randomBytes(29).toString('hex');
+  this.verificationToken = crypto
+  .createHash('sha256')
+  .update(token)
+  .digest('hex');
+
+  this.verificationTokenExpire = Date.now() + 30 * 60 * 1000;
+  return token;
+}
+
 const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
 
 const BuyerSchema = new mongoose.Schema({
