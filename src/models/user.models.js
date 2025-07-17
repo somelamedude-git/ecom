@@ -4,6 +4,7 @@ const { hashPasswords } = require('../utils/password.util');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
+const crypto = require('crypto');
 
 
 

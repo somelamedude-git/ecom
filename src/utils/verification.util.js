@@ -1,36 +1,31 @@
-const jwt = require('jsonwebtoken')
-const nodemailer = require('nodemailer')
+const nodemailer = require('nodemailer');
+require('dotenv').config({path:'../.env'});
 
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
+
+    // const verificationToken = jwt.sign(
+    //     {email: user.email},
+    //     process.env.EMAIL_VERIFY_SECRET,
+    //     {expiresIn: '1h'}
+    // )
+
+const sendEmail = async(options)=>{
+    const transporter = nodemailer.createTransport({
+    service: process.env.EMAIL_SERVICE,
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
     }
-})
+});
 
-const verifyEmail = async (user) => {
-    const verificationToken = jwt.sign(
-        {email: user.email},
-        process.env.EMAIL_VERIFY_SECRET,
-        {expiresIn: '1h'}
-    )
+const mailOptions = {
+    from: `${process.env.FROM_NAME}<${process.env.FROM_EMAIL}>`,
+    to: options.email,
+    subject:options.subject,
+    text:options.message,
+};
 
-    await user.save({validateBeforeSave:false});
-
-    const verificationLink = `http://localhost:${process.env.PORT}/verify-email?verificationToken=${verificationToken}`;
-
-    await transporter.sendMail({
-        from: `ECOM ${process.env.EMAIL_USER}`,
-        to: user.email,
-        subject: `Verify Email`,
-        html: `<p>Click the link below to verify your email:</p>
-         <a href="${verificationLink}">Verify to continue<a>`
-    });
-
-    
+await transporter.sendMail(mailOptions);
 }
-
 module.exports = {
-    verifyEmail
+    sendEmail
 }
