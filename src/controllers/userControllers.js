@@ -7,6 +7,7 @@ const { generateAccessAndRefreshTokens } = require('../utils/tokens.utils');
 const axios = require('axios');
 const { verifyEmail } = require('../utils/verification.util');
 require('dotenv').config({ path: '../.env' });
+const { sendEmail } = require('../utils/verification.util');
 
 const createUser = asyncHandler(async (req, res) => {
     const { kind, username, email, password, name, age } = req.body;

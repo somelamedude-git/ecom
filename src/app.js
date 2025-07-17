@@ -7,11 +7,11 @@ const userRoutes = require('./routes/auth.routes');
 const addressRoutes = require('./routes/address.router');
 const productRouters = require('./routes/products.router');
 const adminRoutes = require('./routes/admin.routes');
-
-const helmet = require('helmet')
-const compression = require('compression')
-const hpp = require('hpp')
-const csrf = require('csurf')
+const apiRoutes = require('./routes/api.routes');
+const helmet = require('helmet');
+const compression = require('compression');
+const hpp = require('hpp');
+const csrf = require('csurf');
 
 const app = express();
 
@@ -58,5 +58,6 @@ app.use(cookieParser())
 app.use('/user', userRoutes);
 app.use('/product', productRouters);
 app.use('/admin', adminRoutes);
+app.use('/api', apiRoutes);
 
 module.exports = { app };
