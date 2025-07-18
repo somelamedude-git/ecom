@@ -3,6 +3,7 @@ const { asyncHandler } = require('./asyncHandler');
 require('dotenv').config({path:'../.env'});
 const { BaseUser } = require('../models/user.models');
 const { ApiError } = require('./ApiError');
+const crypto = require('crypto');
 
 const sendEmail = async(options)=>{
     const transporter = nodemailer.createTransport({

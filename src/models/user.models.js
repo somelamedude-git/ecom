@@ -63,6 +63,14 @@ const BaseUserSchema = new mongoose.Schema({
   isBan: {
     type: Boolean,
     default: false
+  },
+
+  verificationToken:{
+    type:String
+  },
+
+  verificationTokenExpire:{
+    type:Date
   }
 }, options);
 

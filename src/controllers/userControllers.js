@@ -25,7 +25,6 @@ const createUser = asyncHandler(async (req, res) => {
     if (!UserKind) {
         throw new ApiError(400, "Invalid user type");
     }
-
     const user = new UserKind({
         username,
         email,
@@ -35,9 +34,12 @@ const createUser = asyncHandler(async (req, res) => {
         isVerified: false,
     });
 
+    await user.save();
+
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
 
     const verificationToken = user.getVerificationToken();
+
     await user.save({ validateBeforeSave: false });
 
     const verificationURL = `${req.protocol}://${req.get('host')}/api/auth/verifyEmail/${verificationToken}`;
@@ -48,6 +50,7 @@ const createUser = asyncHandler(async (req, res) => {
         subject: "Email Verification",
         message,
     });
+
 
     res
         .cookie("accessToken", accessToken, {
