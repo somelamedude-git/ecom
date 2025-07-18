@@ -9,14 +9,17 @@ require('dotenv').config({ path: '../.env' });
 const { sendEmail } = require('../utils/verification.util');
 
 const createUser = asyncHandler(async (req, res) => {
-    const { kind, username, email, password, name, age } = req.body;
+   try{
+     const { kind, username, email, password, name, age } = req.body;
 
     if (!kind || !username || !email || !password || !name || !age) {
+        console.log('not all fields added');
         throw new ApiError(400, "All fields are required");
     }
 
     const existingUser = await BaseUser.findOne({ email: email.toLowerCase().trim() });
     if (existingUser) {
+        console.log('You are registered');
         throw new ApiError(409, "User already registered");
     }
 
@@ -35,16 +38,12 @@ const createUser = asyncHandler(async (req, res) => {
     });
 
     await user.save();
-
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
-
     const verificationToken = user.getVerificationToken();
-
     await user.save({ validateBeforeSave: false });
-
     const verificationURL = `${req.protocol}://${req.get('host')}/api/auth/verifyEmail/${verificationToken}`;
     const message = `Please verify your email by clicking the following link: ${verificationURL}`;
-
+    
     await sendEmail({
         email: user.email,
         subject: "Email Verification",
@@ -68,6 +67,15 @@ const createUser = asyncHandler(async (req, res) => {
             email: user.email,
             message: "User created successfully. Verification email sent.",
         });
+   }
+   catch(err){ // MongodDB duplicate keys error handling T_T, bhula bhatka samaan
+    if(err.code==11000){
+        console.log('entered');
+        const duplicateFields = Object.keys(err.keyPattern);
+        const message = `Duplicate field(s): ${duplicateFields.join(", ")} already exist.`;
+        throw new ApiError(409, message);
+    }
+   }
 });
 
 
