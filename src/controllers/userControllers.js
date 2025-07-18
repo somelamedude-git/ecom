@@ -9,7 +9,6 @@ require('dotenv').config({ path: '../.env' });
 const { sendEmail } = require('../utils/verification.util');
 
 const createUser = asyncHandler(async (req, res) => {
-   try{
      const { kind, username, email, password, name, age } = req.body;
 
     if (!kind || !username || !email || !password || !name || !age) {
@@ -67,15 +66,6 @@ const createUser = asyncHandler(async (req, res) => {
             email: user.email,
             message: "User created successfully. Verification email sent.",
         });
-   }
-   catch(err){ // MongodDB duplicate keys error handling T_T, bhula bhatka samaan
-    if(err.code==11000){
-        console.log('entered');
-        const duplicateFields = Object.keys(err.keyPattern);
-        const message = `Duplicate field(s): ${duplicateFields.join(", ")} already exist.`;
-        throw new ApiError(409, message);
-    }
-   }
 });
 
 

@@ -12,6 +12,7 @@ const helmet = require('helmet');
 const compression = require('compression');
 const hpp = require('hpp');
 const csrf = require('csurf');
+const { errorHandler } = require('./utils/errorHandler');
 
 const app = express();
 
@@ -59,5 +60,6 @@ app.use('/user', userRoutes);
 app.use('/product', productRouters);
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes);
+app.use(errorHandler);
 
 module.exports = { app };
