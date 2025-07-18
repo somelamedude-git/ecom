@@ -10,16 +10,26 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
 
 const propertyId = process.env.GA4_PROPERTY_ID
 
-const getTotalUsers = async () => {
+const getStats = async () => {
     const response = await analyticsDataClient.runReport({
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-        metrics: [{ name: 'totalUsers' }],
+        metrics: [
+            { name: 'ecommercePurchases' },
+            { name: 'transactions' },
+            { name: 'itemsPurchased' },
+        ],
     })
 
-    return response.rows?.[0]?.metricValues?.[0]?.value || '0'
+    const rows = response.rows?.[0]?.metricValues || []
+
+    return {
+        ecommercePurchases: rows[0]?.value || '0',
+        transactions: rows[1]?.value || '0',
+        itemsPurchased: rows[2]?.value || '0',
+    }
 }
 
 module.exports = {
-    getTotalUsers
+    getStats
 }
