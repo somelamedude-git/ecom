@@ -212,8 +212,8 @@ const SellerSchema =  new mongoose.Schema({
 
   order_quo:[
     {
-      product: {type:mongoose.Schema.Types.ObjectId, ref:"Product"},
-      customer:{type:mongoose.Schema.Types.ObjectId, ref:"Buyer"}
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order"
     }
   ]
 }, options);

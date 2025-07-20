@@ -23,22 +23,15 @@ const addOrder = asyncHandler(async(req, res) => {
         product: productId,
         quantity
     });
-
-    const order_quo_item = {};
+    product_owner.order_quo.push(order);
+    await order.save();
     product.stock -= quantity;
-    order_quo_item.product = product;
     await product.save();
     customer.cart = customer.cart.filter(item => item._id.toString() !== productId);
-
-    order_quo_item.customer = customer;
-
     await customer.save();
-    await order.save();
     customer.orderHistory.push([order._id]);
-    product_owner.order_quo.push(order_quo_item);
-
+    product_owner.order_quo.push(order);
     await product_owner.save();
-    
     return res.status(201).json({status: true, message: `Order ${order._id} placed`, order})
 })//to be only use with "buy now"
 
@@ -58,7 +51,7 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
   await Promise.all(customer.cart.map(async (item) => {
     try {
       const product = await Product.findById(item.product);
-
+     
       if (!product || product.stock < item.quantity) {
         errors.push({ product: item.product, message: "Insufficient stock or product not found" });
         return;
