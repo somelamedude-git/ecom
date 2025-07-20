@@ -18,16 +18,16 @@ const getUserFromToken = asyncHandler(async(token)=>{
            return null;
           }
 
-     const user = await BaseUser.findById(decoded?._id).select("-password" "-refreshAccessToken");
+     const user = await BaseUser.findById(decoded?._id).select("-password -refreshToken");
      if(!user) return null;
 
      if(!user.kind !== 'Admin' || user.isBan){
          return null;}
 
-      return user;
+      return user;}
        )
 
-const verifyWT = asyncHandler(async(req, res)=>{
+const verifyJWT = asyncHandler(async(req, res)=>{
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
     const user = await getUserFromToken(token);
 
@@ -36,14 +36,14 @@ const verifyWT = asyncHandler(async(req, res)=>{
     }
     req.user = user;
     next();
-}
+})
 
 const looseVerification = asyncHandler(async(token)=>{
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
     const user = await getUserFromToken(token);
     req.user = user;
     next();
-}
+});
 
 module.exports = {
     verifyJWT,
