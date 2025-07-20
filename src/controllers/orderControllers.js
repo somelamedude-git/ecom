@@ -30,7 +30,6 @@ const addOrder = asyncHandler(async(req, res) => {
     customer.cart = customer.cart.filter(item => item._id.toString() !== productId);
     await customer.save();
     customer.orderHistory.push([order._id]);
-    product_owner.order_quo.push(order);
     await product_owner.save();
     return res.status(201).json({status: true, message: `Order ${order._id} placed`, order})
 })//to be only use with "buy now"
@@ -73,14 +72,13 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
     }
   }));
 
-  successOrders.map(async (order_id)=>{
+await Promise.all(successOrders.map(async (order_id)=>{
     const order_ = await Order.findById(order_id).populate("product.owner");
     const product_owner = order_.product.owner;
 
     product_owner.order_quo.push(order_);
-
     await product_owner.save();
-  })
+}))
 
   customer.cart = [];
   customer.orderHistory.push(successOrders);
