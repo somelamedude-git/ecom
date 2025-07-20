@@ -5,7 +5,6 @@ const { fetchUserData } = require('../APIs/fetchProfile')
 const { verifyJWT,  looseVerification} = require('../middlewares/auth.middleware');
 const { isLoggedIn } = require('../APIs/checkLoginStatus');
 const { fetchLength } = require('../APIs/cartAndWishCount'); // Who wants to fetch the whole data when all i require are these babies? #GoldDigger
-const { fetchUserData } = require('../APIs/fetchProfile');
 const router = express.Router();
 
 // router.get('/auth/google', (req, res) => {
@@ -28,6 +27,5 @@ router.get('/profile', verifyJWT, fetchUserData);
 
 // router.patch('/unban_user/:id',verifyJWT, userControllers.unbanUser);
 
-// router.get('/api/profile',verifyJWT, fetchUserData); //To fetch ser's profile, middleware yet to be injected
 
 module.exports = router;
