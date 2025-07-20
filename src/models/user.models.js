@@ -189,7 +189,6 @@ const SellerSchema =  new mongoose.Schema({
   
 ],
 
-
   store_information: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Store"

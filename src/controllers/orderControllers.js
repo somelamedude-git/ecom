@@ -11,25 +11,34 @@ const addOrder = asyncHandler(async(req, res) => {
         return res.status(400).json({status: false, message: "Bad request"})
 
     const customer = await Buyer.findById(customerId)
-    const product = await Product.findById(productId)
+    const product = await Product.findById(productId).populate("owner");
+
+    const product_owner = product.owner;
 
     if(!customer || !product || product.stock-quantity < 0 || quantity < 1)
-        return res.status(400).json({status: false, message: "Not found"})
+        return res.status(400).json({status: false, message: "Not found"});
 
     const order = new Order({
         customer: customerId,
         product: productId,
         quantity
-    })
+    });
 
+    const order_quo_item = {};
     product.stock -= quantity;
-    await product.save()
+    order_quo_item.product = product;
+    await product.save();
+    customer.cart = customer.cart.filter(item => item._id.toString() !== productId);
 
-    customer.cart = customer.cart.filter(item => item._id.toString() !== productId)
-    await customer.save()
+    order_quo_item.customer = customer;
 
+    await customer.save();
     await order.save();
     customer.orderHistory.push([order._id]);
+    product_owner.order_quo.push(order_quo_item);
+
+    await product_owner.save();
+    
     return res.status(201).json({status: true, message: `Order ${order._id} placed`, order})
 })//to be only use with "buy now"
 
