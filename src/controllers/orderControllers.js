@@ -73,9 +73,19 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
     }
   }));
 
+  successOrders.map(async (order_id)=>{
+    const order_ = await Order.findById(order_id).populate("product.owner");
+    const product_owner = order_.product.owner;
+
+    product_owner.order_quo.push(order_);
+
+    await product_owner.save();
+  })
+
   customer.cart = [];
   customer.orderHistory.push(successOrders);
   await customer.save();
+
 
   return res.status(201).json({
     status: true,
