@@ -47,5 +47,6 @@ const looseVerification = asyncHandler(async(token)=>{
 
 module.exports = {
     verifyJWT,
-    looseVerification
+    looseVerification,
+    getUserFromToken
 } 

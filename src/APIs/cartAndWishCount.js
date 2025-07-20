@@ -26,3 +26,7 @@ const fetchLength = asyncHandler(async(req, res)=>{
     });
     
     })
+
+module.exports = {
+    fetchLength
+}
