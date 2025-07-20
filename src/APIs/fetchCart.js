@@ -11,10 +11,12 @@ const fetchCart = asyncHandler(async(req, res)=>{
     }
 
     const cart_items = user.cart;
+    const cart_length = cart_items.length;
 
     return res.status(200).json({
         success: true,
-        cart: cart_items
+        cart: cart_items,
+        cart_length: cart_length
     })
 })
 
