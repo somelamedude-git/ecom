@@ -17,3 +17,7 @@ const fetchCart = asyncHandler(async(req, res)=>{
         cart: cart_items
     })
 })
+
+module.exports = {
+    fetchCart
+}
