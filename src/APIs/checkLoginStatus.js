@@ -1,5 +1,5 @@
 const { asyncHandler } = require('../utils/asyncHandler');
-const { ApiError } = require('./utils/ApiError');
+const { ApiError } = require('../utils/ApiError');
 const { getUserFromToken } = require('../middlewares/auth.middleware.js');
 
 const isLoggedIn = asyncHandler(async(req,res)=>{

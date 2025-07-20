@@ -2,7 +2,9 @@ const userControllers = require('../controllers/userControllers');
 const express = require('express');
 require('dotenv').config({ path: '../.env' });
 const { fetchUserData } = require('../APIs/fetchProfile')
-const { verifyJWT } = require('../middlewares/auth.middleware')
+const { verifyJWT,  looseVerification} = require('../middlewares/auth.middleware');
+const { isLoggedIn } = require('../APIs/checkLoginStatus');
+const { fetchLength } = require('../APIs/cartAndWishCount'); // Who wants to fetch the whole data when all i require are these babies? #GoldDigger
 const router = express.Router();
 
 // router.get('/auth/google', (req, res) => {
@@ -10,12 +12,12 @@ const router = express.Router();
 //   res.redirect(url);
 // });
 
-router.post('/login', userControllers.manualLogin);
+router.post('/login', userControllers.manualLogin); // For manual login, yahi use krna hai
 
 // router.get('/auth/google/callback', userControllers.googleLogin);
-
-router.post('/register', userControllers.createUser);
-
+router.get('/verifyLogin', looseVerification, isLoggedIn); // To check if a user is logged in
+router.post('/register', userControllers.createUser); // A welcome mattress for our beloved very low in number non existant/ent? (i am kind of dyslexic) users
+router.get('/getCWL', looseVerification, fetchLength); //CWL: Cart Wish Length , enjoy my acronyms please
 // router.delete('/delete_account/:id', verifyJWT, userControllers.deleteUser);
 
 // router.get('/verify-email/:id', userControllers.verifyUser);
