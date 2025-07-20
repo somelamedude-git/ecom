@@ -209,6 +209,13 @@ const SellerSchema =  new mongoose.Schema({
     {
       type:String
     }
+  ],
+
+  order_quo:[
+    {
+      product: {type:mongoose.Schema.Types.ObjectId, ref:"Product"},
+      customer:{type:mongoose.Schema.Types.ObjectId, ref:"Buyer"}
+    }
   ]
 }, options);
 
