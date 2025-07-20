@@ -258,6 +258,7 @@ module.exports = {
     createUser,
     googleLogin,
     manualLogin,
+    logoutUser,
     updateUser,
     deleteUser,
     verifyUser,
