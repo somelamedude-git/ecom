@@ -53,11 +53,11 @@ const createUser = asyncHandler(async (req, res) => {
     res
         .cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: true,
         })
         .cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: true,
         })
         .status(201)
         .json({
@@ -226,6 +226,34 @@ const unbanUser = asyncHandler(async(req, res) => {
     return res.status(400).json({status: false, message: "User not found"})
 })
 
+const logoutUser = asyncHandler(async(req, res)=>{
+    const user_id = req.user._id; // This will obviously be there only when the user is logged in, as its from verifyJWT middleware which first verifies you are logged in
+    const user = await BaseUser.findById(user_id);
+
+    if(!user){
+        throw new ApiError(401, 'You are already logged out');
+    }
+
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        secure: true
+    });
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure:true
+    });
+
+    user.refreshToken = undefined;
+    user.accessToken = undefined;
+
+    await user.save();
+
+    res.status(200).json({
+        success:true,
+        message: "Logged out successfully"
+    });
+});
 module.exports = {
     createUser,
     googleLogin,
