@@ -11,7 +11,8 @@ const addToBag = asyncHandler(async (req, res) => {
         throw new ApiError(404, 'User not found');
     }
 
-    const { product_id, size_ } = req.params; // Te product variants have color and size
+    const { product_id } = req.params; // Te product variants have color and size
+    const { size_ } = req.body;
     const product = await Product.findById(product_id);
     
     if (!product) {
