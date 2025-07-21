@@ -70,6 +70,17 @@ owner: {
 bitmask:{
   type:String,
   required:true 
+},
+
+size:{
+  type: String,
+  enum :['XS', 'S', 'M', 'L', 'XL', 'XL'],
+  required: true
+},
+
+color:{
+  type: String,
+  required: true
 }
 }, { timestamps: true });
 
