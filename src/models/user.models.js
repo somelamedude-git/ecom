@@ -168,6 +168,11 @@ const BuyerSchema = new mongoose.Schema({
 
   prev_order_bit:{
     type:String
+  },
+
+  creditPoints:{
+    type: Number, 
+    default : 0
   }
 }, options);
 
