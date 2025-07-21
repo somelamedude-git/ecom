@@ -2,7 +2,6 @@ const { Buyer } = require('../models/user.models');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
 const { Product } = require('../models/product.models');
-const { changeQuantUtil } = require('../utils/cartUtility');
 
 const addToBag = asyncHandler(async (req, res) => {
     const user_id = req.user._id;
@@ -48,11 +47,14 @@ const addToBag = asyncHandler(async (req, res) => {
 const incrementItem = asyncHandler(async(req, res)=>{
     const alreadyInCart = req.alreadyInCart;
     const stock = req.stock;
+    const user_id = req.user._id;
+    const user = await Buyer.findById(user_id);
 
     if(alreadyInCart.quanity+1>stock){
         throw new ApiError(400, 'This product is not available in the quantity you requested');
     }
     alreadyInCart.quantity++;
+    await user.save();
     res.status(200).json({
         success: true
     })
@@ -60,16 +62,25 @@ const incrementItem = asyncHandler(async(req, res)=>{
 
 const decrementItem = asyncHandler(async(req, res)=>{
     const alreadyInCart = req.alreadyInCart;
-    const stock = req.stock;
+    const user_id = req.user._id;
+
+    const user = await Buyer.findById(user_id);
 
     if(alreadyInCart.stock-1 <0){
         throw new ApiError(409, 'Item quantity cannot be negative');
     }
+    alreadyInCart.quantity--;
+    await user.save();
 
+    res.status(200).json({
+        success:true
+    })
 })
 
 
 module.exports = {
     addToBag,
-    incrementItem
+    incrementItem,
+    decrementItem
 };
+// Please rememer ki changeCartUtil is a MIDDLEWARE
