@@ -9,6 +9,8 @@ const fetchUserData = asyncHandler(async (req, res) => {
     }
 
     const address = Array.isArray(user.address) ? user.address : [];
+    const year = new Date(user.createdAt).getFullYear();
+    user.joinYear = year;
 
     const address_object = address.map((addr) => ({
         formatted: `${addr.address_line_one} ${addr.address_line_two} ${addr.landmark} ${addr.city} ${addr.state} - ${addr.pincode}, ${addr.country}`
