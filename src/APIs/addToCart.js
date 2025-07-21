@@ -44,7 +44,48 @@ const addToBag = asyncHandler(async (req, res) => {
     });
 });
 
+const incrementItem = asyncHander(async(req, res)=>{
+    const user_id = req.user._id;
+    const user = await Buyer.findById(user_id);
+    
+    if(!user){
+        throw new ApiError(404, 'User not found');
+    }
+    const {product_id} = req.params;
+    const {size} = req.body;
+
+    const cart = user.cart;
+    const alreadyInCart = cart.find(item=>
+        item.product.toString()===product_id &&
+        item.size===size
+    )
+
+    if(!alreadyInCart){
+        throw new ApiError(400, 'The item does not exist in your cart');
+    }
+
+    const product = await Product.findById(product_id);
+
+    const item_stock_helper = product.variants.find(item=>
+        item.size === size
+    );
+
+    const stock = item_stock_helper.stock;
+
+    if(alreadyInCart.quantity+1>stock){
+        throw new ApiError(409, 'Item demand more than the stock available');
+    }
+
+    alreadyInCart.quantity++;
+    await user.save();
+
+    return res.status(200).json({
+        success:true
+    });
+});
+
 
 module.exports = {
-    addToBag
+    addToBag,
+    incrementItem
 };
