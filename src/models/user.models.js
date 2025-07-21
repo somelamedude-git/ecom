@@ -4,6 +4,7 @@ const { hashPasswords } = require('../utils/password.util');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
+const { addressSchema } = require('./address.model');
 const crypto = require('crypto');
 
 
@@ -37,10 +38,7 @@ const BaseUserSchema = new mongoose.Schema({
     trim:true,
     lowercase:true
   },
-  address:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Address"
-  },
+  address:[addressSchema],
   name:{
     type:String,
     required:true,
@@ -71,6 +69,11 @@ const BaseUserSchema = new mongoose.Schema({
 
   verificationTokenExpire:{
     type:Date
+  },
+
+  phone_number:{
+    type: String,
+    required: true
   }
 }, options);
 
@@ -197,6 +200,11 @@ const SellerSchema =  new mongoose.Schema({
   average_rating:{
     type:Number,
     default:0
+  },
+
+  age:{
+    type: Number,
+    required: true // ill do something with this
   },
 
   isVerified:{
