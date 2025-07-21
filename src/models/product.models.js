@@ -63,16 +63,8 @@ variants: [
       type: String,
       enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
     },
-    color: {
-      type: String
-    },
     stock: {
       type: Number,
-      default: 0
-    },
-    price: {
-      type: Number,
-      required: true,
       default: 0
     },
     status: {
@@ -83,7 +75,12 @@ variants: [
       }
     }
   }
-]
+],
+
+price:{
+  type: Number,
+  required: true
+}
 
 }, { timestamps: true });
 

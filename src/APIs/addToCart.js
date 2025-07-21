@@ -11,14 +11,20 @@ const addToBag = asyncHandler(async (req, res) => {
         throw new ApiError(404, 'User not found');
     }
 
-    const { product_id } = req.params;
+    const { product_id, product_variants } = req.params; // Te product variants have color and size
     const product = await Product.findById(product_id);
-
+    
     if (!product) {
         throw new ApiError(404, 'Product not found');
     }
+     const product_info = product.variants.find(variant=>
+        variant.color === product_variants.color &&
+        variant.size === product_variants.size
+    );
 
-    if (product.stock === 0) {
+    const stock_ = product_info.stock;
+
+    if (stock_ === 0) {
         throw new ApiError(409, 'Product out of stock');
     }
 
