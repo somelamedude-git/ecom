@@ -50,7 +50,7 @@ const incrementItem = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
     const user = await Buyer.findById(user_id);
 
-    if(alreadyInCart.quanity+1>stock){
+    if(alreadyInCart.quantity+1>stock){
         throw new ApiError(400, 'This product is not available in the quantity you requested');
     }
     alreadyInCart.quantity++;
@@ -66,7 +66,7 @@ const decrementItem = asyncHandler(async(req, res)=>{
 
     const user = await Buyer.findById(user_id);
 
-    if(alreadyInCart.stock-1 <0){
+    if(alreadyInCart.quantity-1 <0){
         throw new ApiError(409, 'Item quantity cannot be negative');
     }
     alreadyInCart.quantity--;
