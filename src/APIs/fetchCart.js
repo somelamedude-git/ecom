@@ -15,7 +15,7 @@ const fetchCart = asyncHandler(async(req, res)=>{
 
     return res.status(200).json({
         success: true,
-        cart: cart_items,
+        cart: cart_items, // we export cart, we map it, ultimately items ke hum properties chori kr lenge frontend mein
         cart_length: cart_length
     })
 })
