@@ -2,6 +2,7 @@ const { Buyer } = require('../models/user.models');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
 const { Product } = require('../models/product.models');
+const { changeQuantUtil } = require('../utils/cartUtility');
 
 const addToBag = asyncHandler(async (req, res) => {
     const user_id = req.user._id;
@@ -44,45 +45,28 @@ const addToBag = asyncHandler(async (req, res) => {
     });
 });
 
-const incrementItem = asyncHander(async(req, res)=>{
-    const user_id = req.user._id;
-    const user = await Buyer.findById(user_id);
-    
-    if(!user){
-        throw new ApiError(404, 'User not found');
+const incrementItem = asyncHandler(async(req, res)=>{
+    const alreadyInCart = req.alreadyInCart;
+    const stock = req.stock;
+
+    if(alreadyInCart.quanity+1>stock){
+        throw new ApiError(400, 'This product is not available in the quantity you requested');
     }
-    const {product_id} = req.params;
-    const {size} = req.body;
-
-    const cart = user.cart;
-    const alreadyInCart = cart.find(item=>
-        item.product.toString()===product_id &&
-        item.size===size
-    )
-
-    if(!alreadyInCart){
-        throw new ApiError(400, 'The item does not exist in your cart');
-    }
-
-    const product = await Product.findById(product_id);
-
-    const item_stock_helper = product.variants.find(item=>
-        item.size === size
-    );
-
-    const stock = item_stock_helper.stock;
-
-    if(alreadyInCart.quantity+1>stock){
-        throw new ApiError(409, 'Item demand more than the stock available');
-    }
-
     alreadyInCart.quantity++;
-    await user.save();
-
-    return res.status(200).json({
-        success:true
-    });
+    res.status(200).json({
+        success: true
+    })
 });
+
+const decrementItem = asyncHandler(async(req, res)=>{
+    const alreadyInCart = req.alreadyInCart;
+    const stock = req.stock;
+
+    if(alreadyInCart.stock-1 <0){
+        throw new ApiError(409, 'Item quantity cannot be negative');
+    }
+
+})
 
 
 module.exports = {

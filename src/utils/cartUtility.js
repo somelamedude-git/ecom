@@ -3,7 +3,11 @@ const { Product } = require('../models/product.models');
 const { asyncHandler } = require('./asyncHandler');
 const { ApiError } = require('./ApiError');
 
-const changeQuantUtil = asyncHandler(async(user_id, product_id, size)=>{
+const changeQuantUtil = asyncHandler(async(req, res, next)=>{ // use as a middleware
+    const user_id = req.user._id;
+    const {product_id} = req.params;
+    const {size} = req.body;
+
     const user = await Buyer.findById(user_id);
     if(!user) throw new ApiError(404, 'User not found');
 
@@ -27,10 +31,10 @@ const changeQuantUtil = asyncHandler(async(user_id, product_id, size)=>{
     )
     const stock = product_stock_helper.stock;
 
-    return {
-        alreadyInCart,
-        stock
-    }
+   req.alreadyInCart = alreadyInCart;
+   req.stock = stock;
+
+   next();
 })
 
 module.exports = {
