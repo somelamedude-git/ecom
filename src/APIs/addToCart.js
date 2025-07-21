@@ -11,15 +11,14 @@ const addToBag = asyncHandler(async (req, res) => {
         throw new ApiError(404, 'User not found');
     }
 
-    const { product_id, product_variants } = req.params; // Te product variants have color and size
+    const { product_id, size_ } = req.params; // Te product variants have color and size
     const product = await Product.findById(product_id);
     
     if (!product) {
         throw new ApiError(404, 'Product not found');
     }
      const product_info = product.variants.find(variant=>
-        variant.color === product_variants.color &&
-        variant.size === product_variants.size
+        variant.size === size_
     );
 
     const stock_ = product_info.stock;
@@ -29,13 +28,13 @@ const addToBag = asyncHandler(async (req, res) => {
     }
 
     let count_bought;
-    const existingItem = user_.cart.find(item => item.product.toString() === product._id.toString());
+    const existingItem = user_.cart.find(item => (item.product.toString() === product._id.toString()) && (item.size===size_) );
 
     if (existingItem) {
         existingItem.quantity += 1;
         count_bought = existingItem.quantity;
     } else {
-        user_.cart.push({ product: product._id, quantity: 1 });
+        user_.cart.push({ product: product._id, quantity: 1, size:size_ });
         count_bought = 1;
     }
 
@@ -45,6 +44,7 @@ const addToBag = asyncHandler(async (req, res) => {
         success: true,
         product_id: product._id,
         message: "Product added to cart",
+        size: size_,
         count_bought
     });
 });
