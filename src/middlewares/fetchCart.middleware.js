@@ -14,7 +14,7 @@ const filterOutItems = asyncHandler(async (req, res, next) => {
     await user.save();
 
     req.cart = user.cart; // full data jayega ismein 
-
+    
     next(); 
 });
 

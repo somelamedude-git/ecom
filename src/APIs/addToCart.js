@@ -75,12 +75,35 @@ const decrementItem = asyncHandler(async(req, res)=>{
     res.status(200).json({
         success:true
     })
-})
+});
 
+const deleteItem = asyncHandler(async(req, res)=>{
+    const { product_id } = req.params;
+    const product = await Product.findById(product_id);
+    if(!product){
+        throw new ApiError(404, 'Product not found');
+    }
+    const { size } = req.body;
+    const user_id = req.user._id // we need to save the user's data so, well, yes
+    const user = await Buyer.findById(user_id);
+
+    if(!user){
+        throw new ApiError(404, 'User not found');
+    }
+
+    user.cart = user.cart.filter((item)=>
+       ! (item.product.toString() === product_id && item.size === size)
+    )
+    await user.save();
+
+    res.status(200).json({success:true, message: "Item removed from cart" });
+
+})
 
 module.exports = {
     addToBag,
     incrementItem,
-    decrementItem
+    decrementItem,
+    deleteItem
 };
 // Please rememer ki changeCartUtil is a MIDDLEWARE
