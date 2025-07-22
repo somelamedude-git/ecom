@@ -11,6 +11,7 @@ const fetchCart = asyncHandler(async(req, res)=>{
     }
 
     const cart_items = user.cart || []; // Fallback cuz why not
+
     const cart_length = cart_items.length;
 
     return res.status(200).json({
@@ -18,6 +19,11 @@ const fetchCart = asyncHandler(async(req, res)=>{
         cart: cart_items, // we export cart, we map it, ultimately items ke hum properties chori kr lenge frontend mein
         cart_length: cart_length
     })
+});
+
+const removeZeroItems =asyncHandler(async(user)=>{
+    user.cart = user.cart.filter((item)=> item.quantity>0);
+    await user.save();
 })
 
 module.exports = {
