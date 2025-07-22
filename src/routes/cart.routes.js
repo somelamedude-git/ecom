@@ -8,5 +8,6 @@ const { changeQuantUtil } = require('../utils/cartUtility');
 
 router.get('/view', verifyJWT, filterOutItems, fetchCart);
 router.patch('/increment/:product_id', verifyJWT, changeQuantUtil, incrementItem);
+router.patch('/decrement/:product_id', verifyJWT, changeQuantUtil, decrementItem);
 
 module.exports = router;
