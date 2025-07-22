@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { verifyJWT } = require('../middlewares/auth.middleware');
-const { fetchChart } = require('../APIs/fetchCart');
+const { fetchCart } = require('../APIs/fetchCart');
+const { filterOutItems } = require('../middlewares/fetchCart.middleware');
 
-router.get('/view', verifyJWT, fetchChart);
+router.get('/view', verifyJWT, filterOutItems, fetchCart);
 
 module.exports = router;
