@@ -124,25 +124,20 @@ const manualLogin = asyncHandler(async (req, res)=>{
 
                            
 const updateUser = asyncHandler(async (req, res) => {
-    const user_id = req.user._id;
-        const { address, name, coverImage } = req.body
-        let user = await BaseUser.findById(user_id);
-    
+        const user_id = req.user._id;
+        let user = await Buyer.findById(user_id);
+        const allowedFields = ['email', 'name', 'phone', 'style', 'age'];
         if(!user)
             throw new ApiError(404, "User not found");
 
-        if(!address && !name && !coverImage)
-            return res.status(400).json({status: false, message: "No updates provided"});
-
-        if(address)
-            user.address = address
-        if(name)
-            user.name = name
-        if(coverImage)
-            user.coverImage = coverImage
-
+        const { formData } = req.body;
+        if (!formData || typeof formData !== 'object') throw new ApiError(400, "Invalid form data");
+        for(const key of Object.keys(formData)){
+            if(allowedFields.includes(key)){
+                user[key] = formData[key];
+            }
+        }
         await user.save()
-
         return res.status(200).json({status: true, message: "Changes made successfully"});
 });
 
