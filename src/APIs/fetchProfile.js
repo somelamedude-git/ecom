@@ -1,3 +1,7 @@
+const { asyncHandler } = require('../utils/asyncHandler');
+const { ApiError } = require('../utils/ApiError');
+const { BaseUser }= require('../models/user.models');
+
 const fetchUserData = asyncHandler(async (req, res) => {
     if (!req.user || !req.user._id) {
         throw new ApiError(401, 'Unauthorized');
