@@ -3,15 +3,7 @@ const { ApiError } = require('../utils/ApiError');
 const { Buyer } = require('../models/user.models');
 
 const fetchCart = asyncHandler(async(req, res)=>{
-    const user_id = req.user._id;
-    const user = await Buyer.findById(user_id).populate("cart.product", "name description price");
-
-    if(!user){
-        throw new ApiError(404, 'You are not logged in');
-    }
-
-    const cart_items = user.cart || []; // Fallback cuz why not
-
+    const cart_items = req.cart;
     const cart_length = cart_items.length;
 
     return res.status(200).json({
@@ -21,10 +13,6 @@ const fetchCart = asyncHandler(async(req, res)=>{
     })
 });
 
-const removeZeroItems =asyncHandler(async(user)=>{
-    user.cart = user.cart.filter((item)=> item.quantity>0);
-    await user.save();
-})
 
 module.exports = {
     fetchCart
