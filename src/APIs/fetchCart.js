@@ -4,7 +4,7 @@ const { Buyer } = require('../models/user.models');
 
 const fetchCart = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
-    const user = await Buyer.findById(user_id).populate("cart.product", "");
+    const user = await Buyer.findById(user_id).populate("cart.product", "name description price");
 
     if(!user){
         throw new ApiError(404, 'You are not logged in');
