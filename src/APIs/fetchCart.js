@@ -5,11 +5,11 @@ const fetchCart = asyncHandler(async(req, res)=>{
     const cart_items = req.cart;
     const cart_length = cart_items.length;
 
-    return res.status(200).json({
-        success: true,
-        cart: cart_items, // we export cart, we map it, ultimately items ke hum properties chori kr lenge frontend mein
-        cart_length: cart_length
-    })
+    // return res.status(200).json({ // let's just put in stock or not only in fetch cart, bingo
+    //     success: true,
+    //     cart: cart_items, // we export cart, we map it, ultimately items ke hum properties chori kr lenge frontend mein
+    //     cart_length: cart_length
+    // })
 });
 
 

@@ -57,30 +57,43 @@ bitmask:{
   required:true 
 },
 
-variants: [
-  {
-    size: {
-      type: String,
-      enum: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-    },
-    stock: {
-      type: Number,
-      default: 0
-    },
-    status: {
-      type: String,
-      enum: ['sold out', 'in stock'],
-      default: function () {
-        return this.stock === 0 ? 'sold out' : 'in stock';
-      }
-    }
-  }
-],
+xs:{
+  
+    type:Number,
+    default:0
+  
+},
+
+s:{
+  type:Number,
+  default:0
+},
+
+m:{
+  type:Number,
+  default:0
+},
+
+l:{
+  type:Number,
+  default:0
+},
+
+xl:{
+  type:Number,
+  default:0
+},
+
+xxl:{
+  type:Number,
+  default:0
+},
 
 price:{
   type: Number,
   required: true
-}
+},
+
 
 }, { timestamps: true });
 
