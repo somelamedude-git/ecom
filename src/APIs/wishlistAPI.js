@@ -5,7 +5,7 @@ const { Product } = require('../models/product.models');
 
 const addToWishList = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
-    const user = await Buyer.findById(user_id);
+    const user = await Buyer.findById(user_id).select('+wishlist');
 
     if(!user){
         throw new ApiError(404, 'User not found');
@@ -18,9 +18,25 @@ const addToWishList = asyncHandler(async(req, res)=>{
         throw new ApiError(404, 'Product not found');
     }
 
-    const stock
+    const existingItem = user.wishlist.find((item)=>
+    (item.product.toString()===product_id && item.size===size)
+    )
 
+    if(existingItem){
+        throw new ApiError(409, 'The product already exists in the cart');
+    }
 
+    user.wishlist.push({
+        product: product_id,
+        size: size
+    });
+
+    user.save();
+
+    return res.status(200).json({
+        success: true,
+        message: 'Item added to wishlist successfully',
+    })
 });
 
 module.exports = {
