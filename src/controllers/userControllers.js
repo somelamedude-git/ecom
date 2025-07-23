@@ -181,8 +181,8 @@ const banUser = asyncHandler(async(req, res) => {
     if(!admin){
         throw new ApiError(500, 'You are not authorized to perform this action');
        }
-    const {id} = req.query;
-    const user = await  BaseUser.findOne({_id: id})
+    const {email} = req.query;
+    const user = await  BaseUser.findOne({email})
     if(user && user.kind !== 'Admin'){
         user.isBan = true;
         await user.save()
@@ -192,8 +192,8 @@ const banUser = asyncHandler(async(req, res) => {
 })
 
 const unbanUser = asyncHandler(async(req, res) => {
-    const {id} = req.query;
-    const user = BaseUser.findOne({_id: id})
+    const {email} = req.query;
+    const user = BaseUser.findOne({email})
     if(user && user.kind !== 'Admin'){
         user.isBan  = false
         await user.save()
