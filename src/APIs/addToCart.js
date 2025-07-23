@@ -12,14 +12,17 @@ const addToBag = asyncHandler(async (req, res) => {
     const { size_ } = req.body;
 
     if (!size_) throw new ApiError(400, 'Size is required');
+    
+    if (!['xs', 's', 'm', 'l', 'xl', 'xxl'].includes(size_)) {
+    throw new ApiError(400, 'Invalid size selected');
+}
 
     const product = await Product.findById(product_id);
     if (!product) throw new ApiError(404, 'Product not found');
 
-    const product_info = product.variants.find(v => v.size === size_);
-    if (!product_info) throw new ApiError(400, 'Invalid size');
+     const stock_of_product = product[size_]; //Stored as a number datatype, hashmaps core lmao
 
-    if (product_info.stock === 0) {
+    if (stock_of_product === 0) {
         throw new ApiError(409, 'Product out of stock, you may add it to your wishlist');
     }
 
