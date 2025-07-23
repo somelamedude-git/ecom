@@ -19,6 +19,7 @@ router.get('/verifyLogin', looseVerification, isLoggedIn); // To check if a user
 router.post('/register', userControllers.createUser); // A welcome mattress for our beloved very low in number non existant/ent? (i am kind of dyslexic) users
 router.get('/getCWL', looseVerification, fetchLength); //CWL: Cart Wish Length , enjoy my acronyms please
 router.get('/profile', verifyJWT, fetchUserData); 
+router.patch('/editProfile', verifyJWT, userControllers.updateUser);
 // router.delete('/delete_account/:id', verifyJWT, userControllers.deleteUser);
 
 // router.get('/verify-email/:id', userControllers.verifyUser);
