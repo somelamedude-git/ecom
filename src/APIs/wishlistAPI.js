@@ -39,6 +39,35 @@ const addToWishList = asyncHandler(async(req, res)=>{
     })
 });
 
+const removeFromWL = asyncHandler(async(req, res)=>{
+    const user_id = req.user._id;
+    const user = await Buyer.findById(user_id).select('wishlist');
+    
+    if(!user) throw new ApiError(404, 'User not found');
+    const { product_id } = req.params;
+    const { size } = req.body;
+
+    const itemInList = user.wishlist.find((item)=>
+    (item.product.toString()===product_id && item.size===size)
+    )
+
+    if(!itemInList){
+        throw new ApiError(400, 'Bad request');
+    }
+
+    user.wishlist = user.wishlist.some((item)=>
+    !(item.product.toString()===product_id && item.size===size)
+    )
+
+    await user.save();
+
+    return res.status(200).json({
+        success:true,
+        message: 'Item removed successfully'
+    })
+ });
+
 module.exports = {
-    addToWishList
+    addToWishList,
+    removeFromWL
 }
