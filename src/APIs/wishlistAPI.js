@@ -67,18 +67,23 @@ const removeFromWL = asyncHandler(async(req, res)=>{
     })
  });
 
- const fetchWishList = asyncHandler(async(req, res)=>{
+ const fetchWishList = asyncHandler(async (req, res) => {
     const user_id = req.user._id;
-    const user = await Buyer.findById(user_id).populate("wishlist.product")
-    if(!user) throw new ApiError(404, 'User not found');
+    const user = await Buyer.findById(user_id).populate("wishlist.product");
+    if (!user) throw new ApiError(404, 'User not found');
 
-    const wishlist_length = user.wishlist.length;
+    const return_array = user.wishlist.map(item => {
+        const inStock = item.product && item.product.stock?.get(item.size) > 0;
+        return { item, inStock };
+    });
+
     return res.status(200).json({
         success: true,
-        wish_length: wishlist_length,
-        wish_items: user.wishlist
+        wish_length: user.wishlist.length,
+        wish_items_info: return_array
     });
- });
+});
+
 
 module.exports = {
     addToWishList,
