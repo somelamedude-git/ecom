@@ -5,7 +5,7 @@ const { ApiError } = require("../utils/ApiError");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 const { Tag } = require('../models/tags.model');
 
-const addProduct = asyncHandler(async(req, res)=>{
+const addProduct = asyncHandler(async(req, res)=>{ 
     const userId = req.user._id;
     const user_ = await Seller.findById(userId);
 

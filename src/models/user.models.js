@@ -4,6 +4,7 @@ const { hashPasswords } = require('../utils/password.util');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
+const { addressSchema } = require('./address.model');
 const crypto = require('crypto');
 
 
@@ -37,10 +38,7 @@ const BaseUserSchema = new mongoose.Schema({
     trim:true,
     lowercase:true
   },
-  address:{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Address"
-  },
+  address:[addressSchema],
   name:{
     type:String,
     required:true,
@@ -71,6 +69,11 @@ const BaseUserSchema = new mongoose.Schema({
 
   verificationTokenExpire:{
     type:Date
+  },
+
+  phone_number:{
+    type: String,
+    required: true
   }
 }, options);
 
@@ -144,9 +147,9 @@ const BuyerSchema = new mongoose.Schema({
   cart:[
     {
     product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-    quantity: { type: Number, default: 1 }
+    quantity: { type: Number, default: 1 },
+    size:{type: String, enum: ['XS', 'S', 'M', 'XL', 'XXL']}
     }
-
   ],
 
   age:{
@@ -165,6 +168,11 @@ const BuyerSchema = new mongoose.Schema({
 
   prev_order_bit:{
     type:String
+  },
+
+  creditPoints:{
+    type: Number, 
+    default : 0
   }
 }, options);
 
@@ -189,7 +197,6 @@ const SellerSchema =  new mongoose.Schema({
   
 ],
 
-
   store_information: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Store"
@@ -198,6 +205,11 @@ const SellerSchema =  new mongoose.Schema({
   average_rating:{
     type:Number,
     default:0
+  },
+
+  age:{
+    type: Number,
+    required: true // ill do something with this
   },
 
   isVerified:{
@@ -213,8 +225,8 @@ const SellerSchema =  new mongoose.Schema({
 
   order_quo:[
     {
-      product: {type:mongoose.Schema.Types.ObjectId, ref:"Product"},
-      customer:{type:mongoose.Schema.Types.ObjectId, ref:"Buyer"}
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order"
     }
   ]
 }, options);
