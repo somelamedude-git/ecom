@@ -26,10 +26,7 @@ const changeQuantUtil = asyncHandler(async(req, res, next)=>{ // use as a middle
         throw new ApiError(404, 'The product you are requesting for does not exist');
     }
 
-    const product_stock_helper = product.variants.find(item=>
-        item.size === size
-    )
-    const stock = product_stock_helper.stock;
+    const stock = product[size];
 
    req.alreadyInCart = alreadyInCart;
    req.stock = stock;
