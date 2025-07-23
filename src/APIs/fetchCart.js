@@ -1,6 +1,5 @@
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
-const { Buyer } = require('../models/user.models');
 
 const fetchCart = asyncHandler(async(req, res)=>{
     const cart_items = req.cart;

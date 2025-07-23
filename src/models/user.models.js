@@ -130,9 +130,15 @@ const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
 const BuyerSchema = new mongoose.Schema({
   wishlist: [
     {
+    product: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product"
+    },
+
+    size: {
+      type: String, enum:['XS', 'S', 'M', 'L', 'XL', 'XXL']
     }
+  }
   ],
 
   orderHistory:[
