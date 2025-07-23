@@ -67,7 +67,21 @@ const removeFromWL = asyncHandler(async(req, res)=>{
     })
  });
 
+ const fetchWishList = asyncHandler(async(req, res)=>{
+    const user_id = req.user._id;
+    const user = await Buyer.findById(user_id).populate("wishlist.product")
+    if(!user) throw new ApiError(404, 'User not found');
+
+    const wishlist_length = user.wishlist.length;
+    return res.status(200).json({
+        success: true,
+        wish_length: wishlist_length,
+        wish_items: user.wishlist
+    });
+ });
+
 module.exports = {
     addToWishList,
-    removeFromWL
+    removeFromWL,
+    fetchWishList
 }
