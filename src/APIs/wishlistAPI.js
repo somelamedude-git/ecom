@@ -3,7 +3,7 @@ const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
 const { Product } = require('../models/product.models');
 
-const addToWishList = asyncHandler(async(req, res)=>{ // I want to merge this with addToCart, i WILL modularize this, but then an enum is needed
+const addToWishList = asyncHandler(async(req, res)=>{ 
     const user_id = req.user._id;
     const user = await Buyer.findById(user_id).select('+wishlist');
 
@@ -31,7 +31,7 @@ const addToWishList = asyncHandler(async(req, res)=>{ // I want to merge this wi
         size: size
     });
 
-    user.save();
+    await user.save();
 
     return res.status(200).json({
         success: true,

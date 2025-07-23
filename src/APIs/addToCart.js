@@ -20,7 +20,7 @@ const addToBag = asyncHandler(async (req, res) => {
     if (!product_info) throw new ApiError(400, 'Invalid size');
 
     if (product_info.stock === 0) {
-        throw new ApiError(409, 'Product out of stock');
+        throw new ApiError(409, 'Product out of stock, you may add it to your wishlist');
     }
 
     const alreadyInCart = user_.cart.find(item =>
