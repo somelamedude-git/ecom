@@ -6,6 +6,19 @@ const { asyncHandler } = require("../utils/asyncHandler");
 const getOrders = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
     const {status} = req.query
+
+    const allowedStatus = [
+        'pending', 
+        'delivered', 
+        'cancelled', 
+        'schedule_return', 
+        'returned', 
+        'approve_return', 
+        'shipped'
+    ]
+
+    if(!allowedStatus.includes(status))
+        throw new ApiError(400, "Status not allowed")
     const user = await Buyer.findById(user_id).populate({
         path: 'orderHistory',
         populate: {
