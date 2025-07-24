@@ -340,9 +340,8 @@ stock: {
   "XL": 15,
   "XXL": 5
 }
-
-Dynamic Maps allow many sizes to be stored even XXXL, XXS etc. as per Seller
 ```
+Dynamic Maps allow many sizes to be stored even XXXL, XXS etc. as per Seller
 
 ## 🛡️ Security Implementation
 
