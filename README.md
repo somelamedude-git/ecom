@@ -329,7 +329,7 @@ const searchProduct = async (query) => {
 
 ### Size-Based Inventory Management
 
-Products use MongoDB Maps for efficient size-based stock tracking:
+Products use dynamic MongoDB Maps for efficient size-based stock tracking:
 ```javascript
 // Stock structure
 stock: {
@@ -340,6 +340,8 @@ stock: {
   "XL": 15,
   "XXL": 5
 }
+
+Dynamic Maps allow many sizes to be stored even XXXL, XXS etc. as per Seller
 ```
 
 ## 🛡️ Security Implementation
@@ -448,27 +450,6 @@ docker run -p 3001:3001 --env-file .env ecommerce-api
 - **Google Analytics 4**: Comprehensive user behavior tracking
 - **Custom Events**: Business-specific analytics
 - **Performance Monitoring**: Response time tracking
-
-## 🧪 Testing
-
-### Test Structure
-```bash
-# Run tests
-npm test
-
-# Test files located in /tests
-tests/
-├── user.test.js         # User authentication tests
-├── product.test.js      # Product management tests
-├── cart.test.js         # Shopping cart tests
-└── payment.test.js      # Payment processing tests
-```
-
-### Testing Strategy
-- **Unit Tests**: Individual function testing
-- **Integration Tests**: API endpoint testing
-- **Authentication Tests**: JWT and user flow testing
-- **Database Tests**: Model validation and operations
 
 ## 🔧 Development Tools
 
