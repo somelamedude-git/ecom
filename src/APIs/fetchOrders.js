@@ -23,6 +23,7 @@ const getOrders = asyncHandler(async (req, res) => {
         'schedule_return',
         'returned',
         'approve_return',
+        'shipped'
     ]
 
     if(status && allowedStatus.includes(status))
