@@ -19,7 +19,7 @@ const addToBag = asyncHandler(async (req, res) => {
     if (!sizes.includes(size_)) {
     throw new ApiError(400, 'Invalid size selected');
 }
-     const stock_of_product = product.stock.get[size_] //Stored as a number and map datatype, finally a smart decision
+     const stock_of_product = product.stock.get(size_) //Stored as a number and map datatype, finally a smart decision
 
     if (stock_of_product === 0) {
         throw new ApiError(409, 'Product out of stock, you may add it to your wishlist');
