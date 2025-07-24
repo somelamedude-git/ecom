@@ -141,44 +141,25 @@ const updateUser = asyncHandler(async (req, res) => {
         return res.status(200).json({status: true, message: "Changes made successfully"});
 });
 
-const deleteUser = asyncHandler(async(req, res) => {
-        const user_id = req.user._id;
-        const admin =await  Admin.findById(user_id);
+const deleteUser = asyncHandler(async (req, res) => {
+    const user_id = req.user._id;
+    const admin = await Admin.findById(user_id);
 
-        if(!admin){
-            throw new ApiError(500, 'You are not authorized to perform this action');
-           }
+    if (!admin) {
+        throw new ApiError(403, 'You are not authorized to perform this action');
+    }
 
-        const {email, token} = req.body;
+    const { email } = req.body;
 
-        const user = await BaseUser.findOne({email})
+    const result = await BaseUser.deleteOne({ email });
 
-        if(!user)
-            return res.status(404).json({status: false, message: "User not found"})
+    if (result.deletedCount > 0) {
+        return res.status(200).json({ status: true, message: "User deleted successfully" });
+    }
 
-        if(user.googleLogin){
-            const ticket = await client.verifyIdToken({
-                idToken: token,
-                audience: process.env.GOOGLE_CLIENT_ID
-            })
-
-            const payload = ticket.getPayload()
-            const {email: tokenEmail} = payload
-
-            if(tokenEmail === user.email){
-                await BaseUser.deleteOne({email})
-                return res.status(200).json({status: true, message: "User deleted successfully"})
-            }
-            return res.status(401).json({status: false, message: "Invalid Token"})
-        }
-
-        if(user.isVerified){
-            await BaseUser.deleteOne({email})
-            return res.status(200).json({status: true, message: "User deleted successfully"})
-        }
-
-        await verifyEmail(user)
+    return res.status(404).json({ status: false, message: "User not found" });
 });
+
 
 const verifyUser = asyncHandler(async (req, res) => {
         const {token} = req.query
@@ -200,8 +181,8 @@ const banUser = asyncHandler(async(req, res) => {
     if(!admin){
         throw new ApiError(500, 'You are not authorized to perform this action');
        }
-    const {id} = req.query;
-    const user = await  BaseUser.findOne({_id: id})
+    const {email} = req.query;
+    const user = await  BaseUser.findOne({email})
     if(user && user.kind !== 'Admin'){
         user.isBan = true;
         await user.save()
@@ -211,8 +192,8 @@ const banUser = asyncHandler(async(req, res) => {
 })
 
 const unbanUser = asyncHandler(async(req, res) => {
-    const {id} = req.query;
-    const user = BaseUser.findOne({_id: id})
+    const {email} = req.query;
+    const user = BaseUser.findOne({email})
     if(user && user.kind !== 'Admin'){
         user.isBan  = false
         await user.save()
