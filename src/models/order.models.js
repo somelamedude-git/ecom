@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Product } = require('../models/product.models');
 
 // const preorderSchema = new mongoose.Schema({
 //   order_item: {
@@ -33,6 +34,11 @@ const orderSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'delivered', 'cancelled', 'schedule_return', 'returned', 'approve_return', 'shipped'],
     default: 'pending'
+  },
+
+  size:{
+    type: String,
+    required:true // We do the enum part in the processing, when we push the order
   }
 }, { timestamps: true });
 

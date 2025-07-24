@@ -62,7 +62,7 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
         quantity: item.quantity,
       });
 
-      product.stock -= item.quantity;
+      product.stock -= item.quantity; // Fix this
       await product.save();
       await order.save();
 
