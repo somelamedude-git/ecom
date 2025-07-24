@@ -307,31 +307,6 @@ POST   /admin/banUser              # Ban user account
 
 ## 🎯 Advanced Features Deep Dive
 
-### AI-Powered Recommendation System
-
-The system implements a sophisticated collaborative filtering algorithm using BitMask operations:
-
-**1. Product Tagging & BitMask Generation**
-```javascript
-// Each product gets tags converted to a bitmask
-const createBitMask = (indexes) => {
-    let mask = 0n;
-    for(const index of indexes) {
-        mask |= (1n << BigInt(index));
-    }
-    return mask.toString();
-}
-```
-
-**2. User Preference Learning**
-- Users are grouped by age buckets (10-year intervals)
-- Purchase history creates user preference bitmasks
-- Similar users influence recommendations through collaborative filtering
-
-**3. Recommendation Algorithm**
-- Jaccard similarity for user comparison
-- Quartile-based filtering for quality recommendations
-- Real-time mask updates with each purchase
 
 ### Advanced Search Implementation
 
