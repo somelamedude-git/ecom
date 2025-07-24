@@ -198,6 +198,23 @@ const reached_return = asyncHandler(async(req, res) => {
     return res.status(200).json({status: true, message: `Order ${orderId} reached`})
 })//for seller
 
+const shipped = asyncHandler(async(req, res) => {
+    const {orderId} = req.query;
+
+    const order = await Order.findById(orderId)
+
+    if(!order)
+        return res.status(404).json({status: false, message: "Order not found"})
+
+    if(order.status !== 'pending')
+        return res.status(400).json({status: false, message: "Bad request"})
+
+    order.status = 'shipped'
+    await order.save()
+
+    return res.status(200).json({status: true, message: `Order ${orderId} shipped`})
+})//for seller
+
 module.exports = {
     addOrder,
     addOrderFromCart,
@@ -205,5 +222,6 @@ module.exports = {
     schedule_return,
     approve_return,
     returned,
-    reached_return
+    reached_return,
+    shipped
 }
