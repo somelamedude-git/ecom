@@ -13,6 +13,7 @@ const compression = require('compression');
 const hpp = require('hpp');
 const csrf = require('csurf');
 const cartRouter = require('./routes/cart.routes');
+const wishlistRouter = require('./routes/wishlist.routes');
 const { errorHandler } = require('./utils/errorHandler');
 
 const app = express();
@@ -62,6 +63,7 @@ app.use('/product', productRouters);
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes);
 app.use('/cart', cartRouter);
+app.use('/wishlist', wishlistRouter);
 app.use(errorHandler);
 
 module.exports = { app };
