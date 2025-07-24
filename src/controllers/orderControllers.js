@@ -58,8 +58,6 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
       }
 
       const currentQuantity = product.stock.get(item.size)
-      if(currentQuantity < item.quantity)
-        throw new ApiError(400, `Insufficient stock for size ${item.size}`)
 
       product.stock.set(item.size, currentQuantity - item.quantity)
       const order = new Order({
