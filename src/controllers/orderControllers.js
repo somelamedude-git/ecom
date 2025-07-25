@@ -1,7 +1,8 @@
 const { asyncHandler } = require("../utils/asyncHandler");
 const { Buyer } = require('../models/user.models')
 const { Order } = require('../models/order.models')
-const { Product } = require('../models/product.models')
+const { Product } = require('../models/product.models');
+const { ApiError } = require("../utils/ApiError");
 
 const addOrder = asyncHandler(async(req, res) => {
     const { productId, quantity} = req.body;
@@ -51,18 +52,20 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
     try {
       const product = await Product.findById(item.product);
      
-      if (!product || product.stock < item.quantity) {
+      if (!product || product.stock.get(item.size) < item.quantity) {
         errors.push({ product: item.product, message: "Insufficient stock or product not found" });
         return;
       }
 
+      const currentQuantity = product.stock.get(item.size)
+
+      product.stock.set(item.size, currentQuantity - item.quantity)
       const order = new Order({
         customer: customerId,
         product: product._id,
         quantity: item.quantity,
+        size: item.size
       });
-
-      product.stock -= item.quantity; // Fix this
       await product.save();
       await order.save();
 
@@ -195,6 +198,23 @@ const reached_return = asyncHandler(async(req, res) => {
     return res.status(200).json({status: true, message: `Order ${orderId} reached`})
 })//for seller
 
+const shipped = asyncHandler(async(req, res) => {
+    const {orderId} = req.query;
+
+    const order = await Order.findById(orderId)
+
+    if(!order)
+        return res.status(404).json({status: false, message: "Order not found"})
+
+    if(order.status !== 'pending')
+        return res.status(400).json({status: false, message: "Bad request"})
+
+    order.status = 'shipped'
+    await order.save()
+
+    return res.status(200).json({status: true, message: `Order ${orderId} shipped`})
+})//for seller
+
 module.exports = {
     addOrder,
     addOrderFromCart,
@@ -202,5 +222,6 @@ module.exports = {
     schedule_return,
     approve_return,
     returned,
-    reached_return
+    reached_return,
+    shipped
 }
