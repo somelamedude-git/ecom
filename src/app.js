@@ -15,6 +15,7 @@ const csrf = require('csurf');
 const cartRouter = require('./routes/cart.routes');
 const wishlistRouter = require('./routes/wishlist.routes');
 const { errorHandler } = require('./utils/errorHandler');
+const orderRoutes = require('./routes/orders.routes')
 
 const app = express();
 
@@ -64,6 +65,7 @@ app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes);
 app.use('/cart', cartRouter);
 app.use('/wishlist', wishlistRouter);
+app.use('/orders', orderRoutes)
 app.use(errorHandler);
 
 module.exports = { app };

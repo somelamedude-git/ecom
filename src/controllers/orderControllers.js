@@ -1,34 +1,39 @@
 const { asyncHandler } = require("../utils/asyncHandler");
-const { Buyer } = require('../models/user.models')
+const { Buyer, Seller } = require('../models/user.models')
 const { Order } = require('../models/order.models')
 const { Product } = require('../models/product.models');
 const { ApiError } = require("../utils/ApiError");
 
 const addOrder = asyncHandler(async(req, res) => {
-    const { productId, quantity} = req.body;
+    const { productId, quantity, size} = req.body;
     const customerId = req.user._id
 
     if(!customerId || !productId)
         return res.status(400).json({status: false, message: "Bad request"})
 
     const customer = await Buyer.findById(customerId)
-    const product = await Product.findById(productId).populate("owner");
+    const product = await Product.findById(productId);
 
-    const product_owner = product.owner;
+    const product_owner = await Seller.findById(product.owner)
 
-    if(!customer || !product || product.stock-quantity < 0 || quantity < 1)
+    if(!customer || !product || product.stock.get(size)-quantity < 0 || quantity < 1)
         return res.status(400).json({status: false, message: "Not found"});
+
+    const total = product.price * quantity
 
     const order = new Order({
         customer: customerId,
         product: productId,
-        quantity
+        quantity,
+        total,
+        size
     });
     product_owner.order_quo.push(order);
     await order.save();
-    product.stock -= quantity;
+    const currentQuantity = product.stock.get(size)
+    product.stock.set(size, currentQuantity-quantity)
     await product.save();
-    customer.cart = customer.cart.filter(item => item._id.toString() !== productId);
+    customer.cart = customer.cart.filter(item => item.product.toString() !== productId);
     await customer.save();
     customer.orderHistory.push([order._id]);
     await product_owner.save();
