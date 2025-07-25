@@ -13,11 +13,9 @@ const productSchema = new mongoose.Schema({
     lowercase:true,
     required: true
   },
-  productImages: [
-    {
-      type: String
-    }
-  ],
+  productImages: {
+    type: String
+},
 
   category: {
     type: mongoose.Schema.Types.ObjectId,
