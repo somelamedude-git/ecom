@@ -11,11 +11,11 @@ const apiRoutes = require('./routes/api.routes');
 const helmet = require('helmet');
 const compression = require('compression');
 const hpp = require('hpp');
-const csrf = require('csurf');
 const cartRouter = require('./routes/cart.routes');
 const wishlistRouter = require('./routes/wishlist.routes');
 const { errorHandler } = require('./utils/errorHandler');
 const orderRoutes = require('./routes/orders.routes')
+const paymentRoutes = require('./routes/paymentVerification')
 
 const app = express();
 
@@ -24,6 +24,8 @@ app.use(cors({ //Yet to render the frontend, so origin is denoted through a plac
     credentials:true,
     preflightContinue: false
 }));
+
+app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
 
 app.use(express.json({
     limit: "10kb", //Now we are going to prevent DOS attacks, as they are not pretty
@@ -63,6 +65,7 @@ app.use('/user', userRoutes);
 app.use('/product', productRouters);
 app.use('/admin', adminRoutes);
 app.use('/api', apiRoutes);
+app.use('/api/payment', paymentRoutes);
 app.use('/cart', cartRouter);
 app.use('/wishlist', wishlistRouter);
 app.use('/orders', orderRoutes)
