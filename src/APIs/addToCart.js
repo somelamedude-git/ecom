@@ -37,6 +37,9 @@ const addToBag = asyncHandler(async (req, res) => {
     user_.cart.push({ product: product._id, quantity: 1, size: size_ });
     await user_.save();
 
+   product.added_to_cart = (product.added_to_cart || 0) + 1;
+    await product.save();
+
     res.status(200).json({
         success: true,
         product_id: product._id,

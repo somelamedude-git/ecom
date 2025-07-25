@@ -155,8 +155,8 @@ const schedule_return = asyncHandler(async(req, res) => {
     const {orderId} = req.query;
     const customerId = req.user._id;
 
-    const order = await Order.findById(orderId)
-    const customer = await Buyer.findById(customerId)
+    const order = await Order.findById(orderId).select('status customer');
+    const customer = await Buyer.findById(customerId);
 
     if(!order || !customer || order.customer.toString() !== customerId.toString())
         return res.status(404).json({status: false, message: "Order not found"})
@@ -168,7 +168,6 @@ const schedule_return = asyncHandler(async(req, res) => {
     await order.save()
 
     return res.status(200).json({status: false, message: `Order ${orderId} scheduled for return`})
-
 })
 
 const approve_return = asyncHandler(async (req, res) => {

@@ -68,6 +68,11 @@ price:{
 times_ordered:{
   type:Number,
   default:0
+},
+
+added_to_cart:{
+  type: Number,
+  default: 0
 }
 
 }, { timestamps: true });
