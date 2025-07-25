@@ -11,34 +11,55 @@ const addOrder = asyncHandler(async(req, res) => {
     if(!customerId || !productId)
         return res.status(400).json({status: false, message: "Bad request"})
 
-    const customer = await Buyer.findById(customerId)
-    const product = await Product.findById(productId);
-    product.times_ordered++;
+    const session = await Order.startSession()
+    session.startTransaction()
 
-    const product_owner = await Seller.findById(product.owner)
+    try {
+        const customer = await Buyer.findById(customerId).session(session)
+        const product = await Product.findById(productId).session(session)
+        const product_owner = await Seller.findById(product.owner).session(session)
 
-    if(!customer || !product || product.stock.get(size)-quantity < 0 || quantity < 1)
-        return res.status(400).json({status: false, message: "Not found"});
+        if (!product.stock.has(size)) {
+            await session.abortTransaction()
+            session.endSession()
+            return res.status(400).json({ status: false, message: "Invalid size selected" })
+        }
 
-    const total = product.price * quantity
+        if(!customer || !product || product.stock.get(size)-quantity < 0 || quantity < 1){
+            await session.abortTransaction()
+            session.endSession()
+            return res.status(400).json({status: false, message: "Not found"});
+        }
 
-    const order = new Order({
-        customer: customerId,
-        product: productId,
-        quantity,
-        total,
-        size
-    });
-    product_owner.order_quo.push(order);
-    await order.save();
-    const currentQuantity = product.stock.get(size)
-    product.stock.set(size, currentQuantity-quantity)
-    await product.save();
-    customer.cart = customer.cart.filter(item => item.product.toString() !== productId);
-    await customer.save();
-    customer.orderHistory.push([order._id]);
-    await product_owner.save();
-    return res.status(201).json({status: true, message: `Order ${order._id} placed`, order})
+        const total = product.price * quantity
+
+        const order = new Order({
+            customer: customerId,
+            product: productId,
+            quantity,
+            total,
+            size
+        });
+        product_owner.order_quo.push(order);
+        product.times_ordered++;
+        const currentQuantity = product.stock.get(size)
+        product.stock.set(size, currentQuantity-quantity)
+        customer.cart = customer.cart.filter(item => item.product.toString() !== productId);
+        customer.orderHistory.push([order._id]);
+
+        await order.save({session});
+        await product.save({session});
+        await customer.save({session});
+        await product_owner.save({session});
+
+        await session.commitTransaction()
+        session.endSession()
+        return res.status(201).json({status: true, message: `Order ${order._id} placed`, order})
+    } catch (err) {
+        await session.abortTransaction()
+        session.endSession()
+        throw err
+    }
 })//to be only use with "buy now"
 
 //Push back into orderHistory on the customer's end for recommendation system
