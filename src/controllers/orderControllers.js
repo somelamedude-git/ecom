@@ -105,7 +105,7 @@ await Promise.all(successOrders.map(async (order_id)=>{
 });
 
 const cancelOrder = asyncHandler(async(req, res) => {
-    const {orderId} = req.query.orderId;
+    const {orderId} = req.query;
     const customerId = req.user._id;
 
     const order = await Order.findById(orderId)
@@ -121,12 +121,11 @@ const cancelOrder = asyncHandler(async(req, res) => {
     const product = await Product.findById(order.product)
     if(!product)
         return res.status(400).json({status: false, message: "Product not found"})
-    product.stock += order.quantity
+    const current_stock = product.stock.get(order.size);
+    product.stock.set(order.size, current_stock+order.quantity)
 
     await product.save()
-
     return res.status(200).json({status: true, message: "Order cancelled"})
-
 })
 
 const schedule_return = asyncHandler(async(req, res) => {
