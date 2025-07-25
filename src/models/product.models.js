@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { asyncHandler } = require('../utils/asyncHandler');
 const { createBitMask } = require('../utils/bitmask.util');
 
 const productSchema = new mongoose.Schema({
@@ -13,11 +12,9 @@ const productSchema = new mongoose.Schema({
     lowercase:true,
     required: true
   },
-  productImages: [
-    {
-      type: String
-    }
-  ],
+  productImages: {
+    type: String
+},
 
   category: {
     type: mongoose.Schema.Types.ObjectId,
@@ -68,6 +65,10 @@ price:{
   required: true
 },
 
+times_ordered:{
+  type:Number,
+  default:0
+}
 
 }, { timestamps: true });
 
