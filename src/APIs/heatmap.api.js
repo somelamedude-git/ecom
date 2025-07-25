@@ -2,11 +2,12 @@ const { Order } = require('../models/order.models');
 const { Seller } = require('../models/user.models');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
-const { serializeUser } = require('passport');
 
 const fetchSalesMap = asyncHandler(async(req, res)=>{ // Here we return a map instead of a stupid array
     const seller_id = req.user._id;
     const seller = await Seller.findById(seller_id).select("order_quo").populate("order_quo").lean();
+
+    if(!seller) throw new ApiError(404, 'User not found');
 
     const salesByDate = {};
 
