@@ -65,13 +65,15 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
       }
 
       const currentQuantity = product.stock.get(item.size)
+      const total = item.quantity * product.price
 
       product.stock.set(item.size, currentQuantity - item.quantity)
       const order = new Order({
         customer: customerId,
         product: product._id,
         quantity: item.quantity,
-        size: item.size
+        size: item.size,
+        total
       });
       await product.save();
       await order.save();
