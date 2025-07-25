@@ -39,6 +39,11 @@ const orderSchema = new mongoose.Schema({
   size:{
     type: String,
     required:true // We do the enum part in the processing, when we push the order
+  },
+  
+  total: {
+    type: Number,
+    required: true
   }
 }, { timestamps: true });
 
