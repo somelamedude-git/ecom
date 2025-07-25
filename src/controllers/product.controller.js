@@ -5,52 +5,47 @@ const { ApiError } = require("../utils/ApiError");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 const { Tag } = require('../models/tags.model');
 
-const addProduct = asyncHandler(async(req, res)=>{ 
+const addProduct = asyncHandler(async(req, res) => {
     const userId = req.user._id;
-    const user_ = await Seller.findById(userId);
-
-    if(!user_){
-        throw new ApiError(404, "Seller not found");
-    }
     const { description, name, price, stock, status, category } = req.body;
     let tagNames = req.body.tagNames || [];
-    const Tags = await Tag.find({name:{$in: tagNames}});
-    if(Tags.length != tagNames.length){
+
+    const Tags = await Tag.find({ name: { $in: tagNames } });
+    if (Tags.length !== tagNames.length) {
         throw new ApiError(400, 'Some tags are invalid');
     }
-    const tagIndexes = Tags.map(tag=>tag.index);
+    const tagIndexes = Tags.map(tag => tag.index);
 
     const productImages = [];
-
-    for(const file of req.files){
+    for (const file of req.files) {
         const localPath = file.path;
         const image_url = await uploadOnCloudinary(localPath);
-
-        if(!image_url) throw new ApiError(500, "Image Upload Failed");
+        if (!image_url) throw new ApiError(500, "Image Upload Failed");
         productImages.push(image_url);
     }
-
 
     const newProduct = await Product.create({
         description,
         name,
-        productImages:productImages,
+        productImages,
         price,
         stock,
         status,
         category,
-        tags:tagIndexes,
-        owner: user_._id
+        tags: tagIndexes,
+        owner: userId  
     });
 
-    user_.selling_products.push(newProduct);
-    await user_.save();
+    await Seller.findByIdAndUpdate(userId,
+        { $push: { selling_products: newProduct._id } }, 
+        { new: true }
+    );
 
     res.status(201).send({
-        success:true,
+        success: true,
         message: "Product created successfully",
-        data:{
-            _id:newProduct._id,
+        data: {
+            _id: newProduct._id,
             name: newProduct.name,
             stock: newProduct.stock
         }
