@@ -2,7 +2,6 @@ const { razorpay } = require('../config/razorpay');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { Order } = require('../models/order.models');
 require('dotenv').config({ path: '../.env' });
-const crypto = require('crypto');
 
 const payment_db_save = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
@@ -16,9 +15,9 @@ const payment_db_save = asyncHandler(async(req, res)=>{
     }
 
     const options = {
-        amount: order.price*100, //It needs the amount to be in paisa
+        amount: order.total*100, //It needs the amount to be in paisa
         currency: "INR",
-        receipt: "Kill me", //I'll change it
+        receipt: order._id.toString(), //I'll change it
         payment_capture: 1
     }
 
@@ -30,23 +29,6 @@ const payment_db_save = asyncHandler(async(req, res)=>{
         amount:response.amount,
         key: process.env.razor_key
     });
-});
-
-const webHook = asyncHandler(async (req, res) => {
-  const secret = process.env.razor_secret;
-  
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(req.rawBody)
-    .digest('hex');
-
-  const razorSignature = req.headers['x-razorpay-signature'];
-
-  if (expectedSignature === razorSignature) {
-    res.status(200).json({ success: true });
-  } else {
-    res.status(400).json({ success: false, message: 'Invalid signature' });
-  }
 });
 
 const refund = asyncHandler(async(req, res)=>{
@@ -69,9 +51,33 @@ const refund = asyncHandler(async(req, res)=>{
     });
 })
 
+const updatePaymentStatus = asyncHandler(async (req, res) => {
+    const payload = JSON.parse(req.rawBody.toString())
+
+  if (payload.event === 'payment_captured') {
+    const payment = payload.payload.payment.entity
+    const razorpayOrderId = payment.order_id
+    const paymentId = payment.id
+
+    const order = await Order.findOne({ razorpayOrderId })
+
+    if (order) {
+      order.paymentVerified = true
+      order.paymentId = paymentId
+      await order.save()
+
+      return res.status(200).json({ status: true, message: 'Payment updated', order })
+    } else {
+      return res.status(404).json({ status: false, message: 'Order not found' })
+    }
+  }
+
+  res.status(200).json({ status: false, message: 'Unhandled event' })
+})
+
 
 module.exports = {
     payment_db_save,
-    webHook,
-    refund
+    refund,
+    updatePaymentStatus
 }

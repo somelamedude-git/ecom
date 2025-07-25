@@ -40,10 +40,29 @@ const orderSchema = new mongoose.Schema({
     type: String,
     required:true // We do the enum part in the processing, when we push the order
   },
-  
+
   total: {
     type: Number,
     required: true
+  },
+
+  razorpayOrderId: {
+    type: String,
+    required: false,
+    trim: true,
+    index: true
+  },
+
+  paymentVerified: {
+    type: Boolean,
+    default: false
+  },
+
+  paymentId: {
+    type: String,
+    required: false,
+    trim: true,
+    index: true
   }
 }, { timestamps: true });
 
