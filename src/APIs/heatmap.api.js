@@ -1,4 +1,3 @@
-const { Order } = require('../models/order.models');
 const { Seller } = require('../models/user.models');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
@@ -26,6 +25,8 @@ const fetchSalesMap = asyncHandler(async(req, res)=>{ // Here we return a map in
         salesByDate
     });
 });
+
+
 
 module.exports = {
     fetchSalesMap

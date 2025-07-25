@@ -13,6 +13,7 @@ const addOrder = asyncHandler(async(req, res) => {
 
     const customer = await Buyer.findById(customerId)
     const product = await Product.findById(productId);
+    product.times_ordered++;
 
     const product_owner = await Seller.findById(product.owner)
 
@@ -56,6 +57,7 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
   await Promise.all(customer.cart.map(async (item) => {
     try {
       const product = await Product.findById(item.product);
+      product.times_ordered++;
      
       if (!product || product.stock.get(item.size) < item.quantity) {
         errors.push({ product: item.product, message: "Insufficient stock or product not found" });
