@@ -73,6 +73,11 @@ times_ordered:{
 added_to_cart:{
   type: Number,
   default: 0
+},
+
+average_age_customers:{
+  type:Number,
+  default:0
 }
 
 }, { timestamps: true });

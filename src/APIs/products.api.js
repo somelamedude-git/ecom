@@ -42,7 +42,7 @@ const productAnalysis = asyncHandler(async(req, res)=>{
     if(!user) throw new ApiError(404, 'User not found');
     const { product_id } = req.param;
 
-    const product = await Product.findById(product_id).select("owner views times_ordered ")
+    const product = await Product.findById(product_id).select("owner views times_ordered added_to_cart")
     
 })
 

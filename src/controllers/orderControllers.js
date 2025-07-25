@@ -9,7 +9,7 @@ const addOrder = asyncHandler(async(req, res) => {
     const customerId = req.user._id
 
     if(!customerId || !productId)
-        return res.status(400).json({status: false, message: "Bad request"})
+        throw new ApiError(404, 'Bad request');
 
     const session = await Order.startSession()
     session.startTransaction()
@@ -20,17 +20,12 @@ const addOrder = asyncHandler(async(req, res) => {
         const product_owner = await Seller.findById(product.owner).session(session)
 
         if (!product.stock.has(size)) {
-            await session.abortTransaction()
-            session.endSession()
-            return res.status(400).json({ status: false, message: "Invalid size selected" })
+            throw new ApiError(400, 'Invalid size selected');
         }
 
         if(!customer || !product || product.stock.get(size)-quantity < 0 || quantity < 1){
-            await session.abortTransaction()
-            session.endSession()
-            return res.status(400).json({status: false, message: "Not found"});
+           throw new ApiError(404, 'Not found');
         }
-
         const total = product.price * quantity
 
         const order = new Order({
@@ -40,12 +35,13 @@ const addOrder = asyncHandler(async(req, res) => {
             total,
             size
         });
-        product_owner.order_quo.push(order);
-        product.times_ordered++;
+        product_owner.order_quo.push(order._id);
         const currentQuantity = product.stock.get(size)
         product.stock.set(size, currentQuantity-quantity)
         customer.cart = customer.cart.filter(item => item.product.toString() !== productId);
         customer.orderHistory.push([order._id]);
+        product.average_age_customers = (((product.average_age_customers*product.times_ordered)+customer.age)/(product.times_ordered+1));
+        product.times_ordered++;
 
         await order.save({session});
         await product.save({session});
@@ -60,7 +56,7 @@ const addOrder = asyncHandler(async(req, res) => {
         session.endSession()
         throw err
     }
-})//to be only use with "buy now"
+});
 
 //Push back into orderHistory on the customer's end for recommendation system
 
