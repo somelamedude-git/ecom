@@ -1,6 +1,7 @@
 const { Product } = require('../models/product.models');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
+const { Seller } = require('../models/user.models')
 
 const fetchSingleProduct = asyncHandler(async(req, res)=>{
     const { product_id } = req.params;
@@ -22,6 +23,20 @@ const fetchSingleProduct = asyncHandler(async(req, res)=>{
     });
 });
 
+const fetchSellerProducts = asyncHandler(async(req, res)=>{
+    const user_id = req.user._id;
+    const user = await Seller.findById(user_id).select("selling_products").populate("selling_products.product").lean(); // We are only reading, no need for shmancy mongoose <3
+
+    if(!user) throw new ApiError(404, 'User not found');
+    const productsOfUser = user.selling_products.map(item => item.product);
+
+    return res.status(200).json({
+        success: true,
+        productsOfUser
+    });
+});
+
 module.exports = {
-    fetchSingleProduct
+    fetchSingleProduct,
+    fetchSellerProducts
 }
