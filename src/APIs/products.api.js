@@ -36,6 +36,16 @@ const fetchSellerProducts = asyncHandler(async(req, res)=>{
     });
 });
 
+const productAnalysis = asyncHandler(async(req, res)=>{
+    const user_id = req.user._id;
+    const user = await Seller.findById(user_id).select("_id");
+    if(!user) throw new ApiError(404, 'User not found');
+    const { product_id } = req.param;
+
+    const product = await Product.findById(product_id).select("owner views times_ordered ")
+    
+})
+
 module.exports = {
     fetchSingleProduct,
     fetchSellerProducts
