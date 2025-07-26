@@ -83,7 +83,6 @@ if (
 } else {
   analytics.cart_ratio = 0; 
 }
-
 return res.status(200).json({
     success:true,
     analytics,
@@ -93,6 +92,7 @@ return res.status(200).json({
     }
 })
 })
+
 
 module.exports = {
     fetchSingleProduct,

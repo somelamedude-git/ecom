@@ -61,7 +61,7 @@ const addOrder = asyncHandler(async (req, res) => {
         return order;
     });
 
-    res.status(201).json({
+    return res.status(201).json({
         status: true,
         message: `Order ${result._id} placed`,
         order: result
