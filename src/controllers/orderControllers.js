@@ -3,59 +3,69 @@ const { Buyer, Seller } = require('../models/user.models')
 const { Order } = require('../models/order.models')
 const { Product } = require('../models/product.models');
 const { ApiError } = require("../utils/ApiError");
+const { handleTransaction } = require('../utils/handleTransaction');
 
-const addOrder = asyncHandler(async(req, res) => {
-    const { productId, quantity, size} = req.body;
-    const customerId = req.user._id
+const addOrder = asyncHandler(async (req, res) => {
+    const { productId, quantity, size } = req.body;
+    const customerId = req.user._id;
 
-    if(!customerId || !productId)
+    if (!customerId || !productId) {
         throw new ApiError(404, 'Bad request');
+    }
 
-    const session = await Order.startSession()
-    session.startTransaction()
+    const result = await handleTransaction(async (session) => {
+        const customer = await Buyer.findById(customerId).session(session);
+        const product = await Product.findById(productId).session(session);
 
-    try {
-        const customer = await Buyer.findById(customerId).session(session)
-        const product = await Product.findById(productId).session(session)
-        const product_owner = await Seller.findById(product.owner).session(session)
+        if (!product || !customer) {
+            throw new ApiError(404, 'Product or customer not found');
+        }
+
+        const product_owner = await Seller.findById(product.owner).session(session);
 
         if (!product.stock.has(size)) {
             throw new ApiError(400, 'Invalid size selected');
         }
 
-        if(!customer || !product || product.stock.get(size)-quantity < 0 || quantity < 1){
-           throw new ApiError(404, 'Not found');
+        const available = product.stock.get(size);
+        if (available - quantity < 0 || quantity < 1) {
+            throw new ApiError(400, 'Invalid quantity');
         }
-        const total = product.price * quantity
+
+        const total = product.price * quantity;
 
         const order = new Order({
             customer: customerId,
             product: productId,
             quantity,
             total,
-            size
+            size,
         });
+
         product_owner.order_quo.push(order._id);
-        const currentQuantity = product.stock.get(size)
-        product.stock.set(size, currentQuantity-quantity)
+        product.stock.set(size, available - quantity);
         customer.cart = customer.cart.filter(item => item.product.toString() !== productId);
         customer.orderHistory.push([order._id]);
-        product.average_age_customers = (((product.average_age_customers*product.times_ordered)+customer.age)/(product.times_ordered+1));
+
+        product.average_age_customers = (
+            (product.average_age_customers * product.times_ordered + customer.age) /
+            (product.times_ordered + 1)
+        );
         product.times_ordered++;
 
-        await order.save({session});
-        await product.save({session});
-        await customer.save({session});
-        await product_owner.save({session});
+        await order.save({ session });
+        await product.save({ session });
+        await customer.save({ session });
+        await product_owner.save({ session });
 
-        await session.commitTransaction()
-        session.endSession()
-        return res.status(201).json({status: true, message: `Order ${order._id} placed`, order})
-    } catch (err) {
-        await session.abortTransaction()
-        session.endSession()
-        throw err
-    }
+        return order;
+    });
+
+    res.status(201).json({
+        status: true,
+        message: `Order ${result._id} placed`,
+        order: result
+    });
 });
 
 //Push back into orderHistory on the customer's end for recommendation system
