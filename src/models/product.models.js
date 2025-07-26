@@ -78,6 +78,11 @@ added_to_cart:{
 average_age_customers:{
   type:Number,
   default:0
+},
+
+times_returned:{
+  type:Number,
+  default:0
 }
 
 }, { timestamps: true });

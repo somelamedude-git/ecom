@@ -74,6 +74,7 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
   await Promise.all(customer.cart.map(async (item) => {
     try {
       const product = await Product.findById(item.product);
+      product.average_age_customers = (((product.average_age_customers*product.times_ordered)+customer.age)/(product.times_ordered+1));
       product.times_ordered++;
      
       if (!product || product.stock.get(item.size) < item.quantity) {
@@ -147,24 +148,50 @@ const cancelOrder = asyncHandler(async(req, res) => {
     return res.status(200).json({status: true, message: "Order cancelled"})
 })
 
-const schedule_return = asyncHandler(async(req, res) => {
-    const {orderId} = req.query;
+const schedule_return = asyncHandler(async (req, res) => {
+    const { orderId } = req.query;
     const customerId = req.user._id;
 
-    const order = await Order.findById(orderId).select('status customer');
-    const customer = await Buyer.findById(customerId);
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    if(!order || !customer || order.customer.toString() !== customerId.toString())
-        return res.status(404).json({status: false, message: "Order not found"})
+    try {
+        const order = await Order.findById(orderId)
+            .select('status customer product')
+            .populate('product')
+            .session(session);
 
-    if(order.status !== 'pending')
-        return res.status(400).json({status: false, message: "Bad request"})
+        const customer = await Buyer.findById(customerId).session(session);
 
-    order.status = 'schedule_return'
-    await order.save()
+        if (!order || !customer || order.customer.toString() !== customerId.toString())
+            throw new ApiError(404, 'Order not found');
 
-    return res.status(200).json({status: false, message: `Order ${orderId} scheduled for return`})
-})
+        if (order.status !== 'pending')
+            throw new ApiError(400, 'Bad request');
+
+        if (!order.product)
+            throw new ApiError(500, 'Product data not found');
+
+        order.status = 'schedule_return';
+        order.product.times_returned++;
+
+        await order.save({ session });
+        await order.product.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return res.status(200).json({
+            status: true,
+            message: `Order ${orderId} scheduled for return`
+        });
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw error;
+    }
+});
+
 
 const approve_return = asyncHandler(async (req, res) => {
     const {orderId} = req.query;

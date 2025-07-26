@@ -48,5 +48,6 @@ const productAnalysis = asyncHandler(async(req, res)=>{
 
 module.exports = {
     fetchSingleProduct,
-    fetchSellerProducts
+    fetchSellerProducts,
+    productAnalysis
 }
