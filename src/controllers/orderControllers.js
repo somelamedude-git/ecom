@@ -111,7 +111,7 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
 
   customer.cart = [];
   customer.orderHistory.push(successOrders);
-  await customer.save();
+  await customer.save({session});
   })
 
 
