@@ -42,7 +42,7 @@ const productAnalysis = asyncHandler(async(req, res)=>{
     if(!user) throw new ApiError(404, 'User not found');
     const { product_id } = req.params;
 
-    const product = await Product.findById(product_id).select("owner views times_ordered added_to_cart average_age_customers times_returned").lean();
+    const product = await Product.findById(product_id).select("owner views times_ordered added_to_cart average_age_customers times_returned name price").lean();
     if(product.owner.toString() !=user_id.toString()){
         throw new ApiError(401, 'Unauthorized Access');
     }
@@ -86,7 +86,11 @@ if (
 
 return res.status(200).json({
     success:true,
-    analytics
+    analytics,
+    info:{
+        name:product.name,
+        price: product.price
+    }
 })
 })
 
