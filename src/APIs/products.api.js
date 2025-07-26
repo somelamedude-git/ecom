@@ -25,14 +25,22 @@ const fetchSingleProduct = asyncHandler(async(req, res)=>{
 
 const fetchSellerProducts = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
-    const user = await Seller.findById(user_id).select("selling_products").populate("selling_products.product").lean(); // We are only reading, no need for shmancy mongoose <3
-
+    const user = await Seller.findById(user_id).select("selling_products").populate("selling_products.product"); // We are only reading, no need for shmancy mongoose <3
+    const { page = 1, limit=10 } = req.query;
+     const pageNum = parseInt(page, 10);
+    const limitNum = parseInt(limit, 10);
     if(!user) throw new ApiError(404, 'User not found');
-    const productsOfUser = user.selling_products.map(item => item.product);
+    const numberOfProducts = user.selling_products.length;
+    const numberOfPages = numberOfProducts/limit;
+    // As the products here are in an array, i will do this:
+    const start = (pageNum-1)*limitNum;
+    const end = start + limitNum;
 
+    const productsOfUser = user.selling_products.slice(start, end);
     return res.status(200).json({
         success: true,
-        productsOfUser
+        productsOfUser,
+        numberOfPages
     });
 });
 
