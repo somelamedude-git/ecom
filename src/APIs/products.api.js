@@ -40,10 +40,54 @@ const productAnalysis = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
     const user = await Seller.findById(user_id).select("_id");
     if(!user) throw new ApiError(404, 'User not found');
-    const { product_id } = req.param;
+    const { product_id } = req.params;
 
-    const product = await Product.findById(product_id).select("owner views times_ordered added_to_cart")
-    
+    const product = await Product.findById(product_id).select("owner views times_ordered added_to_cart average_age_customers times_returned").lean();
+    if(product.owner.toString() !=user_id.toString()){
+        throw new ApiError(401, 'Unauthorized Access');
+    }
+
+    let analytics = {};
+    analytics.views = product.views || 0;
+    analytics.times_ordered = product.times_ordered || 0;
+    analytics.added_to_cart = product.added_to_cart || 0;
+    analytics.average_age_customers = product.average_age_customers || 0;
+    analytics.times_returned = product.times_returned || 0;
+
+    if (
+  typeof product.times_ordered === "number" &&
+  typeof product.added_to_cart === "number" &&
+  product.added_to_cart !== 0
+) {
+  analytics.order_ratio = product.times_ordered / product.added_to_cart;
+} else {
+  analytics.order_ratio = 0;
+}
+
+if (
+  typeof product.times_ordered === "number" &&
+  typeof product.times_returned === "number" &&
+  product.times_ordered !== 0
+) {
+  analytics.return_ratio = product.times_returned/ product.times_ordered;
+} else {
+  analytics.return_ratio = 0; 
+}
+
+if (
+  typeof product.views === "number" &&
+  typeof product.added_to_cart === "number" &&
+  product.views !== 0
+) {
+  analytics.cart_ratio = product.added_to_cart / product.views;
+} else {
+  analytics.cart_ratio = 0; 
+}
+
+return res.status(200).json({
+    success:true,
+    analytics
+})
 })
 
 module.exports = {

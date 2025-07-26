@@ -83,7 +83,7 @@ average_age_customers:{
 times_returned:{
   type:Number,
   default:0
-}
+} // Add a currentDiscount type, and put that in, handle coupons too
 
 }, { timestamps: true });
 
