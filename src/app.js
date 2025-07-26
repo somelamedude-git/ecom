@@ -14,8 +14,10 @@ const hpp = require('hpp');
 const cartRouter = require('./routes/cart.routes');
 const wishlistRouter = require('./routes/wishlist.routes');
 const { errorHandler } = require('./utils/errorHandler');
-const orderRoutes = require('./routes/orders.routes')
-const paymentRoutes = require('./routes/paymentVerification')
+const orderRoutes = require('./routes/orders.routes');
+const paymentRoutes = require('./routes/paymentVerification');
+const sellerRoutes = require('./routes/seller.routes');
+const productRoutes = require('./routes/product.routes');
 
 const app = express();
 
@@ -68,7 +70,10 @@ app.use('/api', apiRoutes);
 app.use('/api/payment', paymentRoutes);
 app.use('/cart', cartRouter);
 app.use('/wishlist', wishlistRouter);
-app.use('/orders', orderRoutes)
+app.use('/orders', orderRoutes);
+app.use('/seller', sellerRoutes);
+app.use('/product', productRouters);
+
 app.use(errorHandler);
 
 module.exports = { app };
