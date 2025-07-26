@@ -81,9 +81,9 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
   const errors = [];
   const successOrders = [];
 
-  await Promise.all(customer.cart.map(async (item) => {
-    try {
-      const product = await Product.findById(item.product);
+  const result = await handleTransaction (async (session) => {
+    await Promise.all(customer.cart.map(async (item) => {
+      const product = await Product.findById(item.product).session(session);
       product.average_age_customers = (((product.average_age_customers*product.times_ordered)+customer.age)/(product.times_ordered+1));
       product.times_ordered++;
      
@@ -103,26 +103,16 @@ const addOrderFromCart = asyncHandler(async (req, res) => {
         size: item.size,
         total
       });
-      await product.save();
-      await order.save();
+      await product.save({session});
+      await order.save({session});
 
       successOrders.push(order._id);
-    } catch (err) {
-      errors.push({ product: item.product, message: err.message });
-    }
   }));
-
-await Promise.all(successOrders.map(async (order_id)=>{
-    const order_ = await Order.findById(order_id).populate("product.owner");
-    const product_owner = order_.product.owner;
-
-    product_owner.order_quo.push(order_);
-    await product_owner.save();
-}))
 
   customer.cart = [];
   customer.orderHistory.push(successOrders);
-  await customer.save();
+  await customer.save({session});
+  })
 
 
   return res.status(201).json({
@@ -130,7 +120,8 @@ await Promise.all(successOrders.map(async (order_id)=>{
     message: "Order processing completed",
     ordersPlaced: successOrders.length,
     errors,
-    successOrders
+    successOrders,
+    result
   });
 });
 
