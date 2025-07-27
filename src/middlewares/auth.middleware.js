@@ -2,7 +2,7 @@ const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
-const { BaseUser } = require('../models/user.models');
+const { BaseUser, Admin } = require('../models/user.models');
 
 
 const getUserFromToken = asyncHandler(async(token)=>{
@@ -44,6 +44,16 @@ const looseVerification = asyncHandler(async(req, res, next)=>{
     req.user = user;
     next();
 });
+
+const adminCheck = asyncHandler(async (req, res, next) => {
+    const id = req.user._id
+    const admin = await Admin.findById(id)
+
+    if(admin)
+        next()
+
+    throw new ApiError(404, "Admin not found")
+})
 
 module.exports = {
     verifyJWT,
