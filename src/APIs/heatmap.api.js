@@ -27,7 +27,6 @@ const fetchSalesMap = asyncHandler(async(req, res)=>{ // Here we return a map in
 });
 
 
-
 module.exports = {
     fetchSalesMap
 }

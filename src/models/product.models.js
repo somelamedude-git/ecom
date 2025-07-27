@@ -27,7 +27,7 @@ const productSchema = new mongoose.Schema({
     default:0
   },
 
-  reviews:{
+  ratings:{
     type: Number,
     default:0   //This is just for ratings
   },
