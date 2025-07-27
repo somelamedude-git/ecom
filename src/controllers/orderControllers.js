@@ -129,24 +129,26 @@ const cancelOrder = asyncHandler(async(req, res) => {
     const {orderId} = req.query;
     const customerId = req.user._id;
 
-    const order = await Order.findById(orderId)
-    const customer = await Buyer.findById(customerId)
+    const result = await handleTransaction(async (session) => {
+        const order = await Order.findById(orderId).session(session)
+        const customer = await Buyer.findById(customerId).session(session)
 
-    if(!order || !customer || order.customer.toString() !== customerId.toString())
-        return res.status(404).json({status: false, message: "Order not found"})
-    if(order.status !== 'pending')
-        return res.status(400).json({status: false, message: "Bad request"})
-    order.status = 'cancelled'
-    await order.save()
+        if(!order || !customer || order.customer.toString() !== customerId.toString())
+            throw new ApiError(404, "Order not found")
+        if(order.status !== 'pending')
+            throw new ApiError(401, "Bad request")
+        order.status = 'cancelled'
+        await order.save({session})
 
-    const product = await Product.findById(order.product)
-    if(!product)
-        return res.status(400).json({status: false, message: "Product not found"})
-    const current_stock = product.stock.get(order.size);
-    product.stock.set(order.size, current_stock+order.quantity)
+        const product = await Product.findById(order.product).session(session)
+        if(!product)
+            throw new ApiError(404, "Product not found")
+        const current_stock = product.stock.get(order.size);
+        product.stock.set(order.size, current_stock+order.quantity)
 
-    await product.save()
-    return res.status(200).json({status: true, message: "Order cancelled"})
+        await product.save({session})
+    })
+    return res.status(200).json({status: true, message: "Order cancelled", result})
 })
 
 const schedule_return = asyncHandler(async (req, res) => {
@@ -231,23 +233,25 @@ const returned = asyncHandler(async(req, res) => {
 const reached_return = asyncHandler(async(req, res) => {
     const {orderId} = req.query;
 
-    const order = await Order.findById(orderId)
+    const result = await handleTransaction(async (session) => {
+        const order = await Order.findById(orderId).session(session)
 
-    if(!order)
-        return res.status(404).json({status: false, message: "Order not found"})
+        if(!order)
+            throw new ApiError(404, "Order not found")
 
-    if(order.status !== 'returned')
-        return res.status(400).json({status: false, message: "Bad request"})
+        if(order.status !== 'returned')
+            throw new ApiError(400, "Bad Request")
 
-    order.status = 'reached_return'
-    await order.save()
+        order.status = 'reached_return'
+        await order.save({session})
 
-    const product = await Product.findById(order.product)
-    product.stock += order.quantity
+        const product = await Product.findById(order.product).session(session)
+        product.stock += order.quantity
 
-    await product.save()
+        await product.save({session})
+    })
 
-    return res.status(200).json({status: true, message: `Order ${orderId} reached`})
+    return res.status(200).json({status: true, message: `Order ${orderId} reached`, result})
 })//for seller
 
 const shipped = asyncHandler(async(req, res) => {
