@@ -19,6 +19,11 @@ const reviewSchema = new mongoose.Schema({
     owner_of_product:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Seller"
+    },
+
+    rating: {
+        type: Number, 
+        default : 0
     }
 }, { timestamps: true});
 
