@@ -15,15 +15,20 @@ const fetchUsers = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Type not allowed")
 
     let usertype = BaseUser
+    let infotofetch = 'username email address name coverImage isBan'
 
-    if(type === 'buyers')
+    if(type === 'buyers'){
         usertype = Buyer
-    else if(type === 'sellers')
+        infotofetch += ' orderHistory'
+    }
+    else if(type === 'sellers'){
         usertype = Seller
+        infotofetch += ' selling_products store_information average_rating verification_documents'
+    }
     else
         usertype = Admin
 
-    const users = await usertype.find().sort({createdAt: -1})
+    const users = await usertype.find().select(infotofetch).sort({createdAt: -1})
 
     return res.status(200).json({status: true, users})
 
