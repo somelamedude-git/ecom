@@ -27,10 +27,12 @@ const productSchema = new mongoose.Schema({
     default:0
   },
 
-  ratings:{
-    type: Number,
-    default:0   //This is just for ratings
-  },
+  reviews:[
+    {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Review"
+    }
+  ],
 
   popularity:{
     type:Number,

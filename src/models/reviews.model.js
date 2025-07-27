@@ -13,7 +13,8 @@ const reviewSchema = new mongoose.Schema({
 
     user_reviewd:{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Buyer"
+        ref: "Buyer",
+        unique: true
     },
 
     owner_of_product:{

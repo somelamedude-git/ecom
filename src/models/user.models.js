@@ -179,7 +179,14 @@ const BuyerSchema = new mongoose.Schema({
   creditPoints:{
     type: Number, 
     default : 0
-  }
+  },
+
+  reviews_added:[
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Review"
+    }
+  ]
 }, options);
 
 BuyerSchema.pre('save', function(next){
