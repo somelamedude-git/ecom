@@ -26,7 +26,8 @@ const fetchSingleProduct = asyncHandler(async(req, res)=>{
 const fetchSellerProducts = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
     const user = await Seller.findById(user_id).select("selling_products").populate("selling_products.product").lean(); // We are only reading, no need for shmancy mongoose <3
-    let { page = 1, limit=10, sortBy="newest"} = req.query;
+    let { page = 1, limit=10, sortBy="newest", search=""} = req.query;
+    search = search.toLowerCase();
     sortBy = sortBy.toLowerCase();
      const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -34,6 +35,12 @@ const fetchSellerProducts = asyncHandler(async(req, res)=>{
     const numberOfProducts = user.selling_products.length;
     const numberOfPages = Math.ceil(numberOfProducts/limitNum);
     let productsOfUser = user.selling_products.map((item)=>item.product);
+    if(search!==""){
+      productsOfUser = productsOfUser.filter(product =>
+        product.name.toLowerCase().includes(search.toLowerCase()) ||
+        product.description.toLowerCase().includes(search.toLowerCase())
+      )
+    }
     if(sortBy==="newest"){
       productsOfUser = productsOfUser.sort((a,b)=>new Date(b.createdAt) - new Date(a.createdAt));
     }
@@ -56,6 +63,7 @@ const fetchSellerProducts = asyncHandler(async(req, res)=>{
     else if(sortBy == "views"){
       productsOfUser = productsOfUser.sort((a,b)=> b.views-a.views);
     }
+
 
     // As the products here are in an array, i will do this:
     const start = (pageNum-1)*limitNum;

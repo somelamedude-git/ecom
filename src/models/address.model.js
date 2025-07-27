@@ -28,6 +28,10 @@ const addressSchema = new mongoose.Schema({
   country: {
     type: String,
     required: true
+  },
+  district:{
+    type:String,
+    required:true
   }
 });
 
