@@ -3,7 +3,7 @@ const { ApiError } = require('../utils/ApiError')
 const { asyncHandler } = require('../utils/asyncHandler')
 
 const fetchUsers = asyncHandler(async (req, res) => {
-    const {type} = req.query
+    const {type, page = 1, limit = 10} = req.query
 
     const allowedTypes = [
         'buyers',
@@ -28,9 +28,17 @@ const fetchUsers = asyncHandler(async (req, res) => {
     else
         usertype = Admin
 
-    const users = await usertype.find().select(infotofetch).sort({createdAt: -1})
+    let pageno = parseInt(page) || 1
+    let limitno = parseInt(limit) || 1
+    let skip = (pageno - 1) * limitno
 
-    return res.status(200).json({status: true, users})
+    const totalUsers = await usertype.countDocuments()
+
+
+
+    const users = await usertype.find().select(infotofetch).sort({createdAt: -1}).skip(skip).limit(limitno)
+
+    return res.status(200).json({status: true, users, totalUsers, totalPages: Math.ceil(totalUsers / limitno)})
 
 })
 
