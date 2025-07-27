@@ -26,34 +26,34 @@ const fetchSingleProduct = asyncHandler(async(req, res)=>{
 const fetchSellerProducts = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
     const user = await Seller.findById(user_id).select("selling_products").populate("selling_products.product").lean(); // We are only reading, no need for shmancy mongoose <3
-    let { page = 1, limit=10, search="newest"} = req.query;
-    search = search.toLowerCase();
+    let { page = 1, limit=10, sortBy="newest"} = req.query;
+    sortBy = sortBy.toLowerCase();
      const pageNum = Number(page);
     const limitNum = Number(limit);
     if(!user) throw new ApiError(404, 'User not found');
     const numberOfProducts = user.selling_products.length;
     const numberOfPages = Math.ceil(numberOfProducts/limitNum);
     let productsOfUser = user.selling_products.map((item)=>item.product);
-    if(search==="newest"){
+    if(sortBy==="newest"){
       productsOfUser = productsOfUser.sort((a,b)=>new Date(b.createdAt) - new Date(a.createdAt));
     }
-    else if(search ==="oldest"){
+    else if(sortBy ==="oldest"){
       productsOfUser = productsOfUser.sort((a,b)=> new Date(a.createdAt)- new Date(b.createdAt));
     }
 
-    else if(search==="price-high"){
+    else if(sortBy==="price-high"){
       productsOfUser = productsOfUser.sort((a,b)=> b.price-a.price);
     }
 
-    else if(search==="price-low"){
+    else if(sortBy==="price-low"){
       productsOfUser = productsOfUser.sort((a,b)=> a.price-b.price);
     }
 
-    else if(search === "popular"){
+    else if(sortBy === "popular"){
       productsOfUser = productsOfUser.sort((a,b)=> b.popularity-a.popularity);
     }
 
-    else if(search == "views"){
+    else if(sortBy == "views"){
       productsOfUser = productsOfUser.sort((a,b)=> b.views-a.views);
     }
 
