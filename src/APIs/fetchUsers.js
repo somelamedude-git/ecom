@@ -3,7 +3,7 @@ const { ApiError } = require('../utils/ApiError')
 const { asyncHandler } = require('../utils/asyncHandler')
 
 const fetchUsers = asyncHandler(async (req, res) => {
-    const {type, page = 1, limit = 10} = req.query
+    const {type, status, page = 1, limit = 10} = req.query
 
     const allowedTypes = [
         'buyers',
@@ -11,8 +11,16 @@ const fetchUsers = asyncHandler(async (req, res) => {
         'admins'
     ]
 
+    const allowedStatus = [
+        'ban',
+        'unban'
+    ]
+
     if(type && !allowedTypes.includes(type))
         throw new ApiError(400, "Type not allowed")
+
+    if(status && !allowedStatus.includes(status))
+        throw new ApiError(400, "Status request")
 
     let usertype = BaseUser
     let infotofetch = 'username email address name coverImage isBan'
@@ -32,11 +40,16 @@ const fetchUsers = asyncHandler(async (req, res) => {
     let limitno = parseInt(limit) || 1
     let skip = (pageno - 1) * limitno
 
-    const totalUsers = await usertype.countDocuments()
+    let statusq = {}
 
+    if(status === 'ban')
+        statusq = {isBan: true}
+    else if(status === 'unban')
+        statusq = {isBan: false}
 
-
-    const users = await usertype.find().select(infotofetch).sort({createdAt: -1}).skip(skip).limit(limitno)
+    const totalUsers = await usertype.countDocuments(statusq)
+ 
+    const users = await usertype.find(statusq).select(infotofetch).sort({createdAt: -1}).skip(skip).limit(limitno)
 
     return res.status(200).json({status: true, users, totalUsers, totalPages: Math.ceil(totalUsers / limitno)})
 
