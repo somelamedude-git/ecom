@@ -58,5 +58,6 @@ const adminCheck = asyncHandler(async (req, res, next) => {
 module.exports = {
     verifyJWT,
     looseVerification,
-    getUserFromToken
+    getUserFromToken,
+    adminCheck
 } 

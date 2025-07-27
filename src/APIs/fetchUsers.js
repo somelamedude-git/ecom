@@ -12,7 +12,7 @@ const fetchUsers = asyncHandler(async (req, res) => {
     ]
 
     if(type && !allowedTypes.includes(type))
-        throw new ApiError(400, "Type nit allowed")
+        throw new ApiError(400, "Type not allowed")
 
     let usertype = BaseUser
 
