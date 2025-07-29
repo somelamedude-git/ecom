@@ -11,7 +11,7 @@ const reviewSchema = new mongoose.Schema({
         ref: "Product"
     },
 
-    user_reviewd:{
+    user_reviewed:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Buyer",
         unique: true
