@@ -17,7 +17,7 @@ const { errorHandler } = require('./utils/errorHandler');
 const orderRoutes = require('./routes/orders.routes');
 const paymentRoutes = require('./routes/paymentVerification');
 const sellerRoutes = require('./routes/seller.routes');
-const productRoutes = require('./routes/product.routes');
+const productRoutes = require('./routes/products.router');
 
 const app = express();
 

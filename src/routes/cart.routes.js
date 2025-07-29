@@ -12,4 +12,5 @@ router.patch('/decrement/:product_id', verifyJWT, changeQuantUtil, decrementItem
 router.delete('/deleteItem/:product_id', verifyJWT, deleteItem);
 router.post('/addItem/:product_id', verifyJWT, addToBag);
 
+
 module.exports = router;
