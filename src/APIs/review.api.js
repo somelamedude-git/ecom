@@ -36,6 +36,19 @@ const addReview = asyncHandler(async(req, res)=>{
     })
 });
 
+
+const fetchReviews = asyncHandler(async(req, res)=>{
+    const { product_id } = req.params;
+    const product = await Product.findById(product_id).select("reviews").populate("reviews"); // array of schema
+    const product_reviews = product.reviews;
+    if(!product) throw new ApiError(404, 'Product not found');
+    res.status(200).json({
+        success: true,
+        reviews: product_reviews
+    });
+});
+
 module.exports = {
-    addReview
+    addReview,
+    fetchReviews
 }
