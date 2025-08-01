@@ -3,6 +3,7 @@ const { ApiError } = require('../utils/ApiError');
 const { Buyer } = require('../models/user.models.js');
 
 const fetchLength = asyncHandler(async(req, res)=>{
+console.log('fetchLength');
     if(!req.user){
        return  res.status(200).json({
             wish_length:0,

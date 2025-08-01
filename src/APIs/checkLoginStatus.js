@@ -3,8 +3,15 @@ const { ApiError } = require('../utils/ApiError');
 const { getUserFromToken } = require('../middlewares/auth.middleware.js');
 
 const isLoggedIn = asyncHandler(async(req,res)=>{
+    console.log('isLoggedIn');
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
+    if(token){
+        console.log('token found');
+    }
     const user =await getUserFromToken(token);
+    if(user){
+        console.log('user found');
+    }
 
     const loggedIn = !!user;
 

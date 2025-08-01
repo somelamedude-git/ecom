@@ -53,11 +53,11 @@ const createUser = asyncHandler(async (req, res) => {
     res
         .cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: true,
+            secure: false
         })
         .cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: true,
+            secure: false
         })
         .status(201)
         .json({

@@ -6,6 +6,7 @@ const { BaseUser, Admin } = require('../models/user.models');
 
 
 const getUserFromToken = asyncHandler(async(token)=>{
+    console.log('getUserFromToken');
     if(!token) return null;
 
     let decoded;
@@ -28,6 +29,7 @@ const getUserFromToken = asyncHandler(async(token)=>{
        )
 
 const verifyJWT = asyncHandler(async(req, res)=>{
+    console.log('verifyJWT');
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
     const user = await getUserFromToken(token);
 
@@ -39,6 +41,7 @@ const verifyJWT = asyncHandler(async(req, res)=>{
 })
 
 const looseVerification = asyncHandler(async(req, res, next)=>{
+    console.log('looseVerification');
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
     const user = await getUserFromToken(token);
     req.user = user;
