@@ -4,14 +4,13 @@ const jwt = require('jsonwebtoken');
 const { ApiError } = require('../utils/ApiError');
 const { generateAccessAndRefreshTokens } = require('../utils/tokens.utils');
 const axios = require('axios');
-const { verifyEmail } = require('../utils/verification.util');
 require('dotenv').config({ path: '../.env' });
 const { sendEmail } = require('../utils/verification.util');
 
 const createUser = asyncHandler(async (req, res) => {
-     const { kind, username, email, password, name, age } = req.body;
+     const { kind, username, email, password, name, age, phone_number } = req.body;
 
-    if (!kind || !username || !email || !password || !name || !age) {
+    if (!kind || !username || !email || !password || !name || !age || !phone_number) {
         console.log('not all fields added');
         throw new ApiError(400, "All fields are required");
     }
@@ -33,6 +32,7 @@ const createUser = asyncHandler(async (req, res) => {
         password,
         name,
         age,
+        phone_number,
         isVerified: false,
     });
 
