@@ -22,7 +22,7 @@ const productRoutes = require('./routes/products.router');
 const app = express();
 
 app.use(cors({ //Yet to render the frontend, so origin is denoted through a placeholder for once
-    origin: 'http://localhost:3002',
+    origin: process.env.CORS_ORIGIN,
     credentials:true,
     preflightContinue: false
 }));

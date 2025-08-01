@@ -4,6 +4,7 @@ const { verifyEmail } = require('../utils/verification.util');
 const router = express.Router();
 
 router.get('/auth/verifyEmail/:token', verifyEmail);
+
 //router.get('/analytics/stats', async (req, res) => {
   //  try {
     //    const stats = await getStats()

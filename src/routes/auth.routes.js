@@ -7,10 +7,10 @@ const { isLoggedIn } = require('../APIs/checkLoginStatus');
 const { fetchLength } = require('../APIs/cartAndWishCount'); // Who wants to fetch the whole data when all i require are these babies? #GoldDigger
 const router = express.Router();
 
-// router.get('/auth/google', (req, res) => {
-//   const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=profile email`;
-//   res.redirect(url);
-// });
+router.get('/auth/google', (req, res) => {
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}&response_type=code&scope=profile email`;
+  res.redirect(url);
+});
 
 router.post('/login', userControllers.manualLogin); // For manual login, yahi use krna hai
 
@@ -21,8 +21,6 @@ router.get('/getCWL', looseVerification, fetchLength); //CWL: Cart Wish Length ,
 router.get('/profile', verifyJWT, fetchUserData); 
 router.patch('/editProfile', verifyJWT, userControllers.updateUser);
 // router.delete('/delete_account/:id', verifyJWT, userControllers.deleteUser);
-
-// router.get('/verify-email/:id', userControllers.verifyUser);
 
 // router.patch('/ban_user/:id', verifyJWT, userControllers.banUser);
 
