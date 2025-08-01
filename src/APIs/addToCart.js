@@ -5,7 +5,7 @@ const { Product } = require('../models/product.models');
 
 const addToBag = asyncHandler(async (req, res) => {
     const user_id = req.user._id;
-    const user_ = await Buyer.findById(user_id);
+    const user_ = await Buyer.findById(user_id.toString());
     if (!user_) throw new ApiError(404, 'User not found');
 
     const { product_id } = req.params;
@@ -53,7 +53,7 @@ const incrementItem = asyncHandler(async(req, res)=>{
     const alreadyInCart = req.alreadyInCart;
     const stock = req.stock;
     const user_id = req.user._id;
-    const user = await Buyer.findById(user_id);
+    const user = await Buyer.findById(user_id.toString());
 
     if(alreadyInCart.quantity+1>stock){
         throw new ApiError(400, 'This product is not available in the quantity you requested');
@@ -69,7 +69,7 @@ const decrementItem = asyncHandler(async(req, res)=>{
     const alreadyInCart = req.alreadyInCart;
     const user_id = req.user._id;
 
-    const user = await Buyer.findById(user_id);
+    const user = await Buyer.findById(user_id.toString());
 
     if(alreadyInCart.quantity-1 <0){
         throw new ApiError(409, 'Item quantity cannot be negative');

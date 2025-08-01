@@ -6,4 +6,12 @@ const asyncHandler = (func)=> async (req, res, next)=> {
     }
 }
 
-module.exports = { asyncHandler };
+async function asyncWrapper(fn) {
+  try {
+    return await fn();
+  } catch (error) {
+    return { error };
+  }
+}
+
+module.exports = { asyncHandler, asyncWrapper };

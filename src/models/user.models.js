@@ -75,7 +75,16 @@ const BaseUserSchema = new mongoose.Schema({
     type: String,
     required: true
   }
-}, options);
+}, options);BaseUserSchema.methods.generateAccessToken = function(){
+ return jwt.sign({
+    _id:this._id,
+    email:this.email,
+    role: this.kind
+  }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+  })
+};
+
 
 BaseUserSchema.pre("save", async function(next){
   if(this.googleLogin) return next();
@@ -96,15 +105,6 @@ BaseUserSchema.methods.isPasswordCorrect = async function(password){
   return await bcrypt.compare(password, this.password);
 };
 
-BaseUserSchema.methods.generateAccessToken = function(){
- return jwt.sign({
-    _id:this._id,
-    email:this.email,
-    role: this.kind
-  }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: process.env.ACCESS_TOKEN_EXPIRY
-  })
-};
 
 BaseUserSchema.methods.generateRefreshAccessToken = function(){
  return jwt.sign({

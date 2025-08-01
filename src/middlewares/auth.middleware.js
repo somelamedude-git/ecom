@@ -3,30 +3,34 @@ const { ApiError } = require('../utils/ApiError');
 const jwt = require('jsonwebtoken');
 require('dotenv').config({ path: '../.env' });
 const { BaseUser, Admin } = require('../models/user.models');
+const mongoose = require('mongoose');
 
 
-const getUserFromToken = asyncHandler(async(token)=>{
+const getUserFromToken = async(token)=>{
     console.log('getUserFromToken');
-    if(!token) return null;
+    if(!token) {console.log('token not found'); return null;}
 
     let decoded;
 
     try{
         
        decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+       console.log(decoded);
 
        }catch(error){
+        console.log('inside error');
            return null;
           }
 
-     const user = await BaseUser.findById(decoded?._id).select("-password -refreshToken");
-     if(!user) return null;
+    const user = await BaseUser.findById(decoded._id.toString()).select('-password -refreshToken');
 
-     if(!user.kind !== 'Admin' || user.isBan){
-         return null;}
+     if(!user) {console.log('in guft, user not found'); return null;}
+
+     if(user.isBan){
+        console.log('guft, user kind not found'); return null;}
 
       return user;}
-       )
+       
 
 const verifyJWT = asyncHandler(async(req, res)=>{
     console.log('verifyJWT');
@@ -44,6 +48,7 @@ const looseVerification = asyncHandler(async(req, res, next)=>{
     console.log('looseVerification');
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
     const user = await getUserFromToken(token);
+    if(!user) console.log('in looseVerif, user not found here as well');
     req.user = user;
     next();
 });

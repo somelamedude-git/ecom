@@ -18,6 +18,7 @@ const orderRoutes = require('./routes/orders.routes');
 const paymentRoutes = require('./routes/paymentVerification');
 const sellerRoutes = require('./routes/seller.routes');
 const productRoutes = require('./routes/products.router');
+const path = require('path');
 
 const app = express();
 
@@ -26,6 +27,8 @@ app.use(cors({ //Yet to render the frontend, so origin is denoted through a plac
     credentials:true,
     preflightContinue: false
 }));
+
+app.use(express.static(path.join(__dirname, "../../ecom_connected/ecom/build")));
 
 app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
 
