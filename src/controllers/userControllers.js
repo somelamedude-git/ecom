@@ -127,18 +127,31 @@ const manualLogin = asyncHandler(async (req, res)=>{
                            
 const updateUser = asyncHandler(async (req, res) => {
         const user_id = req.user._id;
-        let user = await Buyer.findById(user_id);
+        let user = await Buyer.findById(user_id.toString());
         const allowedFields = ['email', 'name', 'phone', 'style', 'age'];
-        if(!user)
+        if(!user){
+            console.log('User not found');
             throw new ApiError(404, "User not found");
-
-        const { formData } = req.body;
-        if (!formData || typeof formData !== 'object') throw new ApiError(400, "Invalid form data");
-        for(const key of Object.keys(formData)){
-            if(allowedFields.includes(key)){
-                user[key] = formData[key];
-            }
         }
+
+        console.log('user found');
+
+        const formData  = req.body;
+        if (!formData || typeof formData !== 'object'){
+            console.log('Wrong formData');
+            throw new ApiError(400, "Invalid form data");
+        }
+        for (const key of Object.keys(formData)) {
+            console.log('entered key block');
+    if (allowedFields.includes(key)) {
+        console.log('entered allowed fields');
+        if (formData[key] !== '' && formData[key] !== null && formData[key] !== undefined) {
+            user[key] = formData[key];
+            console.log(`Updating ${key}: ${user[key]} -> ${formData[key]}`);
+        }
+    }
+}
+console.log('going to save');
         await user.save()
         return res.status(200).json({status: true, message: "Changes made successfully"});
 });

@@ -186,7 +186,11 @@ const BuyerSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Review"
     }
-  ]
+  ],
+
+  style:{
+    type: String
+  }
 }, options);
 
 BuyerSchema.pre('save', function(next){

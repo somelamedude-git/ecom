@@ -32,7 +32,7 @@ const getUserFromToken = async(token)=>{
       return user;}
        
 
-const verifyJWT = asyncHandler(async(req, res)=>{
+const verifyJWT = asyncHandler(async(req, res, next)=>{
     console.log('verifyJWT');
     const token = req.cookies?.accessToken || req.header("Authorization")?.replace("Bearer ", "");
     const user = await getUserFromToken(token);

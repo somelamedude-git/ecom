@@ -7,7 +7,7 @@ const fetchUserData = asyncHandler(async (req, res) => {
         throw new ApiError(401, 'Unauthorized');
     }
 
-    const user = await BaseUser.findById(req.user._id).select('-password').lean();
+    const user = await BaseUser.findById(req.user._id.toString()).select('-password').lean();
     if (!user) {
         throw new ApiError(404, 'User not found');
     }
