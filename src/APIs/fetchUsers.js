@@ -1,9 +1,16 @@
 const { Buyer, BaseUser, Seller, Admin} = require('../models/user.models')
 const { ApiError } = require('../utils/ApiError')
-const { asyncHandler } = require('../utils/asyncHandler')
+const { asyncHandler } = require('../utils/asyncHandler');
+const { Admin } = require('../models/user.models');
 
-const fetchUsers = asyncHandler(async (req, res) => {
-    const {type, status, page = 1, limit = 10} = req.query
+const fetchUsers = asyncHandler(async (req, res) => { // Adding authentication to this
+    const {type, status, page = 1, limit = 10} = req.query;
+    const user_id = req.user._id;
+    const admin = await Admin.findById(user_id.toString()).select('');
+    if(!admin){
+        throw new ApiError(400, 'Unauthorized Access');
+    }
+
 
     const allowedTypes = [
         'buyers',
