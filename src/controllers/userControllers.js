@@ -128,7 +128,7 @@ const manualLogin = asyncHandler(async (req, res)=>{
 const updateUser = asyncHandler(async (req, res) => {
         const user_id = req.user._id;
         let user = await Buyer.findById(user_id.toString());
-        const allowedFields = ['email', 'name', 'phone', 'style', 'age'];
+        const allowedFields = ['email', 'name', 'phone_number', 'style', 'age'];
         if(!user){
             console.log('User not found');
             throw new ApiError(404, "User not found");
@@ -145,6 +145,7 @@ const updateUser = asyncHandler(async (req, res) => {
             console.log('entered key block');
     if (allowedFields.includes(key)) {
         console.log('entered allowed fields');
+        console.log(key, formData[key]);
         if (formData[key] !== '' && formData[key] !== null && formData[key] !== undefined) {
             user[key] = formData[key];
             console.log(`Updating ${key}: ${user[key]} -> ${formData[key]}`);
