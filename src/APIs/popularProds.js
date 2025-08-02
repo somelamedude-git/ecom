@@ -3,16 +3,25 @@ const { ApiError } = require('../utils/ApiError');
 const { Product } = require('../models/product.models');
 
 
-const showPopular = asyncHandler(async(req, res)=>{
-    const limit = 30; // We show only 30 top products
-    const products = await Product.find().limit(limit).sort({popularity:-1});
-    if (products.length === 0) throw new ApiError(404, 'No popular products found');
-    return res.status(200).json({
-        success:true,
-        products
-    })
-});
+const showProducts = asyncHandler(async(req,res)=>{
+    let { limit = 10, page = 0} = req.query;
+    limit = Number(limit);
+    page = Number(page);
 
+    const products = await Product.find().skip(limit*page).limit(limit);
+    const totalCount = await Product.countDocuments();
+
+    const num_pages = Math.ceil(totalCount/limit);
+
+    return res.status(200).json({
+        success: true,
+        products,
+        totalCount,
+        num_pages,
+        page,
+        limit
+    })
+})
 module.exports = {
-    showPopular
+    showProducts
 }
