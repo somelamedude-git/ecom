@@ -11,6 +11,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@faker-js/faker": "^9.9.0",
     "@google-analytics/data": "^5.2.0",
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
@@ -35,7 +36,7 @@
     "joi": "^17.13.3",
     "jsdom": "^26.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.5",
+    "mongoose": "^8.17.0",
     "mongoose-aggregate-paginate-v2": "^1.1.4",
     "multer": "^2.0.1",
     "natural": "^8.1.0",
