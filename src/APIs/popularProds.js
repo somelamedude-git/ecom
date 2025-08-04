@@ -4,18 +4,34 @@ const { Product } = require('../models/product.models');
 
 
 const showProducts = asyncHandler(async(req,res)=>{
-    let { limit = 10, page = 0} = req.query;
+    let { limit = 10, page = 0, sortBy} = req.query;
     limit = Number(limit);
     page = Number(page);
 
     const products = await Product.find().skip(limit*page).limit(limit);
-    const totalCount = await Product.countDocuments();
 
+    const sortedProducts = [...products].sort((a, b) => {
+    switch (sortBy) {
+      case 'popularity':
+        return b.popularity - a.popularity;
+      case 'price-low':
+        return a.price - b.price;
+      case 'price-high':
+        return b.price - a.price;
+      case 'rating':
+        return calculateAverageRating(b.reviews) - calculateAverageRating(a.reviews);
+      case 'views':
+        return b.views - a.views;
+      default:
+        return 0;
+    }
+  });
+    const totalCount = await Product.countDocuments();
     const num_pages = Math.ceil(totalCount/limit);
 
     return res.status(200).json({
         success: true,
-        products,
+        sortedProducts,
         totalCount,
         num_pages,
         page,
