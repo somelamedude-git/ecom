@@ -5,7 +5,7 @@ const { ApiError } = require('../utils/ApiError');
 const { Tag } = require('../models/tags.model');
 const { initializeRecommendMask } = require('./defaultRecom');
 
-const fetchRecomProds = asyncHandler(async(req, res)=>{
+const fetchRecomProds = asyncHandler(async(req, res)=>{ // idiot
     const user_id = req.user._id;
     const user = await Buyer.findById(user_id.toString());
 
@@ -17,12 +17,15 @@ const fetchRecomProds = asyncHandler(async(req, res)=>{
     const user_mask = user.recommend_masking;
     const length_mask = user_mask.length;
 
-    let tags_array = [];
+    let tags_array = []; // The tags that should be fetched for the user
 
 for(let i = 0; i<length_mask; i++){
-    
-}
+    let val = 1<<i;
 
+    if(val & user_mask){
+        tags_array.push(i); // These are the tag indexes we need, I'm writing this to keep track of my own code
+    }
+}
 });
 
 module.exports = {

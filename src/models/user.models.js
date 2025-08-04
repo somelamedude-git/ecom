@@ -74,7 +74,8 @@ const BaseUserSchema = new mongoose.Schema({
   phone_number:{
     type: String,
     required: true
-  }
+  },
+  
 }, options);BaseUserSchema.methods.generateAccessToken = function(){
  return jwt.sign({
     _id:this._id,
@@ -190,6 +191,11 @@ const BuyerSchema = new mongoose.Schema({
 
   style:{
     type: String
+  },
+
+  tag_indexes:{
+    type: Array,
+    default: []
   }
 }, options);
 
@@ -198,6 +204,22 @@ BuyerSchema.pre('save', function(next){
   this.ageBucket*=10; //We take a margin of 10, because im lazy and 26 is basically 20 ;)
   next();
 });
+
+BuyerSchema.pre('save', function(next){
+try{
+    const user_mask = this.recommend_masking;
+  const length_user_mask = user_mask.length;
+
+  for(let i =0; i<length_user_mask; i++){
+    let value = 1<<i;
+    if(value & user_mask){
+      this.tag_indexes.push(i);
+    }
+  }
+} catch(error){
+  next();
+}
+})
 
 BuyerSchema.index({"ageBucket":1});
 
