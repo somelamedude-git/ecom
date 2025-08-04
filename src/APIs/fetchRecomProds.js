@@ -3,9 +3,9 @@ const { Buyer } = require('../models/user.models');
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
 const { Tag } = require('../models/tags.model');
-const { initializeRecommendMask } = require('./defaultRecom');
+const { countSetBits } = require('./defaultRecom')
 
-const fetchRecomProds = asyncHandler(async(req, res)=>{ // idiot
+const fetchRecomProds = asyncHandler(async(req, res)=>{ // idiot, this is just for fetching the products
     const user_id = req.user._id;
     const user = await Buyer.findById(user_id.toString());
 
@@ -13,19 +13,20 @@ const fetchRecomProds = asyncHandler(async(req, res)=>{ // idiot
         console.log('User not found');
         throw new ApiError(404, 'User not found');
     }
-    await initializeRecommendMask(user);
-    const user_mask = user.recommend_masking;
-    const length_mask = user_mask.length;
 
-    let tags_array = []; // The tags that should be fetched for the user
+    // We can check the similarity by product masking, product bitMask is a string
 
-for(let i = 0; i<length_mask; i++){
-    let val = 1<<i;
+    const products_ = await Product.find().select("bitmask _id").lean(); // No point in refetching, jo krna hai abhi karo
+    const user_choice_bitmask = BigInt(user.recommend_masking);
 
-    if(val & user_mask){
-        tags_array.push(i); // These are the tag indexes we need, I'm writing this to keep track of my own code
-    }
-}
+    const informative_products = products_.map(product=>{
+        const bitmask_of_product = BigInt(product.bitmask);
+        const union = bitmask_of_product | user_choice_bitmask;
+        const intersection = ~(bitmask_of_product ^ user_choice_bitmask);
+
+    })
+
+
 });
 
 module.exports = {

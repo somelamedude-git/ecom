@@ -79,5 +79,6 @@ async function updateMask(user) {
 
 module.exports = {
   initializeRecommendMask,
-  updateMask
+  updateMask,
+  countSetBits
 };
