@@ -5,7 +5,7 @@ const { Seller } = require('../models/user.models')
 
 const fetchSingleProduct = asyncHandler(async(req, res)=>{
     const { product_id } = req.params;
-    const product = await Product.findByIdAndUpdate(product_id,
+    const product = await Product.findByIdAndUpdate(product_id.toString(),
         { $inc: {views: 1}}, { new: true }
     ).select("description name views productImages price stock").lean();
 
@@ -25,10 +25,11 @@ const fetchSingleProduct = asyncHandler(async(req, res)=>{
 
 const fetchSellerProducts = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
-    const user = await Seller.findById(user_id).select("selling_products").populate("selling_products.product").lean(); // We are only reading, no need for shmancy mongoose <3
+    const user = await Seller.findById(user_id.toString()).select("selling_products").populate("selling_products.product").lean(); // We are only reading, no need for shmancy mongoose <3
     let { page = 1, limit=10, sortBy="newest", search=""} = req.query;
-    search = search.toLowerCase();
-    sortBy = sortBy.toLowerCase();
+    console.log(req.query);
+    search = (search || "").toString().toLowerCase();
+    sortBy = (sortBy || "").toString().toLowerCase();
      const pageNum = Number(page);
     const limitNum = Number(limit);
     if(!user) throw new ApiError(404, 'User not found');
@@ -80,11 +81,11 @@ const fetchSellerProducts = asyncHandler(async(req, res)=>{
 
 const productAnalysis = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
-    const user = await Seller.findById(user_id).select("_id");
+    const user = await Seller.findById(user_id.toString()).select("_id");
     if(!user) throw new ApiError(404, 'User not found');
     const { product_id } = req.params;
 
-    const product = await Product.findById(product_id).select("owner views times_ordered added_to_cart average_age_customers times_returned name price").lean();
+    const product = await Product.findById(product_id.toString()).select("owner views times_ordered added_to_cart average_age_customers times_returned name price").lean();
     if(product.owner.toString() !=user_id.toString()){
         throw new ApiError(401, 'Unauthorized Access');
     }
