@@ -20,6 +20,7 @@ router.post('/register', userControllers.createUser); // A welcome mattress for 
 router.get('/getCWL', looseVerification, fetchLength); //CWL: Cart Wish Length , enjoy my acronyms please
 router.get('/profile', verifyJWT, fetchUserData); 
 router.patch('/editProfile', verifyJWT, userControllers.updateUser);
+router.post('/logout', verifyJWT, userControllers.logoutUser);
 // router.delete('/delete_account/:id', verifyJWT, userControllers.deleteUser);
 
 // router.patch('/ban_user/:id', verifyJWT, userControllers.banUser);
