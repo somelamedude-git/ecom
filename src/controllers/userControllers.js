@@ -220,7 +220,7 @@ const unbanUser = asyncHandler(async(req, res) => {
 
 const logoutUser = asyncHandler(async(req, res)=>{
     const user_id = req.user._id; // This will obviously be there only when the user is logged in, as its from verifyJWT middleware which first verifies you are logged in
-    const user = await BaseUser.findById(user_id);
+    const user = await BaseUser.findById(user_id.toString());
 
     if(!user){
         throw new ApiError(401, 'You are already logged out');
