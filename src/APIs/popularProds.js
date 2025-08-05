@@ -36,8 +36,8 @@ const showProducts = asyncHandler(async(req,res)=>{
         num_pages,
         page,
         limit
-    })
-})
+    });
+});
 module.exports = {
     showProducts
 }
