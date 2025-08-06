@@ -7,6 +7,8 @@ const fetchSalesMap = asyncHandler(async(req, res)=>{ // Here we return a map in
     const seller = await Seller.findById(seller_id.toString()).select("order_quo").populate("order_quo").lean();
 
     if(!seller) throw new ApiError(404, 'User not found');
+    const seller_timeStamp = seller_id.getTimestamp();
+    const year_joined = seller_timeStamp.getFullYear();
 
     const salesByDate = {};
 
@@ -22,7 +24,8 @@ const fetchSalesMap = asyncHandler(async(req, res)=>{ // Here we return a map in
 
     res.status(200).json({
         success:true,
-        salesByDate
+        salesByDate,
+        year_joined
     });
 });
 
