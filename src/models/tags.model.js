@@ -18,7 +18,7 @@ const tagSchema = new mongoose.Schema({
         type:Number,
         default:0
     }
-})
+});
 
 const Tag = mongoose.model('Tag', tagSchema);
 
