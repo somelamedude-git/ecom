@@ -1,5 +1,6 @@
 const express = require('express');
 const { verifyEmail } = require('../utils/verification.util');
+const { fetchTagsAndCategories } = require('../APIs/fetchCT');
 // const {getStats} = require('../utils/analytics')
 const router = express.Router();
 
@@ -14,5 +15,7 @@ router.get('/auth/verifyEmail/:token', verifyEmail);
     //    res.status(500).json({status: false, message: "Internal server error"})
    // }
 //})
+
+router.get('/fetchCT', fetchTagsAndCategories);
 
 module.exports = router;

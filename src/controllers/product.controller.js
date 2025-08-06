@@ -13,8 +13,10 @@ const addProduct = asyncHandler(async (req, res) => {
 
   try {
     const userId = req.user._id;
-    const { description, name, price, stock, status, category } = req.body; // convert the stock into a map in the frontend
-    const allowed_categories = ["Men's", "Women's", "Footwear", "Accessories", "Makeup"];
+    const { description, name, price,  status, category } = req.body; // convert the stock into a map in the frontend
+    const stock = JSON.parse(req.body.stock);
+    const categories = await Category.find().select("name");
+    const allowed_categories = categories.map(cat=>cat.name);
 
     if (!allowed_categories.includes(category)) {
       throw new ApiError(400, 'The category does not exist');
@@ -41,18 +43,15 @@ const addProduct = asyncHandler(async (req, res) => {
       throw new ApiError(400, "No images provided");
     }
 
-    const productImages = [];
-    for (const file of req.files) {
-      const localPath = file.path;
-      const image_url = await uploadOnCloudinary(localPath);
-      if (!image_url) throw new ApiError(500, "Image Upload Failed");
-      productImages.push(image_url);
-    }
+    const productImage = req.files;
+    const localPath = file.path;
+    const image_url = await uploadOnCloudinary(localPath);
+    if (!image_url) throw new ApiError(500, "Image Upload Failed");
 
     const newProduct = await Product.create([{
       description,
       name,
-      productImages,
+      productImages: productImage,
       price,
       stock,
       status,
