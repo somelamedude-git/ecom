@@ -4,53 +4,93 @@ const { Seller } = require("../models/user.models");
 const { ApiError } = require("../utils/ApiError");
 const { uploadOnCloudinary } = require("../utils/cloudinary");
 const { Tag } = require('../models/tags.model');
+const { Category } = require('../models/category.models');
+const mongoose = require('mongoose');
 
-const addProduct = asyncHandler(async(req, res) => {
+const addProduct = asyncHandler(async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
     const userId = req.user._id;
-    const { description, name, price, stock, status, category } = req.body;
-    let tagNames = req.body.tagNames || [];
+    const { description, name, price, stock, status, category } = req.body; // convert the stock into a map in the frontend
+    const allowed_categories = ["Men's", "Women's", "Footwear", "Accessories", "Makeup"];
 
-    const Tags = await Tag.find({ name: { $in: tagNames } });
-    if (Tags.length !== tagNames.length) {
-        throw new ApiError(400, 'Some tags are invalid');
+    if (!allowed_categories.includes(category)) {
+      throw new ApiError(400, 'The category does not exist');
     }
-    const tagIndexes = Tags.map(tag => tag.index);
+
+    const categoryDoc = await Category.findOne({ name: category }).session(session);
+    if (!categoryDoc) throw new ApiError(404, "Category document not found");
+
+    const tagNames = req.body.tagNames || [];
+    const tags = await Tag.find({ name: { $in: tagNames } }).session(session);
+    if (tags.length !== tagNames.length) {
+      throw new ApiError(400, 'Some tags are invalid');
+    }
+
+    const tagIndexes = tags.map(tag => tag.index);
+
+    let bitmask = 0;
+    for(const index of tagIndexes){
+        let curr = 1<<index;
+        bitmask = bitmask | curr;
+    }
+
+    if (!req.files || req.files.length === 0) {
+      throw new ApiError(400, "No images provided");
+    }
 
     const productImages = [];
     for (const file of req.files) {
-        const localPath = file.path;
-        const image_url = await uploadOnCloudinary(localPath);
-        if (!image_url) throw new ApiError(500, "Image Upload Failed");
-        productImages.push(image_url);
+      const localPath = file.path;
+      const image_url = await uploadOnCloudinary(localPath);
+      if (!image_url) throw new ApiError(500, "Image Upload Failed");
+      productImages.push(image_url);
     }
 
-    const newProduct = await Product.create({
-        description,
-        name,
-        productImages,
-        price,
-        stock,
-        status,
-        category,
-        tags: tagIndexes,
-        owner: userId  
-    });
+    const newProduct = await Product.create([{
+      description,
+      name,
+      productImages,
+      price,
+      stock,
+      status,
+      category,
+      tags: tagIndexes,
+      owner: userId,
+      bitmask: bitmask.toString()
+    }], { session });
 
-    await Seller.findByIdAndUpdate(userId,
-        { $push: { selling_products: newProduct._id } }, 
-        { new: true }
+    await Seller.findByIdAndUpdate(
+      userId.toString(),
+      { $push: { selling_products: newProduct[0]._id } },
+      { new: true, session }
     );
 
+    categoryDoc.products.push(newProduct[0]._id);
+    await categoryDoc.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
     res.status(201).send({
-        success: true,
-        message: "Product created successfully",
-        data: {
-            _id: newProduct._id,
-            name: newProduct.name,
-            stock: newProduct.stock
-        }
+      success: true,
+      message: "Product created successfully",
+      data: {
+        _id: newProduct[0]._id,
+        name: newProduct[0].name,
+        stock: newProduct[0].stock
+      }
     });
+
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw new ApiError(500, `Failed to create product: ${error.message}`);
+  }
 });
+
 
 const updateProductDetails  = asyncHandler(async(req, res)=>{
     const userId = req.user._id;

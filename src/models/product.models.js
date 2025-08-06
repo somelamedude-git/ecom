@@ -52,8 +52,7 @@ owner: {
 },
 
 bitmask:{
-  type:String,
-  required:true 
+  type:String
 },
 
 stock:{
