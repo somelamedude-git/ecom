@@ -15,12 +15,6 @@ const addProduct = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     const { description, name, price,  status, category } = req.body; // convert the stock into a map in the frontend
     const stock = JSON.parse(req.body.stock);
-    const categories = await Category.find().select("name");
-    const allowed_categories = categories.map(cat=>cat.name);
-
-    if (!allowed_categories.includes(category)) {
-      throw new ApiError(400, 'The category does not exist');
-    }
 
     const categoryDoc = await Category.findOne({ name: category }).session(session);
     if (!categoryDoc) throw new ApiError(404, "Category document not found");
