@@ -13,13 +13,10 @@ const tagSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-
-    usageCount:{
-        type:Number,
-        default:0
-    }
 });
 
 const Tag = mongoose.model('Tag', tagSchema);
 
-module.exports = Tag;
+module.exports = {
+    Tag
+}
