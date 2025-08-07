@@ -39,19 +39,18 @@ const addProduct = asyncHandler(async (req, res) => {
         bitmask = bitmask | curr;
     }
 
-    if (!req.files || req.files.length === 0) {
+    if (!req.file) {
       throw new ApiError(400, "No images provided");
     }
 
-    const productImage = req.files;
-    const localPath = file.path;
+    const localPath = req.file.path;
     const image_url = await uploadOnCloudinary(localPath);
     if (!image_url) throw new ApiError(500, "Image Upload Failed");
 
     const newProduct = await Product.create([{
       description,
       name,
-      productImages: productImage,
+      productImages: image_url,
       price,
       stock,
       status,
