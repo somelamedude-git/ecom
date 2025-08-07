@@ -19,8 +19,20 @@ const addProduct = asyncHandler(async (req, res) => {
     const categoryDoc = await Category.findOne({ name: category }).session(session);
     if (!categoryDoc) throw new ApiError(404, "Category document not found");
 
-    const tagNames = req.body.tagNames || [];
+    let tagNames = req.body.tagNames || [];
+    if (typeof tagNames === 'string') {
+  try {
+    tagNames = JSON.parse(tagNames);
+  } catch (e) {
+    throw new ApiError(400, 'Invalid tag format');
+  }
+}
+
+console.log(typeof tagNames);
+    // tagNames = tagNames.map((tagName)=>tagName.trim().toLowerCase());
+    console.log(tagNames);
     const tags = await Tag.find({ name: { $in: tagNames } }).session(session);
+    console.log(tags);
     if (tags.length !== tagNames.length) {
       throw new ApiError(400, 'Some tags are invalid');
     }
@@ -48,7 +60,7 @@ const addProduct = asyncHandler(async (req, res) => {
       price,
       stock,
       status,
-      category,
+      category: categoryDoc._id,
       tags: tagIndexes,
       owner: userId,
       bitmask: bitmask.toString()
