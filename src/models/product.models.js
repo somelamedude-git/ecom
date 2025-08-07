@@ -3,6 +3,10 @@ const { createBitMask } = require('../utils/bitmask.util');
 
 const productSchema = new mongoose.Schema({
 
+  _id:{
+    type: mongoose.Schema.Types.ObjectId
+  },
+
   description: {
     type: String,
     required: true,

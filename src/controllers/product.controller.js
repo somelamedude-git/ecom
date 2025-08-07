@@ -27,9 +27,6 @@ const addProduct = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Invalid tag format');
   }
 }
-
-console.log(typeof tagNames);
-    // tagNames = tagNames.map((tagName)=>tagName.trim().toLowerCase());
     console.log(tagNames);
     const tags = await Tag.find({ name: { $in: tagNames } }).session(session);
     console.log(tags);
@@ -48,10 +45,10 @@ console.log(typeof tagNames);
     if (!req.file) {
       throw new ApiError(400, "No images provided");
     }
-
     const localPath = req.file.path;
-    const image_url = await uploadOnCloudinary(localPath);
-    if (!image_url) throw new ApiError(500, "Image Upload Failed");
+    const imageInfo = await uploadOnCloudinary(localPath);
+    if (!imageInfo || !imageInfo.secure_url) throw new ApiError(500, "Image Upload Failed");
+    const image_url = imageInfo.secure_url;
 
     const newProduct = await Product.create([{
       description,

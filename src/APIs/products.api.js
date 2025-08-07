@@ -25,17 +25,25 @@ const fetchSingleProduct = asyncHandler(async(req, res)=>{
 
 const fetchSellerProducts = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
-    const user = await Seller.findById(user_id.toString()).select("selling_products").populate("selling_products.product").lean(); // We are only reading, no need for shmancy mongoose <3
+    const user = await Seller.findById(user_id.toString())
+    .select("selling_products")
+    .populate("selling_products");
+
+    console.log("user's products array:");
+    console.log(user.selling_products);
+
     let { page = 1, limit=10, sortBy="newest", search=""} = req.query;
-    console.log(req.query);
     search = (search || "").toString().toLowerCase();
     sortBy = (sortBy || "").toString().toLowerCase();
      const pageNum = Number(page);
     const limitNum = Number(limit);
     if(!user) throw new ApiError(404, 'User not found');
     const numberOfProducts = user.selling_products.length;
+    console.log(numberOfProducts)
     const numberOfPages = Math.ceil(numberOfProducts/limitNum);
+    console.log(numberOfPages);
     let productsOfUser = user.selling_products.map((item)=>item.product);
+    console.log(productsOfUser);
     if(search!==""){
       productsOfUser = productsOfUser.filter(product =>
         product.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -65,12 +73,12 @@ const fetchSellerProducts = asyncHandler(async(req, res)=>{
       productsOfUser = productsOfUser.sort((a,b)=> b.views-a.views);
     }
 
-
-    // As the products here are in an array, i will do this:
     const start = (pageNum-1)*limitNum;
     const end = start + limitNum;
 
     productsOfUser = productsOfUser.slice(start, end);
+
+
 
     return res.status(200).json({
         success: true,

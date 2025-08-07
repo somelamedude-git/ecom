@@ -226,14 +226,12 @@ BuyerSchema.index({"ageBucket":1});
 const Buyer = BaseUser.discriminator('Buyer', BuyerSchema);
 
 const SellerSchema =  new mongoose.Schema({
+  
  selling_products: [
-  {
-    product: {
+     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product"
     }
-  }
-  
 ],
 
   store_information: {
