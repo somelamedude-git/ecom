@@ -3,10 +3,6 @@ const { createBitMask } = require('../utils/bitmask.util');
 
 const productSchema = new mongoose.Schema({
 
-  _id:{
-    type: mongoose.Schema.Types.ObjectId
-  },
-
   description: {
     type: String,
     required: true,
@@ -100,11 +96,5 @@ productSchema.pre('save', function(next) {
   }
   next();
 });
-
-productSchema.pre('save', function(next){
-  let mask = createBitMask(this.tags);
-  this.bitmask = mask;
-  next();
-})
 const Product = mongoose.model('Product', productSchema);
 module.exports = { Product };
