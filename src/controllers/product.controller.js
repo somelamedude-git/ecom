@@ -126,10 +126,41 @@ const updateProductDetails  = asyncHandler(async(req, res)=>{
             name:product.name
         }
     });
-})
+});
+
+const removeProduct = asyncHandler(async(req, res)=>{
+  const userId = req.user._id;
+  const {remove_product_id} = req.params;
+  console.log('id is present');
+  console.log(remove_product_id)
+
+  let user = await Seller.findById(userId.toString()).select("selling_products");
+  console.log(user);
+  if(!user) throw new ApiError(404, 'User not found');
+  console.log(user.selling_products)
+
+  user.selling_products = user.selling_products.filter(product_id => 
+    (product_id._id.toString() !== remove_product_id.toString()) || // A quirky product we have, don't mind this line
+    
+    (product_id.toString() !== remove_product_id.toString()));
+  console.log(user.selling_products);
+  await user.save();
+
+  const deletedProduct = await Product.findByIdAndDelete(remove_product_id.toString());
+  console.log(deletedProduct);
+  if(!deletedProduct){
+    throw new ApiError(404, 'Product not found');
+  }
+
+  res.status(200).json({
+    success: true,
+    message: 'Product deleted successfully'
+  })
+});
 
 
 module.exports = {
     addProduct,
-    updateProductDetails
+    updateProductDetails,
+    removeProduct
 }
