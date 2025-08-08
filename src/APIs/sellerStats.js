@@ -38,7 +38,7 @@ const sellerProfile = asyncHandler(async(req, res)=>{
         number_of_products,
         number_of_orders
     });
-})
+});
 
 module.exports = {
     sellerStats,
