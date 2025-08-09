@@ -4,8 +4,10 @@ const { ApiError } = require('../utils/ApiError');
 const { Product } = require('../models/product.models');
 
 const addToBag = asyncHandler(async (req, res) => {
+    console.log('Entered addToBag');
     const user_id = req.user._id;
     const user_ = await Buyer.findById(user_id.toString());
+    
     if (!user_) throw new ApiError(404, 'User not found');
 
     const { product_id } = req.params;
@@ -84,13 +86,13 @@ const decrementItem = asyncHandler(async(req, res)=>{
 
 const deleteItem = asyncHandler(async(req, res)=>{
     const { product_id } = req.params;
-    const product = await Product.findById(product_id);
+    const product = await Product.findById(product_id.toString());
     if(!product){
         throw new ApiError(404, 'Product not found');
     }
     const { size } = req.body;
     const user_id = req.user._id // we need to save the user's data so, well, yes
-    const user = await Buyer.findById(user_id);
+    const user = await Buyer.findById(user_id.toString());
 
     if(!user){
         throw new ApiError(404, 'User not found');
