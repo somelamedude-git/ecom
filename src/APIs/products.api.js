@@ -5,6 +5,7 @@ const { Seller } = require('../models/user.models')
 
 const fetchSingleProduct = asyncHandler(async(req, res)=>{
     const { product_id } = req.params;
+    console.log('Entered single product fetch');
     const product = await Product.findByIdAndUpdate(product_id.toString(),
         { $inc: {views: 1}}, { new: true }
     ).select("description name views productImages price stock").lean();
