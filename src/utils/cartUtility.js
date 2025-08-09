@@ -4,20 +4,23 @@ const { asyncHandler } = require('./asyncHandler');
 const { ApiError } = require('./ApiError');
 
 const changeQuantUtil = asyncHandler(async(req, res, next)=>{ // use as a middleware
+    console.log('entered changeQuantUtil');
     const user_id = req.user._id;
     const {product_id} = req.params;
     const {size} = req.body;
 
     const user = await Buyer.findById(user_id.toString());
     if(!user) throw new ApiError(404, 'User not found');
+    console.log('in quant util, user found');
 
     const cart = user.cart;
-    const alreadyInCart = cart.find(item=>
+    console.log(cart);
+    const itemIndex = cart.findIndex(item=>
         item.product.toString()===product_id.toString() &&
         item.size===size
     );
 
-    if(!alreadyInCart){
+    if(itemIndex===-1){
         throw new ApiError(400, "The product does not exist in your cart");
     }
 
@@ -25,10 +28,12 @@ const changeQuantUtil = asyncHandler(async(req, res, next)=>{ // use as a middle
     if(!product){
         throw new ApiError(404, 'The product you are requesting for does not exist');
     }
+    console.log(product);
 
     const stock = product.stock.get(size);
+    console.log(stock);
 
-   req.alreadyInCart = alreadyInCart;
+   req.itemIndex = itemIndex;
    req.stock = stock;
 
    next();

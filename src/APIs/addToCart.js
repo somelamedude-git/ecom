@@ -52,17 +52,22 @@ const addToBag = asyncHandler(async (req, res) => {
 });
 
 const incrementItem = asyncHandler(async(req, res)=>{
-    
-    const alreadyInCart = req.alreadyInCart;
+    console.log('Entered incrementItem')
+
+    const itemIndex = req.itemIndex;
     const stock = req.stock;
+    console.log(stock)
     const user_id = req.user._id;
     const user = await Buyer.findById(user_id.toString());
+    console.log(user);
 
-    if(alreadyInCart.quantity+1>stock){
+
+    if(user.cart[itemIndex].quantity+1>stock){
         throw new ApiError(400, 'This product is not available in the quantity you requested');
     }
-    alreadyInCart.quantity++;
+    user.cart[itemIndex].quantity++;
     await user.save();
+    console.log(user);
     res.status(200).json({
         success: true
     })
