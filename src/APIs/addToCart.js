@@ -52,6 +52,7 @@ const addToBag = asyncHandler(async (req, res) => {
 });
 
 const incrementItem = asyncHandler(async(req, res)=>{
+    
     const alreadyInCart = req.alreadyInCart;
     const stock = req.stock;
     const user_id = req.user._id;

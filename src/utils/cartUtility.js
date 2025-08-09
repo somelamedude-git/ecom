@@ -8,12 +8,12 @@ const changeQuantUtil = asyncHandler(async(req, res, next)=>{ // use as a middle
     const {product_id} = req.params;
     const {size} = req.body;
 
-    const user = await Buyer.findById(user_id);
+    const user = await Buyer.findById(user_id.toString());
     if(!user) throw new ApiError(404, 'User not found');
 
     const cart = user.cart;
     const alreadyInCart = cart.find(item=>
-        item.product.toString()===product_id &&
+        item.product.toString()===product_id.toString() &&
         item.size===size
     );
 
@@ -21,7 +21,7 @@ const changeQuantUtil = asyncHandler(async(req, res, next)=>{ // use as a middle
         throw new ApiError(400, "The product does not exist in your cart");
     }
 
-    const product = await Product.findById(product_id);
+    const product = await Product.findById(product_id.toString());
     if(!product){
         throw new ApiError(404, 'The product you are requesting for does not exist');
     }
