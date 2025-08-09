@@ -5,7 +5,7 @@ const { Product } = require('../models/product.models');
 
 const addToWishList = asyncHandler(async(req, res)=>{ 
     const user_id = req.user._id;
-    const user = await Buyer.findById(user_id).select('+wishlist');
+    const user = await Buyer.findById(user_id.toString()).select('+wishlist');
 
     if(!user){
         throw new ApiError(404, 'User not found');
@@ -13,7 +13,7 @@ const addToWishList = asyncHandler(async(req, res)=>{
     const { size } = req.body;
     const { product_id } = req.query;
 
-    const product = await Product.findById(product_id);
+    const product = await Product.findById(product_id.toString());
     if(!product){
         throw new ApiError(404, 'Product not found');
     }
