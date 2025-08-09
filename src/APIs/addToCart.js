@@ -74,15 +74,15 @@ const incrementItem = asyncHandler(async(req, res)=>{
 });
 
 const decrementItem = asyncHandler(async(req, res)=>{
-    const alreadyInCart = req.alreadyInCart;
+    const itemIndex = req.itemIndex;
     const user_id = req.user._id;
 
     const user = await Buyer.findById(user_id.toString());
 
-    if(alreadyInCart.quantity-1 <0){
+    if(user.cart[itemIndex].quantity-1 <0){
         throw new ApiError(409, 'Item quantity cannot be negative');
     }
-    alreadyInCart.quantity--;
+    user.cart[itemIndex].quantity--;
     await user.save();
 
     res.status(200).json({
