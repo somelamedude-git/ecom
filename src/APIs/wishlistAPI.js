@@ -41,14 +41,14 @@ const addToWishList = asyncHandler(async(req, res)=>{
 
 const removeFromWL = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
-    const user = await Buyer.findById(user_id).select('wishlist');
+    const user = await Buyer.findById(user_id.toString()).select('wishlist');
     
     if(!user) throw new ApiError(404, 'User not found');
     const { product_id } = req.params;
     const { size } = req.body;
 
     const itemInList = user.wishlist.find((item)=>
-    (item.product.toString()===product_id && item.size===size)
+    (item.product.toString()===product_id.toString() && item.size===size)
     )
 
     if(!itemInList){
@@ -56,7 +56,7 @@ const removeFromWL = asyncHandler(async(req, res)=>{
     }
 
     user.wishlist = user.wishlist.some((item)=>
-    !(item.product.toString()===product_id && item.size===size)
+    !(item.product.toString()===product_id.toString() && item.size===size)
     )
 
     await user.save();
@@ -69,7 +69,7 @@ const removeFromWL = asyncHandler(async(req, res)=>{
 
  const fetchWishList = asyncHandler(async (req, res) => {
     const user_id = req.user._id;
-    const user = await Buyer.findById(user_id).populate("wishlist.product");
+    const user = await Buyer.findById(user_id.toString()).populate("wishlist.product");
     if (!user) throw new ApiError(404, 'User not found');
 
     const return_array = user.wishlist.map(item => {
