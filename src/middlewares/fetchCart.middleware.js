@@ -13,7 +13,7 @@ const filterOutItems = asyncHandler(async (req, res, next) => {
     }
 
     console.log('User found, I am in cart middleware');
-    user.cart = (user.cart || []).filter(item => item.quantity > 0);
+    user.cart = (user.cart || []).filter(item => item.product && item.quantity > 0);
     await user.save();
 
     req.cart = user.cart; // full data jayega ismein 

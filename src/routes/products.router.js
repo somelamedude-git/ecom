@@ -4,7 +4,7 @@ const { verifyJWT } = require('../middlewares/auth.middleware');
 const { addProduct, updateProductDetails } = require('../controllers/product.controller');
 const { fetchReviews, addReview }  = require('../APIs/review.api');
 const { showProducts } = require('../APIs/popularProds');
-const { fetchSingleProduct } = require('../APIs/products.api');
+const { fetchSingleProduct, produc } = require('../APIs/products.api');
 
 router.post('/addProduct', verifyJWT, addProduct); // multer lagao
 router.post('/updateProduct', verifyJWT, updateProductDetails);

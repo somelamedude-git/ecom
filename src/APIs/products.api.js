@@ -105,12 +105,15 @@ const fetchSellerProducts = asyncHandler(async(req, res)=>{
 
 const productAnalysis = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
+    console.log('Entered product analysis');
     const user = await Seller.findById(user_id.toString()).select("_id");
+    console.log('pa', user);
     if(!user) throw new ApiError(404, 'User not found');
     const { product_id } = req.params;
 
     const product = await Product.findById(product_id.toString()).select("owner views times_ordered added_to_cart average_age_customers times_returned name price").lean();
     if(product.owner.toString() !=user_id.toString()){
+      console.log('no access pa')
         throw new ApiError(401, 'Unauthorized Access');
     }
 
