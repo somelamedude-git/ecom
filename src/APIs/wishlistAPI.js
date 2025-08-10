@@ -43,12 +43,15 @@ const addToWishList = asyncHandler(async(req, res)=>{
 });
 
 const removeFromWL = asyncHandler(async(req, res)=>{
+    console.log('Entered removeFromWL');
     const user_id = req.user._id;
     const user = await Buyer.findById(user_id.toString()).select('wishlist');
     
     if(!user) throw new ApiError(404, 'User not found');
     const { product_id } = req.params;
     const { size } = req.body;
+
+    console.log(size, product_id);
 
     const itemInList = user.wishlist.find((item)=>
     (item.product.toString()===product_id.toString() && item.size===size)
@@ -58,9 +61,13 @@ const removeFromWL = asyncHandler(async(req, res)=>{
         throw new ApiError(400, 'Bad request');
     }
 
-    user.wishlist = user.wishlist.some((item)=>
+    console.log(itemInList);
+
+    user.wishlist = user.wishlist.filter((item)=>
     !(item.product.toString()===product_id.toString() && item.size===size)
     )
+
+    console.log(user.wishlist);
 
     await user.save();
 

@@ -46,7 +46,9 @@ const addProduct = asyncHandler(async (req, res) => {
       throw new ApiError(400, "No images provided");
     }
     const localPath = req.file.path;
+    console.log("local path", localPath);
     const imageInfo = await uploadOnCloudinary(localPath);
+    console.log(imageInfo);
     if (!imageInfo || !imageInfo.secure_url) throw new ApiError(500, "Image Upload Failed");
     const image_url = imageInfo.secure_url;
 
