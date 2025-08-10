@@ -9,7 +9,7 @@ const { fetchSingleProduct } = require('../APIs/products.api');
 router.post('/addProduct', verifyJWT, addProduct); // multer lagao
 router.post('/updateProduct', verifyJWT, updateProductDetails);
 router.get('/getReviews/:product_id', fetchReviews);
-router.post('/:product_id//addReview', verifyJWT, addReview);
+router.post('/:product_id/addReview', verifyJWT, addReview);
 router.get('/fetchProducts', showProducts);
 router.get('/details/:product_id', fetchSingleProduct);
 
