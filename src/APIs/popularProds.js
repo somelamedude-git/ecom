@@ -1,10 +1,11 @@
 const { asyncHandler } = require('../utils/asyncHandler');
 const { ApiError } = require('../utils/ApiError');
 const { Product } = require('../models/product.models');
+const { Category } = require('../models/category.models');
 
 
 const showProducts = asyncHandler(async(req,res)=>{
-    let { limit = 10, page = 0, sortBy} = req.query;
+    let { limit = 10, page = 0, sortBy, category} = req.query;
     console.log('Entered');
     console.log(limit);
     console.log(page);
@@ -15,8 +16,15 @@ const showProducts = asyncHandler(async(req,res)=>{
 
     console.log(limit);
     console.log(page);
-
-    const products = await Product.find().skip(limit*page).limit(limit);
+    let products;
+    if(!category){
+      products = await Product.find().skip(limit*page).limit(limit);
+    }
+    else{
+      const categoryDoc = await Category.findOne({name: category});
+      if(!categoryDoc) throw new ApiError(404, 'Category not found');
+      products = await Product.find({category: categoryDoc._id.toString()}).skip(limit*page).limit(limit);
+    }
     console.log(products);
     const sortedProducts = [...products].sort((a, b) => {
     switch (sortBy) {
@@ -52,6 +60,7 @@ const showProducts = asyncHandler(async(req,res)=>{
         limit
     });
 });
+
 module.exports = {
     showProducts
 }
