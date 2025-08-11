@@ -1,0 +1,157 @@
+.orders-container {
+  min-height: 100vh;
+  background-color: #000;
+  color: #fff;
+}
+
+.orders-main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #9ca3af;
+  background: none;
+  border: none;
+  font-size: 16px;
+  margin-bottom: 32px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.back-btn:hover {
+  color: #facc15;
+}
+
+.orders-hero {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.orders-title {
+  font-size: 64px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.orders-highlight {
+  background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.orders-subtitle {
+  color: #9ca3af;
+  font-size: 18px;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+
+.orders-filter {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.order-card {
+  background-color: #111827;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #374151;
+}
+@media (max-width: 640px) {
+  .orders-title {
+    font-size: 42px;
+  }
+
+  .orders-filter {
+    gap: 12px;
+  }
+
+  .order-card {
+    padding: 16px;
+  }
+}
+.filter-btn {
+  background-color: #1f2937;
+  color: #fff;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+  border-color: #facc15;
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, hsl(45, 100%, 85%), hsl(35, 90%, 68%));
+  color: #000;
+}
+
+.orders-status-msg,
+.orders-error-msg {
+  text-align: center;
+  margin-top: 32px;
+  font-size: 16px;
+  color: #9ca3af;
+}
+
+.orders-error-msg {
+  color: #f87171;
+}
+
+.orders-list {
+  display: grid;
+  gap: 24px;
+  margin-top: 32px;
+}
+
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.order-id {
+  font-weight: 600;
+}
+
+.order-status {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+.order-status.processing {
+  background-color: #facc15;
+  color: #000;
+}
+
+.order-status.shipped {
+  background-color: #3b82f6;
+  color: #fff;
+}
+
+.order-status.delivered {
+  background-color: #10b981;
+  color: #fff;
+}
+
+.order-details p {
+  margin: 4px 0;
+  font-size: 15px;
+}
