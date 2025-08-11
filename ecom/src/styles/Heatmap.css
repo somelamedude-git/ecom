@@ -1,0 +1,319 @@
+.heatmap-container {
+          min-height: 100vh;
+          background-color: #000;
+          color: #fff;
+        }
+
+        .heatmap-main {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 32px 16px;
+        }
+
+        .back-btn {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: #9ca3af;
+          background: none;
+          border: none;
+          font-size: 16px;
+          margin-bottom: 32px;
+          cursor: pointer;
+          transition: color 0.3s ease;
+        }
+
+        .back-btn:hover {
+          color: #facc15;
+        }
+
+        .heatmap-hero {
+          text-align: center;
+          margin-bottom: 48px;
+        }
+
+        .heatmap-title {
+          font-size: 64px;
+          font-weight: bold;
+          margin-bottom: 16px;
+        }
+
+        .heatmap-highlight {
+          background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        .heatmap-subtitle {
+          color: #9ca3af;
+          font-size: 18px;
+          max-width: 600px;
+          margin: 0 auto;
+          line-height: 1.6;
+        }
+
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 24px;
+          margin-bottom: 48px;
+        }
+
+        .stat-card {
+          background-color: #111827;
+          border: 1px solid #374151;
+          border-radius: 12px;
+          padding: 24px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+          border-color: #facc15;
+          transform: translateY(-2px);
+        }
+
+        .stat-icon {
+          background: linear-gradient(135deg, hsl(45, 100%, 85%), hsl(35, 90%, 68%));
+          color: #000;
+          width: 48px;
+          height: 48px;
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .stat-value {
+          font-size: 32px;
+          font-weight: bold;
+          color: #facc15;
+          line-height: 1;
+        }
+
+        .stat-label {
+          color: #9ca3af;
+          font-size: 14px;
+          margin-top: 4px;
+        }
+
+        .year-selector {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 32px;
+        }
+
+        .year-select {
+          background-color: #1f2937;
+          color: #fff;
+          border: 1px solid #374151;
+          border-radius: 8px;
+          padding: 12px 16px;
+          font-size: 16px;
+          cursor: pointer;
+          transition: border-color 0.3s ease;
+        }
+
+        .year-select:focus {
+          outline: none;
+          border-color: #facc15;
+        }
+
+        .heatmap-status-msg,
+        .heatmap-error-msg {
+          text-align: center;
+          margin-top: 64px;
+          font-size: 16px;
+          color: #9ca3af;
+        }
+
+        .heatmap-error-msg {
+          color: #f87171;
+        }
+
+        .loading-spinner {
+          width: 32px;
+          height: 32px;
+          border: 3px solid #374151;
+          border-top: 3px solid #facc15;
+          border-radius: 50%;
+          animation: spin 1s linear infinite;
+          margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+
+        .calendar-container {
+          background-color: #111827;
+          border: 1px solid #374151;
+          border-radius: 12px;
+          padding: 24px;
+          position: relative;
+        }
+
+        .month-labels {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 8px;
+          padding-left: 24px;
+        }
+
+        .month-label {
+          color: #9ca3af;
+          font-size: 12px;
+          font-weight: 500;
+          width: calc(100% / 12);
+          text-align: left;
+        }
+
+        .calendar-wrapper {
+          display: flex;
+          gap: 8px;
+        }
+
+        .weekday-labels {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+          margin-right: 8px;
+        }
+
+        .weekday-label {
+          color: #9ca3af;
+          font-size: 11px;
+          height: 12px;
+          display: flex;
+          align-items: center;
+          margin-bottom: 2px;
+        }
+
+        .calendar-grid {
+          display: flex;
+          gap: 2px;
+          flex: 1;
+        }
+
+        .calendar-week {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
+
+        .calendar-day {
+          width: 12px;
+          height: 12px;
+          border-radius: 2px;
+          border: 1px solid #374151;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+
+        .calendar-day:hover {
+          border-color: #facc15;
+          transform: scale(1.1);
+        }
+
+        .calendar-day.other-year {
+          border-color: transparent;
+        }
+
+        .calendar-legend {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 4px;
+          margin-top: 16px;
+        }
+
+        .legend-label {
+          color: #9ca3af;
+          font-size: 11px;
+        }
+
+        .legend-square {
+          width: 12px;
+          height: 12px;
+          border-radius: 2px;
+          border: 1px solid #374151;
+        }
+
+        .tooltip {
+          position: fixed;
+          background-color: #1f2937;
+          border: 1px solid #374151;
+          border-radius: 6px;
+          padding: 8px 12px;
+          font-size: 12px;
+          pointer-events: none;
+          z-index: 1000;
+          transform: translate(-50%, -100%);
+          margin-top: -8px;
+          left: 50%;
+          top: 50%;
+        }
+
+        .tooltip-date {
+          font-weight: 600;
+          margin-bottom: 2px;
+        }
+
+        .tooltip-count {
+          color: #9ca3af;
+          margin-bottom: 2px;
+        }
+
+        .tooltip-intensity {
+          color: #facc15;
+          font-size: 11px;
+        }
+
+        @media (max-width: 768px) {
+          .heatmap-title {
+            font-size: 48px;
+          }
+
+          .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+          }
+
+          .stat-card {
+            padding: 16px;
+          }
+
+          .stat-value {
+            font-size: 24px;
+          }
+
+          .calendar-container {
+            padding: 16px;
+            overflow-x: auto;
+          }
+
+          .calendar-grid {
+            min-width: 600px;
+          }
+
+          .month-labels {
+            min-width: 600px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .heatmap-title {
+            font-size: 36px;
+          }
+
+          .stats-grid {
+            grid-template-columns: 1fr;
+          }
+
+          .heatmap-main {
+            padding: 16px 12px;
+          }}

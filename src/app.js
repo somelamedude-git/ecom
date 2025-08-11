@@ -21,13 +21,13 @@ const path = require('path');
 
 const app = express();
 
-app.use(cors({ //Yet to render the frontend, so origin is denoted through a placeholder for once
+app.use(cors({ 
     origin: process.env.CORS_ORIGIN,
     credentials:true,
     preflightContinue: false
 }));
 
-app.use(express.static(path.join(__dirname, "../../ecom_connected/ecom/build")));
+app.use(express.static(path.join(__dirname, "../ecom/build")));
 
 app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
 

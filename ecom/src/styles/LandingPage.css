@@ -1,0 +1,143 @@
+.landing-container {
+  min-height: 100vh;
+  background-color: #000;
+  color: #fff;
+}
+.landinghero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.herokaoverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.8));/*ya 1.2? badme dhekna*/
+}
+
+.herocontent {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 0 16px;
+  max-width: 1152px;
+  margin: 0 auto;
+}
+
+.herothingy {
+  display: inline-block;
+  margin-bottom: 32px;
+  background-color: rgba(31, 41, 55, 0.8);
+  color: #d1d5db;
+  padding: 12px 24px;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #374151;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.herothingy:hover {
+  background: linear-gradient(135deg, hsl(45,100%,85%) 0%, hsl(35,90%,68%) 100%);
+  color: #000;
+}
+
+.heroheadline {
+  font-size: 80px;
+  font-weight: bold;
+  line-height: 1.1;
+  margin-bottom: 32px;
+}
+
+.headlinestatic {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.headlinedynamic {
+  display: block;
+  background: linear-gradient(135deg, hsl(45,100%,85%) 0%, hsl(35,90%,68%) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.herosubtit {
+  font-size: 16px;
+  color: #6b7280;
+  margin: 0 auto 48px;
+  max-width: 768px;
+  line-height: 1.6;
+  opacity: 0.6;
+}
+
+.herocta {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ctaprim {
+  background: linear-gradient(135deg, hsl(45,100%,85%) 0%, hsl(35,90%,68%) 100%);
+  color: #000;
+  border: none;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ctaprim:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+
+.ctasec {
+  background: transparent;
+  border: 2px solid #4b5563;
+  color: #fff;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ctasec:hover {
+  background: linear-gradient(135deg, hsl(45,100%,85%) 0%, hsl(35,90%,68%) 100%);
+  color: #000;
+}
+
+.typing-animation {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid #fff;
+  animation: typing 4s steps(40, end), blink 0.75s step-end infinite;
+  max-width: 100%;
+}
+
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  from, to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: #fff;
+  }
+}
