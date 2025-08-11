@@ -27,7 +27,7 @@ app.use(cors({
     preflightContinue: false
 }));
 
-app.use(express.static(path.join(__dirname, "../ecom/build")));
+app.use(express.static(path.join(__dirname, "../../frontend/build")));
 
 app.use('/api/payment/webhook', express.raw({ type: 'application/json' }));
 
