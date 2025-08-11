@@ -19,6 +19,8 @@ const AddProductForm = React.lazy(() => import("./components/AddProduct"));
 const SellerProfile = React.lazy(() => import("./components/sellerProfile"));
 const ProductDescriptionPage = React.lazy(() => import("./components/SingleProduct"));
 const ProductAnalytics = React.lazy(() => import("./components/productAnalytics"));
+const AdminPortal = React.lazy(() => import('./components/Admin'));
+const AnalyticsDashboard = React.lazy(() => import('./components/Analytics'));
 
 function AppContent() {
   const location = useLocation();
@@ -56,6 +58,8 @@ function AppContent() {
             <Route path="/seller/profile" element={<Layout><SellerProfile /></Layout>} />
             <Route path='/product/:product_id' element={<Layout><ProductDescriptionPage/></Layout>} />
             <Route path='/seller/analysis/product/:product_id' element={<Layout><ProductAnalytics/></Layout>} />
+            <Route path='/admin/portal' element={<Layout><AdminPortal/></Layout>} />
+            <Route path='/admin/stats' element={<Layout><AnalyticsDashboard/></Layout>} />
           </Routes>
         </Suspense>
       )}
