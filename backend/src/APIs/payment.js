@@ -64,6 +64,7 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
     if (order) {
       order.paymentVerified = true
       order.paymentId = paymentId
+      order.status = 'confirmed'
       await order.save()
 
       return res.status(200).json({ status: true, message: 'Payment updated', order })
