@@ -14,7 +14,7 @@ const SellerProfile = () => {
     const fetchSellerProfile = async () => {
       try {
         setLoading(true);
-       const response = await axios.get('api/seller/profile', {
+       const response = await axios.get('http://localhost:3000/seller/profile', {
         withCredentials: true
        })
         

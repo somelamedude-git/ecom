@@ -41,7 +41,7 @@ const SellerProductsPage = () => {
         search: searchTerm
       };
 
-      const response = await axios.get('api/seller/productList', {
+      const response = await axios.get('http://localhost:3000/seller/productList', {
         params: queryParams,
         withCredentials: true
       });
@@ -113,7 +113,7 @@ const SellerProductsPage = () => {
 
     try {
       const response = await axios.delete(
-        `api/seller/removeProduct/${productId}`,
+        `http://localhost:3000/seller/removeProduct/${productId}`,
         { withCredentials: true }
       );
 

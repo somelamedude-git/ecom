@@ -35,7 +35,7 @@ function SellerOrdersPage() {
   const fetchOrders = async (filter = '', page = 1, reset = false) => {
     try {
       setLoading(true);
-      const response = await axios.get('api/seller/orders', {
+      const response = await axios.get('http://localhost:3000/seller/orders', {
         params: {
           filter,
           page,
@@ -112,7 +112,7 @@ function SellerOrdersPage() {
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
-      await axios.patch(`api/seller/orders/${orderId}/status`, {
+      await axios.patch(`http://localhost:3000/seller/orders/${orderId}/status`, {
         status: newStatus
       }, {
         withCredentials: true

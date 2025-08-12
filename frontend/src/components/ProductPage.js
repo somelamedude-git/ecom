@@ -50,7 +50,7 @@ const ProductsPage = () => {
 
       console.log('Fetching products with params:', params);
 
-      const response = await axios.get('api/product/fetchProducts', {
+      const response = await axios.get('http://localhost:3000/product/fetchProducts', {
         params: params
       });
 
@@ -73,7 +73,7 @@ const ProductsPage = () => {
   // Fetch user's wishlist on component mount
   const fetchWishlist = async () => {
     try {
-      const response = await axios.get('api/wishlist/getItems', {
+      const response = await axios.get('http://localhost:3000/wishlist/getItems', {
         withCredentials: true
       });
       
@@ -124,7 +124,7 @@ const ProductsPage = () => {
     setCartLoading(prev => new Set(prev).add(productId));
     
     try {
-      const response = await axios.post(`api/cart/addItem/${productId}`, {
+      const response = await axios.post(`http://localhost:3000/cart/addItem/${productId}`, {
         size_: size
       });
 
@@ -158,7 +158,7 @@ const ProductsPage = () => {
 
     try {
       const response = await axios.post(
-        `api/wishlist/add/${productId}`, 
+        `http://localhost:3000/wishlist/add/${productId}`, 
         {
           size: size
         }, 
@@ -197,7 +197,7 @@ const ProductsPage = () => {
     setWishlistLoading(prev => new Set(prev).add(productId));
 
     try {
-      const response = await axios.delete(`api/wishlist/remove/${productId}`, {
+      const response = await axios.delete(`http://localhost:3000/wishlist/remove/${productId}`, {
         withCredentials: true
       });
 
