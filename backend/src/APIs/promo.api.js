@@ -48,6 +48,10 @@ const addCode = asyncHandler(async(req, res)=>{
         success: true,
         message: 'Promo code added successfully'
     })
+});
+
+const fetchPromo = asyncHandler(async(req, res)=>{
+    
 })
 
 module.exports = {
