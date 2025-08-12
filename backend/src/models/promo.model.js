@@ -8,6 +8,12 @@ const promoSchema = new mongoose.Schema({
 
     discount_provided:{
         type: Number
+    },
+
+    used_by:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Buyer',
+        unique: true
     }
 });
 
