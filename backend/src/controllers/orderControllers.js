@@ -135,7 +135,7 @@ const cancelOrder = asyncHandler(async(req, res) => {
 
         if(!order || !customer || order.customer.toString() !== customerId.toString())
             throw new ApiError(404, "Order not found")
-        if(order.status !== 'pending')
+        if(order.status !== 'confirmed')
             throw new ApiError(401, "Bad request")
         order.status = 'cancelled'
         await order.save({session})
@@ -169,7 +169,7 @@ const schedule_return = asyncHandler(async (req, res) => {
         if (!order || !customer || order.customer.toString() !== customerId.toString())
             throw new ApiError(404, 'Order not found');
 
-        if (order.status !== 'pending')
+        if (order.status !== 'confirmed')
             throw new ApiError(400, 'Bad request');
 
         if (!order.product)
@@ -262,7 +262,7 @@ const shipped = asyncHandler(async(req, res) => {
     if(!order)
         return res.status(404).json({status: false, message: "Order not found"})
 
-    if(order.status !== 'pending')
+    if(order.status !== 'confirmed')
         return res.status(400).json({status: false, message: "Bad request"})
 
     order.status = 'shipped'

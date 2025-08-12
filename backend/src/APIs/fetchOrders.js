@@ -8,7 +8,7 @@ const getOrders = asyncHandler(async (req, res) => {
     const { status } = req.query;
 
     const allowedStatus = [
-        'pending',
+        'confirmed',
         'delivered',
         'cancelled',
         'schedule_return',
