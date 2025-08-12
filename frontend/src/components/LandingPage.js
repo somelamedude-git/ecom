@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { TrendingUp, Package, Users, DollarSign, Plus, BarChart3, ShoppingBag, Eye } from 'lucide-react';
 import axios from 'axios';
 import '../styles/LandingPage.css';
-
+import image from '../assets/image.png';
 function LandingPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -189,6 +189,7 @@ function LandingPage() {
           </div>
         </div>
       </main>
+      <Carousel />
     </div>
   );
 
@@ -467,4 +468,91 @@ function LandingPage() {
   return userType === 'Seller' ? <SellerLandingPage /> : <BuyerLandingPage />;
 }
 
+
+function Carousel() {
+  const navigate = useNavigate();
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  const carouselSlides = [
+    {
+      title: 'MIN. 50% OFF',
+      subtitle: 'Extra 20% off on Indianwear',
+      code: 'with code ETHNIC20',
+      image:{image},
+      badge: { title: 'CLIQUE', subtitle: 'Moments that CLiQ', footer: 'SALE NOW LIVE' },
+    },
+  ];
+
+  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % carouselSlides.length);
+  const prevSlide = () =>
+    setCurrentSlide((prev) => (prev - 1 + carouselSlides.length) % carouselSlides.length);
+
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <section className="carousel-section">
+      <div className="carousel-container">
+        <button onClick={prevSlide} className="carousel-button">
+          ‹
+        </button>
+        <div className="carousel-wrapper">
+          <div
+            className="carousel-track"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {carouselSlides.map((slide, index) => (
+              <div key={index} className="carousel-slide">
+                <div className="slide-content">
+                  <div className="slide-text">
+                    <h2 className="slide-title">{slide.title}</h2>
+                    <p className="slide-subtitle">{slide.subtitle}</p>
+                    <p className="slide-code">{slide.code}</p>
+                    <button
+                      onClick={() => navigate('/products')}
+                      className="slide-button"
+                    >
+                      SHOP NOW
+                    </button>
+                  </div>
+                  <div className="slide-image-container">
+                    <img
+                      src={slide.image}
+                      alt={slide.title}
+                      className="slide-image"
+                    />
+                    {slide.badge && (
+                      <div className="slide-badge">
+                        <div className="badge-content">
+                          <div className="badge-title">{slide.badge.title}</div>
+                          <div className="badge-subtitle">{slide.badge.subtitle}</div>
+                          <div className="badge-footer">{slide.badge.footer}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <button onClick={nextSlide} className="carousel-button">
+          ›
+        </button>
+      </div>
+
+      <div className="carousel-indicators">
+        {carouselSlides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`indicator ${currentSlide === index ? 'active' : ''}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
 export default LandingPage;
