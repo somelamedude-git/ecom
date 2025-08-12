@@ -10,11 +10,11 @@ const promoSchema = new mongoose.Schema({
         type: Number
     },
 
-    used_by:{
+    used_by:[{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Buyer',
         unique: true
-    },
+    }],
 
     badge:{
         type:String,
@@ -34,5 +34,5 @@ const promoSchema = new mongoose.Schema({
 
 const Promo = mongoose.model('Promo', promoSchema);
 module.exports = {
-    promoSchema
+    Promo
 }
