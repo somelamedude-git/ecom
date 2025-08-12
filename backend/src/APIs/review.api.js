@@ -10,7 +10,9 @@ const addReview = asyncHandler(async(req, res)=>{
     const user_id = req.user._id;
     const { product_id } = req.params;
 
-    const { review_desc, review_rating } = req.body;
+    let { description, rating } = req.body;
+    console.log('Add reviw', review_desc, review_rating);
+    review_rating = Number(review_rating);
     let review = null;
 
     const result = await handleTransaction(async(session)=>{
@@ -53,8 +55,8 @@ const addReview = asyncHandler(async(req, res)=>{
 const fetchReviews = asyncHandler(async(req, res)=>{
     const { product_id } = req.params;
     const product = await Product.findById(product_id.toString()).select("reviews").populate("reviews"); // array of schema
-    const product_reviews = product.reviews;
     if(!product) throw new ApiError(404, 'Product not found');
+    const product_reviews = product.reviews.filter(view=> view!==null)
     res.status(200).json({
         success: true,
         reviews: product_reviews
