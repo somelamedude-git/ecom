@@ -21,11 +21,11 @@ const ProductDescriptionPage = React.lazy(() => import("./components/SingleProdu
 const ProductAnalytics = React.lazy(() => import("./components/productAnalytics"));
 const AdminPortal = React.lazy(() => import('./components/Admin'));
 const AnalyticsDashboard = React.lazy(() => import('./components/Analytics'));
-const WorkWithUsPage = React.lazy(()=>import("./pages/workwithusPage"))
-const Contact = React.lazy(() => import("./components/ContactPage"));
+const WorkWithUsPage = React.lazy(() => import("./pages/workwithusPage"));
+const ContactPage = React.lazy(() => import("./components/ContactPage")); 
 const Checkout = React.lazy(() => import("./components/CheckoutPage"));
 const OrderConfirmedPage = React.lazy(() => import('./components/OrderConfirmed'));
-const ContactPage = React.lazy(() => import("./components/ContactPage"));
+const Offers = React.lazy(() => import("./components/OffersPage"));
 
 function AppContent() {
   const location = useLocation();
@@ -61,22 +61,21 @@ function AppContent() {
             <Route path="/seller/analytics" element={<Layout><SalesHeatmap /></Layout>} />
             <Route path="/seller/add-product" element={<Layout><AddProductForm /></Layout>} />
             <Route path="/seller/profile" element={<Layout><SellerProfile /></Layout>} />
-            <Route path='/product/:product_id' element={<Layout><ProductDescriptionPage/></Layout>} />
-            <Route path='/seller/analysis/product/:product_id' element={<Layout><ProductAnalytics/></Layout>} />
-            <Route path='/admin/portal' element={<Layout><AdminPortal/></Layout>} />
-            <Route path='/admin/stats' element={<Layout><AnalyticsDashboard/></Layout>} />
-            <Route path='/work-with-us' element={<Layout><WorkWithUsPage/></Layout>}></Route>
-            <Route path='/contact' element={<Layout><Contact/></Layout>}></Route>
-            <Route path='/checkout' element={<Layout><Checkout/></Layout>}></Route>
-            <Route path='/confirmation' element={<Layout><OrderConfirmedPage/></Layout>}></Route>
-            <Route path='/contact'><Layout><ContactPage/></Layout></Route>
+            <Route path="/product/:product_id" element={<Layout><ProductDescriptionPage/></Layout>} />
+            <Route path="/seller/analysis/product/:product_id" element={<Layout><ProductAnalytics/></Layout>} />
+            <Route path="/admin/portal" element={<Layout><AdminPortal/></Layout>} />
+            <Route path="/admin/stats" element={<Layout><AnalyticsDashboard/></Layout>} />
+            <Route path="/work-with-us" element={<Layout><WorkWithUsPage/></Layout>} />
+            <Route path="/contact" element={<Layout><ContactPage/></Layout>} />
+            <Route path="/checkout" element={<Layout><Checkout/></Layout>} />
+            <Route path="/confirmation" element={<Layout><OrderConfirmedPage/></Layout>} />
+             <Route path='/offers' element={<Layout><Offers/></Layout>}></Route>
           </Routes>
         </Suspense>
       )}
     </>
   );
 }
-
 
 export default function App() {
   return <AppContent />;

@@ -14,6 +14,21 @@ const promoSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Buyer',
         unique: true
+    },
+
+    badge:{
+        type:String,
+        required: true
+    },
+
+    title:{
+        type: String,
+        required: true,
+    },
+
+    description:{
+        type: String,
+        required: true
     }
 });
 

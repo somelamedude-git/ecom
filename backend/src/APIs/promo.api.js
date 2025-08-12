@@ -34,12 +34,15 @@ const addCode = asyncHandler(async(req, res)=>{
     const admin = Admin.findById(user_id.toString());
     if(!admin) throw new ApiError(400, 'Unauthorized access');
 
-    let { code, discount } = req.body;
+    let { code, discount, badge, title, description } = req.body;
     discount = Number(discount);
     const new_code = await Promo.create({
         code: code,
         discount_provided:discount,
-        used_by: []
+        used_by: [],
+        badge: badge,
+        title: title,
+        description: description
     });
 
     await new_code.save();
@@ -51,10 +54,15 @@ const addCode = asyncHandler(async(req, res)=>{
 });
 
 const fetchPromo = asyncHandler(async(req, res)=>{
-    
+    const promo_info = await Promo.find().select("description code discount_provided title badge");
+    res.status(200).json({
+        success: true,
+        promo_info: promo_info
+    })
 })
 
 module.exports = {
     applyPromo,
-    addCode
+    addCode,
+    fetchPromo
 }

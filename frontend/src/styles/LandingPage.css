@@ -14,7 +14,8 @@
 .herokaoverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.8));/*ya 1.2? badme dhekna*/
+  background: rgba(0,0,0, 0.8);/*ya 1.2? badme dhekna*/
+  isolation: isolate;
 }
 
 .herocontent {
@@ -62,6 +63,7 @@
   background: linear-gradient(135deg, hsl(45,100%,85%) 0%, hsl(35,90%,68%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -79,6 +81,7 @@
   gap: 16px;
   flex-wrap: wrap;
   justify-content: center;
+
 }
 
 .ctaprim {
@@ -108,6 +111,7 @@
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
+  isolation: isolate;
 }
 
 .ctasec:hover {
@@ -140,4 +144,184 @@
   50% {
     border-color: #fff;
   }
+}
+.carousel-section {
+  padding: 80px 0;
+  background-color: #000;
+}
+
+.carousel-container {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.carousel-wrapper {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+}
+
+.carousel-slide {
+  min-width: 100%;
+  height: 400px;
+}
+
+.slide-content {
+  display: flex;
+  height: 100%;
+  background: linear-gradient(135deg, #8B4513 0%, #D2691E 100%);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.slide-text {
+  flex: 1;
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+}
+
+.slide-title {
+  font-size: 48px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.slide-subtitle {
+  font-size: 20px;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.slide-code {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 32px;
+  background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.slide-button {
+  background-color: #fff;
+  color: #000;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.slide-button:hover {
+  transform: scale(1.05);
+}
+
+.slide-image-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slide-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #8B0000 0%, #DC143C 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.badge-content {
+  padding: 8px;
+  text-align: center;
+}
+
+.badge-title {
+  font-size: 10px;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.badge-subtitle {
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.badge-footer {
+  font-size: 8px;
+  opacity: 0.8;
+}
+
+.carousel-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+}
+
+.carousel-button:hover {
+  background-color: #fff;
+}
+
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+  transform: scale(1.2);
 }
