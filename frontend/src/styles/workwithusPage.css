@@ -1,0 +1,111 @@
+.work-container {
+  min-height: 100vh;
+  background-color: #000;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+}
+
+.work-content {
+  width: 100%;
+  max-width: 600px;
+  background-color: #111;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.backb {
+  background: none;
+  border: none;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  transition: color 0.2s ease;
+}
+
+.backb:hover {
+  color: #fff;
+}
+
+.pagetitle {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: hsl(35,90%,68%);
+}
+
+.workform label {
+  display: block;
+  margin-bottom: 1.25rem;
+  font-size: 1rem;
+}
+
+.workform input,
+.workform textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #222;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.workform input:focus,
+.workform textarea:focus {
+  background-color: #333;
+}
+
+.formerror {
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.successmsg {
+  font-size: 1.2rem;
+  text-align: center;
+  color: #66ff99;
+  padding: 2rem 1rem;
+  background-color: #1c1c1c;
+  border-radius: 0.75rem;
+  box-shadow: 0 0 8px rgba(0, 255, 153, 0.3);
+}
+
+.submitb {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #ffea4d;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submitb:hover {
+  background-color: hsl(35,90%,68%);
+}
+
+@media screen and (max-width: 480px) {
+  .workcontent {
+    padding: 1.5rem;
+  }
+
+  .pagetitle {
+    font-size: 1.5rem;
+  }
+}

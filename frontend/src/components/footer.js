@@ -3,10 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from "react";
 import { Instagram, Twitter, Smartphone, Play } from 'lucide-react';
 import '../styles/FooterSection.css'
-import SideMenu from './SideMenu';
 import axios from 'axios';
 
-function FooterSection({menumove:SideMenu}) {
+function FooterSection() {
   const navigate= useNavigate();
   const [loggedin, setLoggedin] = useState(false);
   const safenav= (path)=>{
