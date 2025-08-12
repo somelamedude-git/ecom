@@ -43,7 +43,6 @@ const addOrder = asyncHandler(async (req, res) => {
         });
 
         product_owner.order_quo.push(order._id);
-        product.stock.set(size, available - quantity);
         customer.cart = customer.cart.filter(item => item.product.toString() !== productId);
         customer.orderHistory.push([order._id]);
 
@@ -262,7 +261,7 @@ const shipped = asyncHandler(async(req, res) => {
     if(!order)
         return res.status(404).json({status: false, message: "Order not found"})
 
-    if(order.status !== 'pending')
+    if(order.status !== 'confirmed')
         return res.status(400).json({status: false, message: "Bad request"})
 
     order.status = 'shipped'
@@ -270,6 +269,39 @@ const shipped = asyncHandler(async(req, res) => {
 
     return res.status(200).json({status: true, message: `Order ${orderId} shipped`})
 })//for seller
+
+const orderConfirmed = asyncHandler(async (req, res) => {
+    const { orderId } = req.body;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+        return res.status(404).json({ status: false, message: "Order not found" });
+    }
+
+    const product = await Product.findById(order.product);
+    if (!product) {
+        return res.status(404).json({ status: false, message: "Product not found" });
+    }
+
+    const { size, quantity } = order;
+    const available = product.stock.get(size);
+
+    if (available === undefined) {
+        return res.status(400).json({ status: false, message: "Invalid size" });
+    }
+
+    if (available < quantity) {
+        return res.status(400).json({ status: false, message: "Not enough stock" });
+    }
+
+    order.status = "confirmed";
+    product.stock.set(size, available - quantity);
+
+    await Promise.all([order.save(), product.save()]);
+
+    return res.status(200).json({ status: true, order });
+});
+
 
 module.exports = {
     addOrder,
@@ -279,5 +311,6 @@ module.exports = {
     approve_return,
     returned,
     reached_return,
-    shipped
+    shipped,
+    orderConfirmed
 }
