@@ -12,7 +12,7 @@ function WishlistPage() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await axios.get('http://localhost:3000/wishlist/getItems', {  
+        const res = await axios.get('api/wishlist/getItems', {  
           withCredentials: true,
         });
         setWishlist(res.data.wish_items_info);
@@ -34,7 +34,7 @@ function WishlistPage() {
     
     try {
       // Call API after UI update
-      await axios.delete(`http://localhost:3000/wishlist/deleteItem/${product_id}`, {
+      await axios.delete(`api/wishlist/deleteItem/${product_id}`, {
         data: { size: item_size },
         withCredentials: true
       });
@@ -55,14 +55,14 @@ function WishlistPage() {
     
     try {
       // Add to cart
-      await axios.post(`http://localhost:3000/cart/addItem/${item.item.product._id}`, {
+      await axios.post(`api/cart/addItem/${item.item.product._id}`, {
         size_: item.item.size
       }, {
         withCredentials: true
       });
       
       // Remove from wishlist (API call)
-      await axios.delete(`http://localhost:3000/wishlist/deleteItem/${item.item.product._id}`, {
+      await axios.delete(`api/wishlist/deleteItem/${item.item.product._id}`, {
         data: { size: item.item.size },
         withCredentials: true
       });
@@ -87,14 +87,14 @@ function WishlistPage() {
       // Process all items
       await Promise.all(inStockItems.map(async (item) => {
         // Add to cart
-        await axios.post(`http://localhost:3000/cart/addItem/${item.item.product._id}`, {
+        await axios.post(`api/cart/addItem/${item.item.product._id}`, {
           size_: item.item.size
         }, {
           withCredentials: true
         });
         
         // Remove from wishlist
-        await axios.delete(`http://localhost:3000/wishlist/deleteItem/${item.item.product._id}`, {
+        await axios.delete(`api/wishlist/deleteItem/${item.item.product._id}`, {
           data: { size: item.item.size },
           withCredentials: true
         });

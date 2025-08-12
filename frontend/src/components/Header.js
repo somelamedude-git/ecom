@@ -26,7 +26,7 @@ function Header({ menumove }) {
   // Memoize the fetch function to prevent unnecessary re-renders
   const fetchData = useCallback(async () => {
     try {
-      const res_login_status = await axios.get('http://localhost:3000/user/verifyLogin', {
+      const res_login_status = await axios.get('api/user/verifyLogin', {
         withCredentials: true
       });
       
@@ -36,14 +36,14 @@ function Header({ menumove }) {
         
         // Only fetch cart/wishlist data for buyers
         if (res_login_status.data.userType === 'Buyer') {
-          const res_CWL = await axios.get('http://localhost:3000/user/getCWL', {
+          const res_CWL = await axios.get('api/user/getCWL', {
             withCredentials: true
           });
           setWishlistCount(res_CWL.data.wish_length);
           setCartCount(res_CWL.data.cart_length);
         } else if (res_login_status.data.userType === 'Seller') {
           // Only fetch seller stats for sellers
-          const res_seller_stats = await axios.get('http://localhost:3000/seller/stats', {
+          const res_seller_stats = await axios.get('api/seller/stats', {
             withCredentials: true
           });
           setSellerStats(res_seller_stats.data);

@@ -15,7 +15,7 @@ function CartPage() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/cart/getItems', {
+        const response = await axios.get('api/cart/getItems', {
           withCredentials: true
         });
         setcartitems(response.data.cart);
@@ -50,19 +50,19 @@ function CartPage() {
     try {
       // API call in background
       if (new_quantity === 0) {
-        await axios.delete(`http://localhost:3000/cart/deleteItem/${item_id}`, {
+        await axios.delete(`api/cart/deleteItem/${item_id}`, {
           data: { size: item_size },
           withCredentials: true
         });
       } else if (old_quantity < new_quantity) {
         // Increment
-        await axios.patch(`http://localhost:3000/cart/increment/${item_id}`,
+        await axios.patch(`api/cart/increment/${item_id}`,
           { size: item_size },
           { withCredentials: true }
         );
       } else if (old_quantity > new_quantity) {
         // Decrement
-        await axios.patch(`http://localhost:3000/cart/decrement/${item_id}`, {
+        await axios.patch(`api/cart/decrement/${item_id}`, {
           size: item_size
         }, {
           withCredentials: true
@@ -101,7 +101,7 @@ function CartPage() {
 
     try {
       // API call in background
-      await axios.delete(`http://localhost:3000/cart/deleteItem/${item_id}`, {
+      await axios.delete(`api/cart/deleteItem/${item_id}`, {
         data: { size: item_size },
         withCredentials: true
       });

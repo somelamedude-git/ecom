@@ -22,7 +22,7 @@ const SalesHeatmap = () => {
     const fetchSalesData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:3000/seller/SalesMap', {
+        const response = await axios.get('api/seller/SalesMap', {
             withCredentials: true
         });
 

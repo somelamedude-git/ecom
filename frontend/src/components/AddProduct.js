@@ -31,7 +31,7 @@ const AddProductForm = () => {
 
   const fetchCategoriesAndTags = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/fetchCT');
+      const response = await axios.get('api/api/fetchCT');
       setTags(response.data.tag_names);
       setCategories(response.data.category_names);
     } catch (error) {
@@ -140,7 +140,7 @@ const AddProductForm = () => {
 
       formDataToSend.append('productImages', image);
 
-      const response = await axios.post('http://localhost:3000/seller/addProduct', formDataToSend, {
+      const response = await axios.post('api/seller/addProduct', formDataToSend, {
   headers: {
     'Content-Type': 'multipart/form-data'
   },

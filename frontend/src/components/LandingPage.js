@@ -24,7 +24,7 @@ function LandingPage() {
   const fetchUserData = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await axios.get('http://localhost:3000/user/verifyLogin', {
+      const res = await axios.get('api/user/verifyLogin', {
         withCredentials: true
       });
       
@@ -35,7 +35,7 @@ function LandingPage() {
         // Only fetch seller stats if user is a seller
         if (res.data.userType === 'Seller') {
           try {
-            const statsRes = await axios.get('http://localhost:3000/seller/stats', {
+            const statsRes = await axios.get('api/seller/stats', {
               withCredentials: true
             });
             setSellerStats(statsRes.data);

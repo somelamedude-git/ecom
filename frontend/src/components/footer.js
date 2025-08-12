@@ -23,7 +23,7 @@ function FooterSection() {
     useEffect(()=>{
       const fetchData = async()=>{
         try{
-          const res_login_status = await axios.get('http://localhost:3000/user/verifyLogin',{
+          const res_login_status = await axios.get('api/user/verifyLogin',{
             withCredentials: true
           });
           setLoggedin(res_login_status.data.isLoggedIn);

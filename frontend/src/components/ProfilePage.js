@@ -26,7 +26,7 @@ function ProfilePage({ loggedin, onToggleMenu, cartcount, wishlistcount }) {
 
  const handleSave = async () => {
   try {
-    await axios.patch('http://localhost:3000/user/editProfile', formData, {
+    await axios.patch('api/user/editProfile', formData, {
       withCredentials: true
     });
     toast.success("Profile updated successfully!", {
@@ -99,10 +99,10 @@ useEffect(() => {
   const fetchProfile = async () => {
     try {
       const [profileRes, cwlRes] = await Promise.all([
-        axios.get('http://localhost:3000/user/profile', {
+        axios.get('api/user/profile', {
           withCredentials: true,
         }),
-        axios.get('http://localhost:3000/user/getCWL', {
+        axios.get('api/user/getCWL', {
           withCredentials: true,
         }),
       ]);

@@ -34,7 +34,7 @@ function ProductDescriptionPage() {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:3000/product/details/${product_id}`);
+      const response = await axios.get(`api/product/details/${product_id}`);
       const { product_info, product_sizes } = response.data;
       
       setProduct(product_info);
@@ -53,7 +53,7 @@ function ProductDescriptionPage() {
   const fetchReviews = async () => {
     try {
       setReviewsLoading(true);
-      const response = await axios.get(`http://localhost:3000/product/getReviews/${product_id}`);
+      const response = await axios.get(`api/product/getReviews/${product_id}`);
       setReviews(response.data.reviews || []);
     } catch (err) {
       console.error('Error fetching reviews:', err);
@@ -67,7 +67,7 @@ function ProductDescriptionPage() {
     try {
      setSubmittingReview(true);
 const response = await axios.post(
-  `http://localhost:3000/product/${product_id}/addReview`,
+  `api/product/${product_id}/addReview`,
   {
     rating: newReview.rating,
     description: newReview.description,
@@ -109,7 +109,7 @@ const response = await axios.post(
     }
 
     try{
-        await axios.post(`http://localhost:3000/cart/addItem/${product_id}`, {
+        await axios.post(`api/cart/addItem/${product_id}`, {
         size_: selectedSize
     },
 {withCredentials: true}

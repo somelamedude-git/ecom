@@ -42,7 +42,7 @@ function SideMenu({isopen, onclose}) {
     const fetchData = async () => {
       try {
         // Check login status and user type
-        const loginRes = await axios.get('http://localhost:3000/user/verifyLogin', {
+        const loginRes = await axios.get('api/user/verifyLogin', {
           withCredentials: true
         });
         
@@ -50,7 +50,7 @@ function SideMenu({isopen, onclose}) {
           setUserType(loginRes.data.userType || 'Buyer');
           
           // Fetch profile data
-          const profileRes = await axios.get('http://localhost:3000/user/profile', {
+          const profileRes = await axios.get('api/user/profile', {
             withCredentials: true
           });
           const user = profileRes.data.user || {};
@@ -61,7 +61,7 @@ function SideMenu({isopen, onclose}) {
 
           // Fetch user-specific data
           if (loginRes.data.userType === 'Buyer') {
-            const countsRes = await axios.get('http://localhost:3000/user/getCWL', {
+            const countsRes = await axios.get('api/user/getCWL', {
               withCredentials: true
             });
             setcounts({
@@ -69,7 +69,7 @@ function SideMenu({isopen, onclose}) {
               cart_length: countsRes.data.cart_length,
             });
           } else if (loginRes.data.userType === 'Seller') {
-            const statsRes = await axios.get('http://localhost:3000/seller/stats', {
+            const statsRes = await axios.get('api/seller/stats', {
               withCredentials: true
             });
             setSellerStats(statsRes.data);
@@ -102,7 +102,7 @@ function SideMenu({isopen, onclose}) {
 
   const handleLogout = async () => {
     try {
-      await axios.post('http://localhost:3000/user/logout', {}, {
+      await axios.post('api/user/logout', {}, {
         withCredentials: true
       });
       navigate('/');
