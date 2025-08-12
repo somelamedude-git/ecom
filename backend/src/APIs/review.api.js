@@ -12,7 +12,7 @@ const addReview = asyncHandler(async(req, res)=>{
 
     let { description, rating } = req.body;
     console.log('Add reviw', description, rating);
-    review_rating = Number(review_rating);
+    rating = Number(rating);
     let review = null;
 
     const result = await handleTransaction(async(session)=>{
