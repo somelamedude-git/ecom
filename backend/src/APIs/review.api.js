@@ -11,7 +11,7 @@ const addReview = asyncHandler(async(req, res)=>{
     const { product_id } = req.params;
 
     let { description, rating } = req.body;
-    console.log('Add reviw', review_desc, review_rating);
+    console.log('Add reviw', description, rating);
     review_rating = Number(review_rating);
     let review = null;
 
@@ -27,10 +27,10 @@ const addReview = asyncHandler(async(req, res)=>{
     }
 
    review= await Review.create([{
-        description: review_desc,
+        description: description,
         product_reviewed: product_id,
         owner_of_product: product.owner,
-        rating: review_rating,
+        rating: rating,
         user_reviewed: user_id
     }], {session});
 
