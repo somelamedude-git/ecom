@@ -1,0 +1,500 @@
+/* AnalyticsDashboard.css */
+
+/* Base Styles */
+.dashboard {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #0f0f0f 100%);
+  color: #ffffff;
+  min-height: 100vh;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* Background Animation */
+.background-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: #ffd700;
+  border-radius: 50%;
+  animation: float ease-in-out infinite;
+  opacity: 0.6;
+}
+
+/* Header Styles */
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.header-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.main-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  background: linear-gradient(45deg, #ffd700, #ffed4a, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #cccccc;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+}
+
+.date-badge {
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  display: inline-block;
+  margin: 2rem 0;
+  color: #ffd700;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+}
+
+/* Error Styles */
+.error-container {
+  background: linear-gradient(145deg, rgba(139, 0, 0, 0.2), rgba(139, 0, 0, 0.1));
+  border: 1px solid rgba(255, 69, 0, 0.3);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.error-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.error-title {
+  color: #ff4444;
+  margin-bottom: 0.5rem;
+}
+
+.error-message {
+  color: #ffaaaa;
+  margin-bottom: 1rem;
+}
+
+.retry-button {
+  background: linear-gradient(45deg, #ffd700, #ffed4a);
+  border: none;
+  border-radius: 25px;
+  padding: 0.8rem 2rem;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.retry-button:hover {
+  transform: scale(1.05);
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.chart-card {
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(30, 30, 30, 0.6));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 16px;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.chart-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chart-title.gold {
+  color: #ffd700;
+}
+
+.chart-title.yellow {
+  color: #ffed4a;
+}
+
+.chart-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.chart-loading-skeleton {
+  background: linear-gradient(90deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.2) 50%, rgba(255,215,0,0.1) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  height: 200px;
+  border-radius: 8px;
+}
+
+.chart-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Chart Components */
+.chart-svg {
+  overflow: visible;
+}
+
+.chart-line {
+  animation: drawLine 2s ease-out forwards;
+}
+
+.chart-point {
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.chart-bar {
+  animation: growBar 1.5s ease-out forwards;
+  transform: scaleY(0);
+}
+
+/* Donut Chart */
+.donut-container {
+  position: relative;
+}
+
+.donut-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.donut-percentage {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.donut-circle {
+  animation: drawCircle 2s ease-out forwards;
+}
+
+/* Engagement Card */
+.engagement-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.engagement-section {
+  text-align: center;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: linear-gradient(145deg, rgba(20, 20, 20, 0.8), rgba(30, 30, 30, 0.6));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  animation: slideUp 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.metric-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  border-color: var(--metric-color);
+  box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+}
+
+/* FIXED: Remove the problematic top bar that was causing the white bar */
+.metric-top-bar {
+  display: none; /* Hide this element completely to fix the white bar issue */
+}
+
+/* Alternative: If you want to keep the top bar but fix it properly */
+/*
+.metric-top-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--metric-color, #ffd700);
+  opacity: 0.6;
+  border-radius: 16px 16px 0 0;
+}
+*/
+
+.metric-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.metric-icon {
+  font-size: 2rem;
+  filter: grayscale(0.3);
+}
+
+.metric-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.indicator-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.metric-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #aaaaaa;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.loading-skeleton {
+  background: rgba(255, 215, 0, 0.1);
+  border-radius: 8px;
+  height: 60px;
+  margin-bottom: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-skeleton::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid #ffd700;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding: 2rem;
+  border-top: 1px solid rgba(255, 215, 0, 0.2);
+  color: #888888;
+}
+
+.footer p {
+  font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg); 
+    opacity: 0.6; 
+  }
+  50% { 
+    transform: translateY(-20px) rotate(180deg); 
+    opacity: 1; 
+  }
+}
+
+@keyframes glow {
+  from { 
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3); 
+  }
+  to { 
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.6); 
+  }
+}
+
+@keyframes shimmer {
+  0% { 
+    background-position: -200% 0; 
+  }
+  100% { 
+    background-position: 200% 0; 
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(20px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes drawLine {
+  from { 
+    stroke-dasharray: 0 1000; 
+  }
+  to { 
+    stroke-dasharray: 1000 0; 
+  }
+}
+
+@keyframes drawCircle {
+  from { 
+    stroke-dashoffset: 283; 
+  }
+  to { 
+    stroke-dashoffset: 71; 
+  }
+}
+
+@keyframes growBar {
+  from { 
+    transform: scaleY(0); 
+  }
+  to { 
+    transform: scaleY(1); 
+  }
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+@keyframes spin {
+  0% { 
+    transform: translate(-50%, -50%) rotate(0deg); 
+  }
+  100% { 
+    transform: translate(-50%, -50%) rotate(360deg); 
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 1rem;
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .engagement-card {
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .main-title {
+    font-size: 2rem;
+  }
+  
+  .chart-card {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .date-badge {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .metric-card {
+    padding: 1rem;
+  }
+  
+  .metric-value {
+    font-size: 1.5rem;
+  }
+}
