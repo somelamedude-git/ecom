@@ -24,6 +24,7 @@ const AnalyticsDashboard = React.lazy(() => import('./components/Analytics'));
 const WorkWithUsPage = React.lazy(()=>import("./pages/workwithusPage"))
 const Contact = React.lazy(() => import("./components/ContactPage"));
 const Checkout = React.lazy(() => import("./components/CheckoutPage"));
+const Offers = React.lazy(() => import("./components/OffersPage"));
 const OrderConfirmedPage = React.lazy(() => import('./components/OrderConfirmed'));
 
 function AppContent() {
@@ -67,6 +68,7 @@ function AppContent() {
             <Route path='/work-with-us' element={<Layout><WorkWithUsPage/></Layout>}></Route>
             <Route path='/contact' element={<Layout><Contact/></Layout>}></Route>
             <Route path='/checkout' element={<Layout><Checkout/></Layout>}></Route>
+            <Route path='/offers' element={<Layout><Offers/></Layout>}></Route>
             <Route path='/confirmation' element={<Layout><OrderConfirmedPage/></Layout>}></Route>
           </Routes>
         </Suspense>
