@@ -169,6 +169,14 @@
   text-align: center;
 }
 
+/* Loading state */
+.loading-container {
+  text-align: center;
+  padding: 48px;
+  color: #9ca3af;
+  font-size: 18px;
+}
+
 /* Offers grid */
 .offers-grid {
   display: grid;
@@ -184,6 +192,7 @@
   border: 1px solid #374151;
   text-align: center;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .offer-card:hover {
@@ -214,6 +223,67 @@
   line-height: 1.6;
 }
 
+/* Discount info */
+.discount-info {
+  margin-bottom: 20px;
+}
+
+.discount-amount {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+/* Promo code section */
+.promo-code-section {
+  margin-bottom: 24px;
+}
+
+.promo-code-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+}
+
+.promo-code-text {
+  background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.copy-button {
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.copy-button:hover {
+  background-color: #374151;
+  color: #fff;
+}
+
 .offer-button {
   background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
   color: #000;
@@ -223,14 +293,47 @@
   border: none;
   cursor: pointer;
   transition: opacity 0.3s ease;
+  width: 100%;
 }
 
 .offer-button:hover {
   opacity: 0.9;
 }
 
-/* Promo section */
-.promo-section {
+/* No offers state */
+.no-offers {
+  text-align: center;
+  padding: 48px;
+  background-color: #111827;
+  border-radius: 12px;
+  border: 1px solid #374151;
+  margin-bottom: 64px;
+}
+
+.no-offers p {
+  color: #9ca3af;
+  font-size: 18px;
+  margin-bottom: 24px;
+}
+
+.shop-button {
+  background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+  color: #000;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  font-size: 16px;
+}
+
+.shop-button:hover {
+  opacity: 0.9;
+}
+
+/* CTA section (replaces old promo section) */
+.cta-section {
   background-color: #111827;
   border-radius: 12px;
   padding: 48px;
@@ -238,24 +341,70 @@
   text-align: center;
 }
 
-.promo-title {
+.cta-title {
   font-size: 32px;
   font-weight: bold;
   margin-bottom: 16px;
 }
 
-.promo-code {
+.cta-text {
+  color: #9ca3af;
+  font-size: 16px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.cta-button {
   background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
   color: #000;
   padding: 16px 32px;
   border-radius: 8px;
-  font-size: 24px;
-  font-weight: bold;
-  display: inline-block;
-  margin-bottom: 16px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+  font-size: 18px;
 }
 
-.promo-text {
-  color: #9ca3af;
-  font-size: 16px;
+.cta-button:hover {
+  opacity: 0.9;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .title {
+    font-size: 48px;
+  }
+  
+  .offers-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .offer-card {
+    padding: 24px;
+  }
+  
+  .cta-section {
+    padding: 32px 24px;
+  }
+  
+  .main-content {
+    padding: 24px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 36px;
+  }
+  
+  .promo-code-display {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .offer-card {
+    padding: 20px;
+  }
 }
