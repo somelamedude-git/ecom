@@ -217,6 +217,7 @@ function CartPage() {
                   <button
                     className="checkoutb"
                     disabled={!cartitems.length}
+  
                     onClick={handleCheckout}
                   >
                     Proceed to Checkout

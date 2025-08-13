@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, use } from 'react';
 import { ArrowLeft, CreditCard, MapPin, Truck, Shield, Lock, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -21,11 +21,28 @@ function CheckoutPage({
   const [selectedDelivery, setSelectedDelivery] = useState('standard');
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [appliedPromoData, setAppliedPromoData] = useState(null);
   const [razorpayLoaded, setRazorpayLoaded] = useState(false);
   const [orderItems, setOrderItems] = useState([]);
   const [addresses, setAddresses] = useState([]);
   const [cartLoading, setCartLoading] = useState(true);
   const [userProfile, setUserProfile] = useState({});
+  const [loggedin, setLoggedin] = useState(false);
+
+  const fetchData = useCallback(async()=>{
+    try{
+       const res_login_status = await axios.get('http://localhost:3000/user/verifyLogin', {
+              withCredentials: true
+            });
+
+            if(res_login_status.data.isLoggedIn){
+              setLoggedin(true);
+            }
+    }catch(error){
+      console.log(error);
+    }
+  })
   
   const [formData, setFormData] = useState({
     email: '',
@@ -46,7 +63,7 @@ function CheckoutPage({
 
   // Configure axios defaults
   axios.defaults.withCredentials = true;
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
   // Helper function for API error handling
   const handleApiError = (error, context) => {
@@ -266,24 +283,59 @@ function CheckoutPage({
     }
   };
 
-  const applyPromoCode = () => {
+  // Updated promo code function to use the API
+  const applyPromoCode = async () => {
     if (!promoCode.trim()) {
       toast.error('Please enter a promo code');
       return;
     }
     
-    // Mock promo code validation (replace with actual API call if you have promo system)
-    if (promoCode.toLowerCase() === 'clique20') {
-      setPromoApplied(true);
-      toast.success('Promo code applied successfully! 20% off');
-    } else {
-      toast.error('Invalid promo code');
+    if (promoApplied) {
+      toast.info('A promo code is already applied');
+      return;
+    }
+
+    try {
+      setPromoLoading(true);
+      
+      // Calculate current total (before promo)
+      const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const deliveryPrice = deliveryOptions.find(option => option.id === selectedDelivery)?.price || 0;
+      const currentTotal = subtotal + deliveryPrice;
+
+      const response = await axios.patch(`${API_BASE_URL}/promo/apply`, {
+        total_cost: currentTotal,
+        code_used: promoCode.trim()
+      });
+
+      if (response.data.success) {
+        setPromoApplied(true);
+        setAppliedPromoData({
+          code: promoCode.trim(),
+          newCost: response.data.new_cost,
+          originalCost: currentTotal,
+          discount: currentTotal - response.data.new_cost
+        });
+        toast.success(`Promo code applied successfully! You saved ₹${(currentTotal - response.data.new_cost).toFixed(2)}`);
+      } else {
+        throw new Error(response.data.message || 'Failed to apply promo code');
+      }
+    } catch (error) {
+      console.error('Promo code error:', error);
+      if (error.response?.status === 400) {
+        toast.error(error.response.data.message || 'Invalid promo code');
+      } else {
+        handleApiError(error, 'Promo code application');
+      }
+    } finally {
+      setPromoLoading(false);
     }
   };
 
   const removePromoCode = () => {
     setPromoApplied(false);
     setPromoCode('');
+    setAppliedPromoData(null);
     toast.info('Promo code removed');
   };
 
@@ -392,7 +444,8 @@ function CheckoutPage({
             state: {
               orderId: orderId,
               paymentId: response.razorpay_payment_id,
-              orderDetails: orderResponse
+              orderDetails: orderResponse,
+              promoApplied: appliedPromoData
             }
           });
         },
@@ -404,7 +457,8 @@ function CheckoutPage({
         notes: {
           address: selectedAddress === 'new' ? 
             `${formData.address}, ${formData.city}, ${formData.state} - ${formData.pincode}` :
-            addresses.find(addr => addr.id === selectedAddress)?.address || ''
+            addresses.find(addr => addr.id === selectedAddress)?.address || '',
+          promoCode: appliedPromoData?.code || ''
         },
         theme: {
           color: '#3399cc'
@@ -451,7 +505,8 @@ function CheckoutPage({
         state: {
           orderId: orderResponse.successOrders[0],
           paymentMethod: 'cod',
-          orderDetails: orderResponse
+          orderDetails: orderResponse,
+          promoApplied: appliedPromoData
         }
       });
 
@@ -506,11 +561,18 @@ function CheckoutPage({
     } 
   };
 
-  // Calculate totals
+  // Calculate totals with promo consideration
   const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const deliveryPrice = deliveryOptions.find(option => option.id === selectedDelivery)?.price || 0;
-  const discount = promoApplied ? subtotal * 0.2 : 0;
-  const total = subtotal + deliveryPrice - discount;
+  
+  let discount = 0;
+  let total = subtotal + deliveryPrice;
+  
+  if (promoApplied && appliedPromoData) {
+    // Use the exact discount and total from API response
+    total = appliedPromoData.newCost;
+    discount = appliedPromoData.discount;
+  }
 
   if (cartLoading) {
     return (
@@ -778,10 +840,15 @@ function CheckoutPage({
                   onChange={(e) => setPromoCode(e.target.value)}
                   placeholder="Enter promo code"
                   className="checkout-input"
+                  disabled={promoApplied || promoLoading}
                 />
                 {!promoApplied ? (
-                  <button onClick={applyPromoCode} className="checkout-promo-button">
-                    Apply
+                  <button 
+                    onClick={applyPromoCode} 
+                    className="checkout-promo-button"
+                    disabled={promoLoading || !promoCode.trim()}
+                  >
+                    {promoLoading ? 'Applying...' : 'Apply'}
                   </button>
                 ) : (
                   <button onClick={removePromoCode} className="checkout-promo-remove">
@@ -789,10 +856,10 @@ function CheckoutPage({
                   </button>
                 )}
               </div>
-              {promoApplied && (
+              {promoApplied && appliedPromoData && (
                 <div className="checkout-promo-success">
                   <Check size={16} />
-                  <span>CLIQUE20 applied - 20% discount</span>
+                  <span>{appliedPromoData.code.toUpperCase()} applied - You saved ₹{appliedPromoData.discount.toFixed(2)}</span>
                 </div>
               )}
             </div>
@@ -836,9 +903,9 @@ function CheckoutPage({
               <span>Delivery</span>
               <span>{deliveryPrice > 0 ? `₹${deliveryPrice.toFixed(2)}` : 'Free'}</span>
             </div>
-            {promoApplied && (
+            {promoApplied && discount > 0 && (
               <div className="checkout-summary-line discount">
-                <span>Discount (20%)</span>
+                <span>Discount ({appliedPromoData?.code.toUpperCase()})</span>
                 <span>-₹{discount.toFixed(2)}</span>
               </div>
             )}
@@ -850,9 +917,9 @@ function CheckoutPage({
             <button
               className="checkout-place-order"
               onClick={handlePlaceOrder}
-              disabled={loading || addressSaving}
+              disabled={loading || addressSaving || promoLoading}
             >
-              {loading ? 'Processing...' : addressSaving ? 'Saving...' : 'Place Order'}
+              {loading ? 'Processing...' : addressSaving ? 'Saving...' : promoLoading ? 'Applying Promo...' : 'Place Order'}
             </button>
           </div>
         </div>

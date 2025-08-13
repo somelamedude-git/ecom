@@ -184,6 +184,7 @@ function OffersPage({ isLoggedIn, onToggleMenu }) {
             ))}
           </div>
         )}
+        </div>
 
         <div className="cta-section">
           <h2 className="cta-title">
