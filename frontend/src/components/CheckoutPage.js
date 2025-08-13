@@ -8,10 +8,8 @@ import '../styles/CheckoutPage.css';
 import image from '../assets/checkout-image.jpg';
 
 function CheckoutPage({ 
-  loggedin: loggedinProp, 
   menumove, 
   cartcount = 0, 
-  wishlistcount = 0 
 }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -28,7 +26,9 @@ function CheckoutPage({
   const [addresses, setAddresses] = useState([]);
   const [cartLoading, setCartLoading] = useState(true);
   const [userProfile, setUserProfile] = useState({});
-  const [loggedin, setLoggedin] = useState(loggedinProp || false);
+  const [loggedin, setLoggedin] = useState(false);
+  const [wishlistcount, setWishlistCount] = useState(0);
+  const [cartcount, setCartCount] = useState(0);
 
   const fetchData = useCallback(async()=>{
     try{
@@ -39,6 +39,13 @@ function CheckoutPage({
             if(res_login_status.data.isLoggedIn){
               setLoggedin(true);
             }
+
+            const res_CWL = await axios.get('http://localhost:3000/user/getCWL', {
+            withCredentials: true
+          });
+
+          setWishlistCount(res_CWL.data.wish_length);
+          setCartCount(res_CWL.data.cart_length);
     }catch(error){
       console.log(error);
     }
