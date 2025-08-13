@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 import Header from './Header';
 import '../styles/CheckoutPage.css';
+import image from '../assets/checkout-image.jpg';
 
 function CheckoutPage({ 
   loggedin, 
@@ -286,6 +287,37 @@ function CheckoutPage({
     toast.info('Promo code removed');
   };
 
+//   const createRazorpayOrder = async (orderData) => {
+//     try {
+//       const response = await fetch('/api/create-razorpay-order', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${localStorage.getItem('token')}`
+//         },
+//         body: JSON.stringify({
+//           amount: orderData.total * 100, // Convert
+//           currency: 'INR',
+//           orderItems: orderData.items,
+//           customerInfo: formData,
+//           deliveryInfo: {
+//             option: selectedDelivery,
+//             address: selectedAddress
+//           }
+//         })
+//       });
+
+//       if (!response.ok) {
+//         throw new Error('Failed to create order');
+//       }
+
+//       const data = await response.json();
+//       return data;
+//     } catch (error) {
+//       console.error('Error creating Razorpay order:', error);
+//       throw error;
+//     }
+//   };
   const createOrderFromCart = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/order/cart`);
@@ -441,11 +473,37 @@ function CheckoutPage({
       return;
     }
 
+    // if (selectedPayment === 'razorpay') {
+    //   await handleRazorpayPayment(orderData);
+    // } else if (selectedPayment === 'cod') {
+    //   try {
+    //     setLoading(true);
+    //     // Handle COD order
+
+    //     if (!response.ok) {
+    //       throw new Error('Failed to place order');
+    //     }
+
+    //     const data = await response.json();
+    //     toast.success('Order placed successfully!');
+    //     navigate('/order-confirmed', { 
+    //       state: { 
+    //         orderId: data.orderId,
+    //         orderDetails: data.orderDetails 
+    //       }
+    //     });
+    //   } catch (error) {
+    //     console.error('COD order error:', error);
+    //     toast.error('Failed to place order. Please try again.');
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // }
     if (selectedPayment === 'razorpay') {
       await handleRazorpayPayment();
     } else if (selectedPayment === 'cod') {
       await handleCODOrder();
-    }
+    } 
   };
 
   // Calculate totals

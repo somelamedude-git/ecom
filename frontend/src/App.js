@@ -24,6 +24,7 @@ const AnalyticsDashboard = React.lazy(() => import('./components/Analytics'));
 const WorkWithUsPage = React.lazy(() => import("./pages/workwithusPage"));
 const ContactPage = React.lazy(() => import("./components/ContactPage")); 
 const Checkout = React.lazy(() => import("./components/CheckoutPage"));
+const Offers = React.lazy(() => import("./components/OffersPage"));
 const OrderConfirmedPage = React.lazy(() => import('./components/OrderConfirmed'));
 const Offers = React.lazy(() => import("./components/OffersPage"));
 
@@ -69,7 +70,7 @@ function AppContent() {
             <Route path="/contact" element={<Layout><ContactPage/></Layout>} />
             <Route path="/checkout" element={<Layout><Checkout/></Layout>} />
             <Route path="/confirmation" element={<Layout><OrderConfirmedPage/></Layout>} />
-             <Route path='/offers' element={<Layout><Offers/></Layout>}></Route>
+            <Route path='/offers' element={<Layout><Offers/></Layout>}></Route>
           </Routes>
         </Suspense>
       )}
