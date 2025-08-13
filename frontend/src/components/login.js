@@ -72,7 +72,7 @@ const SetPasswordModal = ({ isOpen, onClose, userEmail }) => {
     
     try {
       const response = await axios.post(
-        'http://localhost:3000/user/reset-password',
+        'http://localhost:5000/user/reset-password',
         { new_password: newPassword },
         {
           headers: {
@@ -280,7 +280,7 @@ const ForgotPasswordModal = ({ isOpen, onClose, onEmailSent }) => {
     setError('');
     
     try {
-      const response = await axios.post('http://localhost:3000/user/send-forgot-mail', {
+      const response = await axios.post('http://localhost:5000/user/send-forgot-mail', {
         email: email
       }, {
         headers: {
@@ -436,7 +436,7 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
     if (resetEmail) {
       interval = setInterval(async () => {
         try {
-          const response = await axios.get('http://localhost:3000/user/returnPasswordLinkClickedStat', {
+          const response = await axios.get('http://localhost:5000/user/returnPasswordLinkClickedStat', {
             withCredentials: true,
             timeout: 5000,
           });
@@ -478,7 +478,7 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:3000/user/login', {
+      const response = await axios.post('http://localhost:5000/user/login', {
         email: formData.email,
         password: formData.password
       }, {
