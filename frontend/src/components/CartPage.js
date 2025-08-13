@@ -126,6 +126,10 @@ function CartPage() {
     updateQuantity(item_id, item_size, new_quantity);
   };
 
+  const handleCheckout = () => {
+    navigate('/checkout');
+  };
+
   const subtotal = !loading
     ? (cartitems || []).reduce(
         (sum, i) => sum + i.product.price * i.quantity,
@@ -213,7 +217,8 @@ function CartPage() {
                   <button
                     className="checkoutb"
                     disabled={!cartitems.length}
-                    onClick={() => navigate('/checkout')}
+  
+                    onClick={handleCheckout}
                   >
                     Proceed to Checkout
                   </button>
