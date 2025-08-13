@@ -15,7 +15,7 @@ const AdminPortal = () => {
   const [totalUsers, setTotalUsers] = useState(0);
 
   const navigate = useNavigate(); // Add this hook
-  const API_BASE_URL = 'http://localhost:5000';
+  const API_BASE_URL = 'http://localhost:3000';
   
   axios.defaults.withCredentials = true;
 

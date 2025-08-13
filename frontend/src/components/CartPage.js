@@ -213,7 +213,7 @@ function CartPage() {
                   <button
                     className="checkoutb"
                     disabled={!cartitems.length}
-                    onClick={() => alert('Proceed to checkout')}
+                    onClick={() => navigate('/checkout')}
                   >
                     Proceed to Checkout
                   </button>
