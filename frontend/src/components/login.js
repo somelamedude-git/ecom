@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, Eye, EyeOff, X } from 'lucide-react';
 
 const styles = {
   container: {
@@ -164,6 +164,17 @@ const styles = {
     background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
     transition: 'left 0.6s ease'
   },
+  forgotPassword: {
+    textAlign: 'center',
+    marginTop: '16px'
+  },
+  forgotPasswordLink: {
+    color: '#9ca3af',
+    textDecoration: 'none',
+    fontSize: '14px',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease'
+  },
   switchText: {
     textAlign: 'center',
     color: '#9ca3af',
@@ -190,6 +201,69 @@ const styles = {
     margin: '0 2px',
     opacity: '0.4',
     animation: 'loadingPulse 1.4s infinite ease-in-out'
+  },
+  // Modal styles
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backdropFilter: 'blur(10px)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    padding: '20px'
+  },
+  modal: {
+    backgroundColor: 'rgba(17, 24, 39, 0.95)',
+    backdropFilter: 'blur(20px)',
+    borderRadius: '16px',
+    padding: '32px',
+    border: '1px solid rgba(55, 65, 81, 0.5)',
+    width: '100%',
+    maxWidth: '400px',
+    position: 'relative',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
+    animation: 'modalSlideIn 0.3s ease-out'
+  },
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '24px'
+  },
+  modalTitle: {
+    fontSize: '20px',
+    fontWeight: '600',
+    color: '#ffffff'
+  },
+  closeButton: {
+    background: 'none',
+    border: 'none',
+    color: '#9ca3af',
+    cursor: 'pointer',
+    padding: '4px',
+    borderRadius: '4px',
+    transition: 'all 0.3s ease'
+  },
+  modalDescription: {
+    color: '#9ca3af',
+    fontSize: '14px',
+    marginBottom: '24px',
+    lineHeight: '1.5'
+  },
+  successMessage: {
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    border: '1px solid rgba(16, 185, 129, 0.3)',
+    borderRadius: '8px',
+    padding: '12px 16px',
+    color: '#10b981',
+    fontSize: '14px',
+    marginTop: '16px',
+    textAlign: 'center'
   }
 };
 
@@ -409,6 +483,153 @@ const FloatingOrbs = () => {
   );
 };
 
+const ForgotPasswordModal = ({ isOpen, onClose }) => {
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [focusedField, setFocusedField] = useState('');
+
+  const handleSubmit = async () => {
+    if (!email) {
+      alert('Please enter your email address');
+      return;
+    }
+    
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsLoading(false);
+    setIsSuccess(true);
+    
+    // Auto close after 3 seconds
+    setTimeout(() => {
+      onClose();
+      setIsSuccess(false);
+      setEmail('');
+    }, 3000);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      style={styles.modalOverlay}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div style={styles.modal}>
+        <div style={styles.modalHeader}>
+          <h2 style={styles.modalTitle}>Reset Password</h2>
+          <button 
+            onClick={onClose}
+            style={styles.closeButton}
+            onMouseEnter={(e) => {
+              e.target.style.color = 'hsl(45, 100%, 85%)';
+              e.target.style.backgroundColor = 'rgba(253, 224, 71, 0.1)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.color = '#9ca3af';
+              e.target.style.backgroundColor = 'transparent';
+            }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <p style={styles.modalDescription}>
+          Enter your email address and we'll send you a link to reset your password.
+        </p>
+
+        <div style={styles.formGroup}>
+          <label 
+            htmlFor="reset-email" 
+            style={{
+              ...styles.label,
+              color: focusedField === 'reset-email' ? 'hsl(45, 100%, 85%)' : '#d1d5db'
+            }}
+          >
+            Email Address
+          </label>
+          <div style={styles.inputContainer}>
+            <Mail 
+              size={18} 
+              style={{
+                ...styles.inputIcon,
+                color: focusedField === 'reset-email' ? 'hsl(45, 100%, 85%)' : '#6b7280'
+              }}
+            />
+            <input
+              type="email"
+              id="reset-email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled={isLoading || isSuccess}
+              style={{
+                ...styles.input,
+                borderColor: focusedField === 'reset-email' ? 'hsl(45, 100%, 85%)' : 'rgba(55, 65, 81, 0.5)',
+                boxShadow: focusedField === 'reset-email' ? '0 0 0 3px rgba(253, 224, 71, 0.1)' : 'none',
+                opacity: isLoading || isSuccess ? 0.6 : 1
+              }}
+              placeholder="your.email@example.com"
+              onFocus={() => setFocusedField('reset-email')}
+              onBlur={() => setFocusedField('')}
+            />
+          </div>
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          disabled={isLoading || isSuccess}
+          style={{
+            ...styles.submitButton,
+            opacity: isLoading || isSuccess ? 0.8 : 1,
+            cursor: isLoading || isSuccess ? 'not-allowed' : 'pointer',
+            marginTop: '24px'
+          }}
+          onMouseEnter={(e) => {
+            if (!isLoading && !isSuccess) {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 10px 25px -5px rgba(253, 224, 71, 0.4)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isLoading && !isSuccess) {
+              e.target.style.transform = 'translateY(0px)';
+              e.target.style.boxShadow = 'none';
+            }
+          }}
+        >
+          {isLoading ? (
+            <>
+              Sending Reset Link
+              <span className="loading-dot" style={styles.loadingDot} />
+              <span className="loading-dot" style={styles.loadingDot} />
+              <span className="loading-dot" style={styles.loadingDot} />
+            </>
+          ) : isSuccess ? (
+            'Reset Link Sent!'
+          ) : (
+            'Send Reset Link'
+          )}
+        </button>
+
+        {isSuccess && (
+          <div style={styles.successMessage}>
+            A password reset link has been sent to your email address. Please check your inbox and follow the instructions.
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) {
   const [formData, setFormData] = useState({
     email: '',
@@ -417,6 +638,7 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [focusedField, setFocusedField] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   useEffect(() => {
     // Add keyframes for animations
@@ -462,6 +684,10 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
       @keyframes fadeInOut {
         0%, 100% { opacity: 0; }
         50% { opacity: 0.3; }
+      }
+      @keyframes modalSlideIn {
+        from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+        to { opacity: 1; transform: translateY(0) scale(1); }
       }
       .loading-dot:nth-child(1) { animation-delay: 0s; }
       .loading-dot:nth-child(2) { animation-delay: 0.2s; }
@@ -665,6 +891,23 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
           </button>
         </div>
 
+        <div style={styles.forgotPassword}>
+          <span 
+            onClick={() => setShowForgotPassword(true)}
+            style={styles.forgotPasswordLink}
+            onMouseEnter={(e) => {
+              e.target.style.color = 'hsl(45, 100%, 85%)';
+              e.target.style.textShadow = '0 0 8px rgba(253, 224, 71, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.color = '#9ca3af';
+              e.target.style.textShadow = 'none';
+            }}
+          >
+            Forgot your password?
+          </span>
+        </div>
+
         <div style={styles.switchText}>
           Don't have an account?{' '}
           <span 
@@ -683,6 +926,11 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
           </span>
         </div>
       </div>
+
+      <ForgotPasswordModal 
+        isOpen={showForgotPassword} 
+        onClose={() => setShowForgotPassword(false)} 
+      />
     </div>
   );
 }
