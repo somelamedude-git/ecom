@@ -49,7 +49,8 @@ const updatePassword = asyncHandler(async(req, res)=>{
     user.password = new_password;
     user.passwordToken = undefined;
     user.passwordTokenExpire = undefined;
-    
+    user.passwordLink
+
     await user.save();
     
     res.status(200).json({
@@ -58,7 +59,18 @@ const updatePassword = asyncHandler(async(req, res)=>{
     })
 });
 
+const returnPasswordLinkClickedStat = asyncHandler(async(req, res)=>{ // jugaad
+    const { email } = req.body;
+    const user = await BaseUser.findById({email:email}); if(!user) res.status(200).json({success: true, message:'bear with me'
+    });
+
+    res.status(200).json({
+        succes:true,
+        clickStatus: user.passwordLinkClicked
+    })
+})
 module.exports = {
     sendForgotMail,
-    updatePassword
+    updatePassword,
+    returnPasswordLinkClickedStat
 };

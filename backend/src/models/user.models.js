@@ -85,6 +85,11 @@ const BaseUserSchema = new mongoose.Schema({
   passwordTokenExpire:{
     type: Date,
     default: null
+  },
+
+  passwordLinkClicked:{
+    type: Boolean,
+    default: false
   }
 }, options);BaseUserSchema.methods.generateAccessToken = function(){
  return jwt.sign({

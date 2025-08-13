@@ -67,6 +67,7 @@ const verifyPassword = asyncHandler(async (req, res) => {
     }
     user.passwordToken = undefined;
     user.passwordTokenExpire = undefined;
+    user.passwordLinkClicked = true
 
     await user.save();
 

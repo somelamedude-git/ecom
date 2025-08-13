@@ -28,7 +28,225 @@ const FloatingOrbs = () => {
   );
 };
 
-const ForgotPasswordModal = ({ isOpen, onClose }) => {
+const SetPasswordModal = ({ isOpen, onClose, userEmail }) => {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [focusedField, setFocusedField] = useState('');
+
+  useEffect(() => {
+    if (!isOpen) {
+      setNewPassword('');
+      setConfirmPassword('');
+      setError('');
+      setIsSuccess(false);
+      setIsLoading(false);
+      setShowPassword(false);
+      setShowConfirmPassword(false);
+    }
+  }, [isOpen]);
+
+  const handleSubmit = async () => {
+    if (!newPassword || !confirmPassword) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
+    
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const response = await axios.post('http://localhost:3000/user/reset-password', {
+        email: userEmail,
+        newPassword: newPassword
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000,
+      });
+
+      if (response.status === 200 && response.data.success) {
+        setIsLoading(false);
+        setIsSuccess(true);
+        
+        // Auto close after 3 seconds
+        setTimeout(() => {
+          onClose();
+          setIsSuccess(false);
+          setNewPassword('');
+          setConfirmPassword('');
+          setError('');
+        }, 3000);
+      } else {
+        setIsLoading(false);
+        setError(response.data.message || 'An error occurred. Please try again.');
+      }
+    } catch (err) {
+      setIsLoading(false);
+      
+      if (err.code === 'ECONNABORTED') {
+        setError('Request timed out. Please try again.');
+      } else if (err.response) {
+        const errorMessage = err.response.data?.message || 'Server error. Please try again later.';
+        setError(errorMessage);
+      } else if (err.request) {
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSubmit();
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="modal-overlay"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div className="modal">
+        <div className="modal-header">
+          <h2 className="modal-title">Set New Password</h2>
+          <button 
+            onClick={onClose}
+            className="close-button"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        <p className="modal-description">
+          Please enter your new password below.
+        </p>
+
+        <div className="form-group">
+          <label 
+            htmlFor="new-password" 
+            className={`label ${focusedField === 'new-password' ? 'focused' : ''}`}
+          >
+            New Password
+          </label>
+          <div className="input-container">
+            <Lock 
+              size={18} 
+              className={`input-icon ${focusedField === 'new-password' ? 'focused' : ''}`}
+            />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="new-password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled={isLoading || isSuccess}
+              className="input password"
+              placeholder="Enter new password"
+              onFocus={() => setFocusedField('new-password')}
+              onBlur={() => setFocusedField('')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className={`eye-button ${showPassword ? 'active' : ''}`}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </div>
+
+        <div className="form-group">
+          <label 
+            htmlFor="confirm-password" 
+            className={`label ${focusedField === 'confirm-password' ? 'focused' : ''}`}
+          >
+            Confirm Password
+          </label>
+          <div className="input-container">
+            <Lock 
+              size={18} 
+              className={`input-icon ${focusedField === 'confirm-password' ? 'focused' : ''}`}
+            />
+            <input
+              type={showConfirmPassword ? 'text' : 'password'}
+              id="confirm-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled={isLoading || isSuccess}
+              className="input password"
+              placeholder="Confirm new password"
+              onFocus={() => setFocusedField('confirm-password')}
+              onBlur={() => setFocusedField('')}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              className={`eye-button ${showConfirmPassword ? 'active' : ''}`}
+            >
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
+        </div>
+
+        <button
+          onClick={handleSubmit}
+          disabled={isLoading || isSuccess}
+          className="submit-button"
+          style={{ marginTop: '24px' }}
+        >
+          <div className="submit-button-glow" />
+          {isLoading ? (
+            <>
+              Setting Password
+              <span className="loading-dot" />
+              <span className="loading-dot" />
+              <span className="loading-dot" />
+            </>
+          ) : isSuccess ? (
+            'Password Updated!'
+          ) : (
+            'Set Password'
+          )}
+        </button>
+
+        {isSuccess && (
+          <div className="success-message">
+            Your password has been successfully updated. You can now sign in with your new password.
+          </div>
+        )}
+
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const ForgotPasswordModal = ({ isOpen, onClose, onEmailSent }) => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -67,12 +285,15 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        timeout: 10000, // 10 second timeout
+        timeout: 10000,
       });
 
       if (response.status === 200 && response.data.success) {
         setIsLoading(false);
         setIsSuccess(true);
+        
+        // Notify parent component about the email being sent
+        onEmailSent(email);
         
         // Auto close after 4 seconds
         setTimeout(() => {
@@ -91,14 +312,11 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
       if (err.code === 'ECONNABORTED') {
         setError('Request timed out. Please try again.');
       } else if (err.response) {
-        // Server responded with error status
         const errorMessage = err.response.data?.message || 'Server error. Please try again later.';
         setError(errorMessage);
       } else if (err.request) {
-        // Network error
         setError('Network error. Please check your connection and try again.');
       } else {
-        // Other error
         setError('An unexpected error occurred. Please try again.');
       }
     }
@@ -206,6 +424,46 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
   const [isLoading, setIsLoading] = useState(false);
   const [focusedField, setFocusedField] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showSetPassword, setShowSetPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+
+  // Check for password reset link click status
+  useEffect(() => {
+    let interval;
+    
+    if (resetEmail) {
+      // Start polling every 3 seconds to check if user clicked the reset link
+      interval = setInterval(async () => {
+        try {
+          const response = await axios.post('http://localhost:3000/user/returnPasswordLinkClickedStat', {
+            email: resetEmail
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            timeout: 5000,
+          });
+
+          if (response.data.success && response.data.clickStatus === true) {
+            // User clicked the reset link, show set password modal
+            setShowSetPassword(true);
+            clearInterval(interval);
+            setResetEmail(''); // Clear the email to stop polling
+          }
+        } catch (error) {
+          console.error('Error checking link click status:', error);
+          // Continue polling even if there's an error
+        }
+      }, 3000); // Check every 3 seconds
+    }
+
+    // Cleanup interval on unmount or when resetEmail changes
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [resetEmail]);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -231,6 +489,15 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
       e.preventDefault();
       handleSubmit();
     }
+  };
+
+  const handleEmailSent = (email) => {
+    setResetEmail(email); // Start polling for this email
+  };
+
+  const handleSetPasswordClose = () => {
+    setShowSetPassword(false);
+    setResetEmail(''); // Stop polling
   };
 
   return (
@@ -359,7 +626,14 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
 
       <ForgotPasswordModal 
         isOpen={showForgotPassword} 
-        onClose={() => setShowForgotPassword(false)} 
+        onClose={() => setShowForgotPassword(false)}
+        onEmailSent={handleEmailSent}
+      />
+
+      <SetPasswordModal 
+        isOpen={showSetPassword} 
+        onClose={handleSetPasswordClose}
+        userEmail={resetEmail}
       />
     </div>
   );
