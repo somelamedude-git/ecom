@@ -72,7 +72,8 @@ const verifyPassword = asyncHandler(async (req, res) => {
 
     res.status(200).json({
         success: true,
-        message: 'Password verification link clicked'
+        message: 'Password verification link clicked',
+        email: user.email
     });
 });
 

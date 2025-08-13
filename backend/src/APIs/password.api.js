@@ -40,6 +40,8 @@ const sendForgotMail = asyncHandler(async (req, res) => {
     }
 });
 
+const updatePassword
+
 module.exports = {
     sendForgotMail
 };
