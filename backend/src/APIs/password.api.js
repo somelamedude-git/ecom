@@ -26,6 +26,11 @@ const sendForgotMail = asyncHandler(async (req, res) => {
             subject: 'Password Reset Verification',
             message
         });
+        res.cookie("email", email,{
+            httpOnly: true,
+            secure:false,
+            sameSite: 'lax'
+        });
 
         res.status(200).json({
             success: true,
@@ -41,7 +46,7 @@ const sendForgotMail = asyncHandler(async (req, res) => {
 });
 
 const updatePassword = asyncHandler(async(req, res)=>{
-    const { email } = req.body;
+    const email = req.cookies?.email;
     const user = await BaseUser.findOne({email:email});
     if(!user) throw new ApiError(404, 'User not found');
 
@@ -49,7 +54,13 @@ const updatePassword = asyncHandler(async(req, res)=>{
     user.password = new_password;
     user.passwordToken = undefined;
     user.passwordTokenExpire = undefined;
-    user.passwordLink
+    user.passwordLinkClicked = false;
+
+    res.cookie("passwordLinkClicked", user.passwordLinkClicked, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'lax'
+    })
 
     await user.save();
     
@@ -59,14 +70,13 @@ const updatePassword = asyncHandler(async(req, res)=>{
     })
 });
 
-const returnPasswordLinkClickedStat = asyncHandler(async(req, res)=>{ // jugaad
-    const { email } = req.body;
-    const user = await BaseUser.findById({email:email}); if(!user) res.status(200).json({success: true, message:'bear with me'
-    });
+const returnPasswordLinkClickedStat = asyncHandler(async(req, res)=>{ 
+    const passwordLinkClicked = req.cookies?.passwordLinkClicked;
+    console.log(passwordLinkClicked);
 
     res.status(200).json({
-        succes:true,
-        clickStatus: user.passwordLinkClicked
+        success: true,
+        clickStatus: Boolean(passwordLinkClicked)
     })
 })
 module.exports = {

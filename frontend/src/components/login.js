@@ -69,47 +69,48 @@ const SetPasswordModal = ({ isOpen, onClose, userEmail }) => {
     setIsLoading(true);
     setError('');
     
-    try {
-      const response = await axios.post('http://localhost:3000/user/reset-password', {
-        email: userEmail,
-        newPassword: newPassword
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        timeout: 10000,
-      });
-
-      if (response.status === 200 && response.data.success) {
-        setIsLoading(false);
-        setIsSuccess(true);
-        
-        // Auto close after 3 seconds
-        setTimeout(() => {
-          onClose();
-          setIsSuccess(false);
-          setNewPassword('');
-          setConfirmPassword('');
-          setError('');
-        }, 3000);
-      } else {
-        setIsLoading(false);
-        setError(response.data.message || 'An error occurred. Please try again.');
-      }
-    } catch (err) {
-      setIsLoading(false);
-      
-      if (err.code === 'ECONNABORTED') {
-        setError('Request timed out. Please try again.');
-      } else if (err.response) {
-        const errorMessage = err.response.data?.message || 'Server error. Please try again later.';
-        setError(errorMessage);
-      } else if (err.request) {
-        setError('Network error. Please check your connection and try again.');
-      } else {
-        setError('An unexpected error occurred. Please try again.');
-      }
+  try {
+  const response = await axios.post(
+    'http://localhost:3000/user/reset-password',
+    { new_password: newPassword }, // backend expects `new_password`, not `newPassword`
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true, // IMPORTANT: send cookies along
+      timeout: 10000,
     }
+  );
+
+  if (response.status === 200 && response.data.success) {
+    setIsLoading(false);
+    setIsSuccess(true);
+
+    setTimeout(() => {
+      onClose();
+      setIsSuccess(false);
+      setNewPassword('');
+      setConfirmPassword('');
+      setError('');
+    }, 3000);
+  } else {
+    setIsLoading(false);
+    setError(response.data.message || 'An error occurred. Please try again.');
+  }
+} catch (err) {
+  setIsLoading(false);
+
+  if (err.code === 'ECONNABORTED') {
+    setError('Request timed out. Please try again.');
+  } else if (err.response) {
+    const errorMessage = err.response.data?.message || 'Server error. Please try again later.';
+    setError(errorMessage);
+  } else if (err.request) {
+    setError('Network error. Please check your connection and try again.');
+  } else {
+    setError('An unexpected error occurred. Please try again.');
+  }
+}
   };
 
   const handleKeyPress = (e) => {
@@ -434,26 +435,20 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
     if (resetEmail) {
       // Start polling every 3 seconds to check if user clicked the reset link
       interval = setInterval(async () => {
-        try {
-          const response = await axios.post('http://localhost:3000/user/returnPasswordLinkClickedStat', {
-            email: resetEmail
-          }, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            timeout: 5000,
-          });
+    try {
+  const response = await axios.get('http://localhost:3000/user/returnPasswordLinkClickedStat', {
+    withCredentials: true, // important so cookies are sent
+    timeout: 5000,
+  });
 
-          if (response.data.success && response.data.clickStatus === true) {
-            // User clicked the reset link, show set password modal
-            setShowSetPassword(true);
-            clearInterval(interval);
-            setResetEmail(''); // Clear the email to stop polling
-          }
-        } catch (error) {
-          console.error('Error checking link click status:', error);
-          // Continue polling even if there's an error
-        }
+  if (response.data.success && response.data.clickStatus === true) { 
+    setShowSetPassword(true);
+    clearInterval(interval);
+    setResetEmail(''); 
+  }
+} catch (error) {
+  console.error('Error checking link click status:', error);
+}
       }, 3000); // Check every 3 seconds
     }
 
