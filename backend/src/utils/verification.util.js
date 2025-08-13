@@ -58,17 +58,15 @@ const verifyPassword = asyncHandler(async (req, res) => {
         .digest('hex');
 
     const user = await BaseUser.findOne({
-        verificationToken: hashedToken,
-        verificationTokenExpire: { $gt: Date.now() }
+        passwordToken: hashedToken,
+        passwordTokenExpire: { $gt: Date.now() }
     });
 
     if (!user) {
         throw new ApiError(400, 'Invalid or expired token');
     }
-
-    user.clicked_passVerif = true;
-    user.verificationToken = undefined;
-    user.verificationTokenExpire = undefined;
+    user.passwordToken = undefined;
+    user.passwordTokenExpire = undefined;
 
     await user.save();
 

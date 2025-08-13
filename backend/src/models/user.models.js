@@ -19,6 +19,7 @@ const BaseUserSchema = new mongoose.Schema({
     lowercase:true
   },
 
+
   googleLogin:{
     type:Boolean,
     default:false
@@ -75,7 +76,16 @@ const BaseUserSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  
+
+  passwordToken:{
+    type: String,
+    default: null
+  },
+
+  passwordTokenExpire:{
+    type: Date,
+    default: null
+  }
 }, options);BaseUserSchema.methods.generateAccessToken = function(){
  return jwt.sign({
     _id:this._id,
@@ -124,6 +134,16 @@ BaseUserSchema.methods.getVerificationToken = function(){
 
   this.verificationTokenExpire = Date.now() + 30 * 60 * 1000;
   return token;
+}
+
+BaseUserSchema.methods.getPasswordToken = function(){
+  const token = crypto.randomBytes(29).toString('hex');
+  this.passwordToken = crypto
+  .createHash('sha256')
+  .update(token)
+  .digest('hex');
+
+  
 }
 
 const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
