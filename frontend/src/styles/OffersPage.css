@@ -4,7 +4,6 @@
   color: #fff;
 }
 
-/* Header */
 .offers-header {
   background-color: #000;
   border-bottom: 1px solid #374151;
@@ -121,7 +120,6 @@
   opacity: 0.9;
 }
 
-/* Main content */
 .main-content {
   max-width: 1280px;
   margin: 0 auto;
@@ -144,6 +142,7 @@
 .back-button:hover {
   background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
@@ -158,6 +157,7 @@
 .title-accent {
   background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
@@ -169,16 +169,12 @@
   text-align: center;
 }
 
-
-/* Loading state */
 .loading-container {
   text-align: center;
   padding: 48px;
   color: #9ca3af;
   font-size: 18px;
 }
-
-/* Offers grid */
 .offers-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -225,7 +221,6 @@
 }
 
 
-/* Discount info */
 .discount-info {
   margin-bottom: 20px;
 }
@@ -239,8 +234,6 @@
   font-weight: bold;
   display: inline-block;
 }
-
-/* Promo code section */
 .promo-code-section {
   margin-bottom: 24px;
 }
@@ -418,4 +411,49 @@
   .offer-card {
     padding: 20px;
   }
+}
+.promo-section {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.promo-card {
+  background: #111827;
+  border: 1px solid #374151;
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 500px;
+  margin: 0 auto 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.promo-title {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+
+.title-accent {
+  background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.promo-code {
+  display: inline-block;
+  background: linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%);
+  color: #000;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+}
+
+.promo-text {
+  font-size: 1rem;
+  color: #9ca3af;
 }

@@ -121,70 +121,71 @@ function OffersPage({ isLoggedIn, onToggleMenu }) {
         </div>
 
         <div className="promo-section">
-          <h2 className="promo-title">
+        <div className="promo-card">
+            <h2 className="promo-title">
             Special Promo <span className="title-accent">Code</span>
-          </h2>
-          <div className="promo-code">CLIQUE20</div>
-          <p className="promo-text">
-            Use this code at checkout to get 20% off on your entire order. Valid until the end of this month!
-          </p>
+            </h2>
+            <div className="promo-code">CLIQUE20</div>
+            <p className="promo-text">
+            Use this code at checkout to get 20% off on your entire order. 
+            Valid until the end of this month!
+            </p>
+        </div>
 
         {promos.length === 0 ? (
-          <div className="no-offers">
+            <div className="no-offers">
             <p>No promotional offers available at the moment.</p>
             <button
-              className="shop-button"
-              onClick={() => navigate("/products")}
+                className="shop-button"
+                onClick={() => navigate("/products")}
             >
-              Browse Products
+                Browse Products
             </button>
-          </div>
+            </div>
         ) : (
-          <div className="offers-grid">
+            <div className="offers-grid">
             {promos.map((promo) => (
-              <div key={promo._id || promo.code} className="offer-card">
+                <div key={promo._id || promo.code} className="offer-card">
                 <div className="offer-badge">{promo.badge}</div>
                 <h3 className="offer-title">{promo.title}</h3>
                 <p className="offer-description">{promo.description}</p>
-                
                 {promo.discount_provided && (
-                  <div className="discount-info">
+                    <div className="discount-info">
                     <span className="discount-amount">
-                      {promo.discount_provided}% OFF
+                        {promo.discount_provided}% OFF
                     </span>
-                  </div>
+                    </div>
                 )}
-
                 {promo.code && (
-                  <div className="promo-code-section">
+                    <div className="promo-code-section">
                     <div className="promo-code-display">
-                      <span className="promo-code-text">{promo.code}</span>
-                      <button
+                        <span className="promo-code-text">{promo.code}</span>
+                        <button
                         className="copy-button"
                         onClick={() => copyPromoCode(promo.code)}
                         title="Copy promo code"
-                      >
+                        >
                         {copiedCode === promo.code ? (
-                          <Check size={16} />
+                            <Check size={16} />
                         ) : (
-                          <Copy size={16} />
+                            <Copy size={16} />
                         )}
-                      </button>
+                        </button>
                     </div>
-                  </div>
+                    </div>
                 )}
-
                 <button
-                  className="offer-button"
-                  onClick={() => navigate("/products")}
+                    className="offer-button"
+                    onClick={() => navigate("/products")}
                 >
-                  Shop Now
+                    Shop Now
                 </button>
-              </div>
+                </div>
             ))}
-          </div>
+            </div>
         )}
         </div>
+
 
         <div className="cta-section">
           <h2 className="cta-title">
