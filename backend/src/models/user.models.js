@@ -143,7 +143,8 @@ BaseUserSchema.methods.getPasswordToken = function(){
   .update(token)
   .digest('hex');
 
-  
+  this.passwordTokenExpire = Date.now() + 30*60*1000;
+  return token;
 }
 
 const BaseUser = mongoose.model("BaseUser", BaseUserSchema);
