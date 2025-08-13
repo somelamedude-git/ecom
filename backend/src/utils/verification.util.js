@@ -49,8 +49,37 @@ const verifyEmail = asyncHandler(async(req, res)=>{
         success: true,
         message: 'Email verified successfully'
     })
-})
+});
+
+const verifyPassword = asyncHandler(async (req, res) => {
+    const hashedToken = crypto
+        .createHash('sha256')
+        .update(req.params.token)
+        .digest('hex');
+
+    const user = await BaseUser.findOne({
+        verificationToken: hashedToken,
+        verificationTokenExpire: { $gt: Date.now() }
+    });
+
+    if (!user) {
+        throw new ApiError(400, 'Invalid or expired token');
+    }
+
+    user.clicked_passVerif = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpire = undefined;
+
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+        message: 'Password verification link clicked'
+    });
+});
+
 module.exports = {
     sendEmail,
-    verifyEmail
+    verifyEmail,
+    verifyPassword
 }
