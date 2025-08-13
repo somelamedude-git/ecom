@@ -151,7 +151,9 @@ A comprehensive full-stack e-commerce platform featuring AI-powered recommendati
 
 ## Team Members
 
-*Add team member names here*
+*2024BMS016 - Prapti*
+*2024BEE037 - Yashasvi Jain*
+*2024IMT074 - Samiksha Agarwal*
 
 ## Demo Video
 
