@@ -3,7 +3,7 @@ import {useLocation, useNavigate} from 'react-router-dom';
 import {Package, MapPin, User} from 'lucide-react';
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../styles/OrderConfirmedPage.css';
+import '../styles/OrderConfirmed.css';
 
 toast.configure();
 
