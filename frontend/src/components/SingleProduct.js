@@ -65,28 +65,34 @@ function ProductDescriptionPage() {
 
   const submitReview = async () => {
     try {
-     setSubmittingReview(true);
-const response = await axios.post(
-  `http://localhost:3000/product/${product_id}/addReview`,
-  {
-    rating: newReview.rating,
-    description: newReview.description,
-  },
-  {
-    withCredentials: true,
-  }
-);
+      setSubmittingReview(true);
+      const response = await axios.post(
+        `http://localhost:3000/product/${product_id}/addReview`,
+        {
+          rating: newReview.rating,
+          description: newReview.description,
+        },
+        {
+          withCredentials: true,
+        }
+      );
 
-      setReviews(prev => [response.data.review, ...prev]);
+      // Reset form and hide it
       setShowReviewForm(false);
       setNewReview({ rating: 0, description: '' });
       
+      // Fetch fresh reviews from server to ensure data consistency
+      await fetchReviews();
+      
+      // Update product info if provided
       if (response.data.updatedProduct) {
         setProduct(prev => ({
           ...prev,
           popularity: response.data.updatedProduct.popularity
         }));
       }
+      
+      alert('Review submitted successfully!');
     } catch (err) {
       console.error('Error submitting review:', err);
       alert('Failed to submit review. Please try again.');
@@ -194,7 +200,8 @@ useEffect(()=>{
   const calculateAverageRating = () => {
     if (reviews.length === 0) return 0;
     const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-    return (sum / reviews.length).toFixed(1);
+    const average = sum / reviews.length;
+    return Number(average.toFixed(1));
   };
 
   const renderTabContent = () => {
@@ -235,7 +242,7 @@ useEffect(()=>{
                   <div className="average-rating">
                     <div className="stars">{renderStars(calculateAverageRating())}</div>
                     <span className="rating-text">
-                      {calculateAverageRating()} out of 5 ({reviews.length} reviews)
+                      {calculateAverageRating()} out of 5 ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
                     </span>
                   </div>
                 )}
@@ -398,7 +405,7 @@ useEffect(()=>{
                     <>
                       <div className="stars">{renderStars(calculateAverageRating())}</div>
                       <span className="rating-text">
-                        {calculateAverageRating()} ({reviews.length} reviews)
+                        {calculateAverageRating()} ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
                       </span>
                     </>
                   ) : (

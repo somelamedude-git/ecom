@@ -64,6 +64,7 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
     if (order) {
       order.paymentVerified = true
       order.paymentId = paymentId
+      order.status = 'confirmed'
       await order.save()
 
       return res.status(200).json({ status: true, message: 'Payment updated', order })
@@ -75,9 +76,25 @@ const updatePaymentStatus = asyncHandler(async (req, res) => {
   res.status(200).json({ status: false, message: 'Unhandled event' })
 })
 
+let razorpayInstance = null;
+
+if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+  const Razorpay = require('razorpay');
+  razorpayInstance = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+  });
+} else {
+  console.warn("⚠ Razorpay keys missing — payment routes will be disabled.");
+}
+
+module.exports = razorpayInstance;
+
+
 
 module.exports = {
     payment_db_save,
     refund,
-    updatePaymentStatus
+    updatePaymentStatus,
+    razorpayInstance
 }
