@@ -2,3 +2,4 @@
 node_modules/
 seedAdmin.js
 .vercel
+backend/src/*.json
