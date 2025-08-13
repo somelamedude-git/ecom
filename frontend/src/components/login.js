@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, X } from 'lucide-react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Add this import
 import '../styles/login.css';
 
 const FloatingOrbs = () => {
@@ -69,48 +70,48 @@ const SetPasswordModal = ({ isOpen, onClose, userEmail }) => {
     setIsLoading(true);
     setError('');
     
-  try {
-  const response = await axios.post(
-    'http://localhost:3000/user/reset-password',
-    { new_password: newPassword }, // backend expects `new_password`, not `newPassword`
-    {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      withCredentials: true, // IMPORTANT: send cookies along
-      timeout: 10000,
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/user/reset-password',
+        { new_password: newPassword },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+          timeout: 10000,
+        }
+      );
+
+      if (response.status === 200 && response.data.success) {
+        setIsLoading(false);
+        setIsSuccess(true);
+
+        setTimeout(() => {
+          onClose();
+          setIsSuccess(false);
+          setNewPassword('');
+          setConfirmPassword('');
+          setError('');
+        }, 3000);
+      } else {
+        setIsLoading(false);
+        setError(response.data.message || 'An error occurred. Please try again.');
+      }
+    } catch (err) {
+      setIsLoading(false);
+
+      if (err.code === 'ECONNABORTED') {
+        setError('Request timed out. Please try again.');
+      } else if (err.response) {
+        const errorMessage = err.response.data?.message || 'Server error. Please try again later.';
+        setError(errorMessage);
+      } else if (err.request) {
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
     }
-  );
-
-  if (response.status === 200 && response.data.success) {
-    setIsLoading(false);
-    setIsSuccess(true);
-
-    setTimeout(() => {
-      onClose();
-      setIsSuccess(false);
-      setNewPassword('');
-      setConfirmPassword('');
-      setError('');
-    }, 3000);
-  } else {
-    setIsLoading(false);
-    setError(response.data.message || 'An error occurred. Please try again.');
-  }
-} catch (err) {
-  setIsLoading(false);
-
-  if (err.code === 'ECONNABORTED') {
-    setError('Request timed out. Please try again.');
-  } else if (err.response) {
-    const errorMessage = err.response.data?.message || 'Server error. Please try again later.';
-    setError(errorMessage);
-  } else if (err.request) {
-    setError('Network error. Please check your connection and try again.');
-  } else {
-    setError('An unexpected error occurred. Please try again.');
-  }
-}
   };
 
   const handleKeyPress = (e) => {
@@ -269,7 +270,6 @@ const ForgotPasswordModal = ({ isOpen, onClose, onEmailSent }) => {
       return;
     }
 
-    // Basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setError('Please enter a valid email address');
@@ -293,10 +293,8 @@ const ForgotPasswordModal = ({ isOpen, onClose, onEmailSent }) => {
         setIsLoading(false);
         setIsSuccess(true);
         
-        // Notify parent component about the email being sent
         onEmailSent(email);
         
-        // Auto close after 4 seconds
         setTimeout(() => {
           onClose();
           setIsSuccess(false);
@@ -427,32 +425,33 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showSetPassword, setShowSetPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
+  const [error, setError] = useState(''); // Add error state
+  
+  const navigate = useNavigate(); // Add navigation hook
 
   // Check for password reset link click status
   useEffect(() => {
     let interval;
     
     if (resetEmail) {
-      // Start polling every 3 seconds to check if user clicked the reset link
       interval = setInterval(async () => {
-    try {
-  const response = await axios.get('http://localhost:3000/user/returnPasswordLinkClickedStat', {
-    withCredentials: true, // important so cookies are sent
-    timeout: 5000,
-  });
+        try {
+          const response = await axios.get('http://localhost:3000/user/returnPasswordLinkClickedStat', {
+            withCredentials: true,
+            timeout: 5000,
+          });
 
-  if (response.data.success && response.data.clickStatus === true) { 
-    setShowSetPassword(true);
-    clearInterval(interval);
-    setResetEmail(''); 
-  }
-} catch (error) {
-  console.error('Error checking link click status:', error);
-}
-      }, 3000); // Check every 3 seconds
+          if (response.data.success && response.data.clickStatus === true) { 
+            setShowSetPassword(true);
+            clearInterval(interval);
+            setResetEmail(''); 
+          }
+        } catch (error) {
+          console.error('Error checking link click status:', error);
+        }
+      }, 3000);
     }
 
-    // Cleanup interval on unmount or when resetEmail changes
     return () => {
       if (interval) {
         clearInterval(interval);
@@ -465,17 +464,66 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
       ...formData,
       [e.target.name]: e.target.value
     });
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const handleSubmit = async () => {
-    if (formData.email && formData.password) {
-      setIsLoading(true);
-      // Simulate loading for better UX
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      onLogin(formData);
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await axios.post('http://localhost:3000/user/login', {
+        email: formData.email,
+        password: formData.password
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+        timeout: 10000,
+      });
+
+      if (response.status === 200 && response.data.success) {
+        const { userKind, userId, email } = response.data;
+        
+        // Store user data in localStorage or context if needed
+        localStorage.setItem('userKind', userKind);
+        localStorage.setItem('userId', userId);
+        localStorage.setItem('userEmail', email);
+        
+        // Route based on user type
+        if (userKind === 'Admin') {
+          navigate('/admin/portal');
+        } else {
+          navigate('/'); // Landing page for Buyer/Seller
+        }
+        
+        // Call the original onLogin if it's still needed for parent component state
+        if (onLogin) {
+          onLogin(formData);
+        }
+      } else {
+        setError(response.data.message || 'Login failed. Please try again.');
+      }
+    } catch (err) {
+      if (err.code === 'ECONNABORTED') {
+        setError('Request timed out. Please try again.');
+      } else if (err.response) {
+        const errorMessage = err.response.data?.message || 'Invalid credentials. Please try again.';
+        setError(errorMessage);
+      } else if (err.request) {
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    } finally {
       setIsLoading(false);
-    } else {
-      alert('Please fill in all fields');
     }
   };
 
@@ -487,12 +535,12 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
   };
 
   const handleEmailSent = (email) => {
-    setResetEmail(email); // Start polling for this email
+    setResetEmail(email);
   };
 
   const handleSetPasswordClose = () => {
     setShowSetPassword(false);
-    setResetEmail(''); // Stop polling
+    setResetEmail('');
   };
 
   return (
@@ -535,6 +583,7 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
                 value={formData.email}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
+                disabled={isLoading}
                 required
                 className="input"
                 placeholder="your.email@example.com"
@@ -563,6 +612,7 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
                 value={formData.password}
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
+                disabled={isLoading}
                 required
                 className="input password"
                 placeholder="Your password"
@@ -573,11 +623,18 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className={`eye-button ${showPassword ? 'active' : ''}`}
+                disabled={isLoading}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
           </div>
+
+          {error && (
+            <div className="error-message" style={{ marginBottom: '16px' }}>
+              {error}
+            </div>
+          )}
 
           <button
             type="button"

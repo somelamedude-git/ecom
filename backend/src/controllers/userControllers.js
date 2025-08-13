@@ -66,6 +66,7 @@ const createUser = asyncHandler(async (req, res) => {
             success: true,
             userId: user._id,
             email: user.email,
+            userKind: user.kind, // Include user kind in response
             message: "User created successfully. Verification email sent.",
         });
 });
@@ -99,7 +100,12 @@ const googleLogin = asyncHandler(async (req, res) => {
         .cookie('accessToken', accessToken, { httpOnly: true, secure: true })
         .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
         .status(200)
-        .json({ success: true, userId: user._id, email: user.email });
+        .json({ 
+            success: true,
+            userId: user._id, 
+            email: user.email,
+            userKind: user.kind
+        });
 });
 
 const manualLogin = asyncHandler(async (req, res)=>{
@@ -120,7 +126,12 @@ const manualLogin = asyncHandler(async (req, res)=>{
         .cookie('accessToken', accessToken, { httpOnly: true, secure: false, sameSite: 'lax' })
         .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'lax' })
         .status(200)
-        .json({ success: true, userId: user._id, email: user.email });
+        .json({ 
+            success: true, 
+            userId: user._id, 
+            email: user.email,
+            userKind: user.kind // Include user kind in response for frontend routing
+        });
 
 });
 
@@ -246,6 +257,7 @@ const logoutUser = asyncHandler(async(req, res)=>{
         message: "Logged out successfully"
     });
 });
+
 module.exports = {
     createUser,
     googleLogin,
