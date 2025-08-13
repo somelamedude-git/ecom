@@ -32,8 +32,8 @@ const sendForgotMail = asyncHandler(async (req, res) => {
             message: 'If an account with that email exists, a verification link has been sent.'
         });
     } catch (err) {
-        user.passwordResetToken = undefined;
-        user.passwordResetExpire = undefined;
+        user.passwordToken = undefined;
+        user.passwordExpire = undefined;
         await user.save({ validateBeforeSave: false });
 
         throw new ApiError(500, 'Error sending email. Please try again later.');
