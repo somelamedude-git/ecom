@@ -1,484 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, X } from 'lucide-react';
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    backgroundColor: '#000000',
-    color: '#ffffff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '32px 16px',
-    position: 'relative',
-    overflow: 'hidden'
-  },
-  backgroundOrbs: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    pointerEvents: 'none',
-    zIndex: 1
-  },
-  orb: {
-    position: 'absolute',
-    borderRadius: '50%',
-    background: 'linear-gradient(135deg, rgba(253, 224, 71, 0.08) 0%, rgba(251, 191, 36, 0.04) 100%)',
-    filter: 'blur(80px)',
-    animation: 'float 8s ease-in-out infinite'
-  },
-  formContainer: {
-    backgroundColor: 'rgba(17, 24, 39, 0.8)',
-    backdropFilter: 'blur(20px)',
-    borderRadius: '16px',
-    padding: '48px',
-    border: '1px solid rgba(55, 65, 81, 0.5)',
-    width: '100%',
-    maxWidth: '400px',
-    position: 'relative',
-    zIndex: 2,
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)'
-  },
-  backButton: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    color: '#9ca3af',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '16px',
-    marginBottom: '32px',
-    transition: 'all 0.3s ease',
-    padding: '8px 12px',
-    borderRadius: '8px'
-  },
-  logo: {
-    textAlign: 'center',
-    marginBottom: '32px',
-    position: 'relative'
-  },
-  logoText: {
-    fontSize: '36px',
-    fontWeight: 'bold',
-    background: 'linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-    textShadow: '0 0 30px rgba(253, 224, 71, 0.3)',
-    letterSpacing: '2px'
-  },
-  logoGlow: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '150px',
-    height: '40px',
-    background: 'linear-gradient(135deg, rgba(253, 224, 71, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%)',
-    borderRadius: '50%',
-    filter: 'blur(20px)',
-    zIndex: -1
-  },
-  title: {
-    fontSize: '24px',
-    fontWeight: '600',
-    textAlign: 'center',
-    marginBottom: '32px',
-    opacity: '0.9'
-  },
-  formDiv: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '24px'
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    position: 'relative'
-  },
-  label: {
-    fontSize: '14px',
-    fontWeight: '500',
-    color: '#d1d5db',
-    marginBottom: '8px',
-    transition: 'color 0.3s ease'
-  },
-  inputContainer: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center'
-  },
-  inputIcon: {
-    position: 'absolute',
-    left: '16px',
-    zIndex: 2,
-    color: '#6b7280',
-    transition: 'color 0.3s ease'
-  },
-  input: {
-    width: '100%',
-    backgroundColor: 'rgba(31, 41, 55, 0.8)',
-    border: '1px solid rgba(55, 65, 81, 0.5)',
-    borderRadius: '12px',
-    padding: '14px 16px 14px 48px',
-    color: '#ffffff',
-    fontSize: '16px',
-    transition: 'all 0.3s ease',
-    backdropFilter: 'blur(10px)'
-  },
-  eyeButton: {
-    position: 'absolute',
-    right: '16px',
-    background: 'none',
-    border: 'none',
-    color: '#6b7280',
-    cursor: 'pointer',
-    padding: '4px',
-    borderRadius: '4px',
-    transition: 'color 0.3s ease'
-  },
-  submitButton: {
-    width: '100%',
-    background: 'linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%)',
-    color: '#000000',
-    padding: '14px',
-    borderRadius: '12px',
-    fontWeight: '600',
-    border: 'none',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease',
-    marginTop: '16px',
-    fontSize: '16px',
-    position: 'relative',
-    overflow: 'hidden'
-  },
-  submitButtonGlow: {
-    position: 'absolute',
-    top: 0,
-    left: '-100%',
-    width: '100%',
-    height: '100%',
-    background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)',
-    transition: 'left 0.6s ease'
-  },
-  forgotPassword: {
-    textAlign: 'center',
-    marginTop: '16px'
-  },
-  forgotPasswordLink: {
-    color: '#9ca3af',
-    textDecoration: 'none',
-    fontSize: '14px',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease'
-  },
-  switchText: {
-    textAlign: 'center',
-    color: '#9ca3af',
-    marginTop: '24px',
-    fontSize: '15px'
-  },
-  switchLink: {
-    color: '#ffffff',
-    textDecoration: 'none',
-    fontWeight: '500',
-    background: 'linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-    backgroundClip: 'text',
-    cursor: 'pointer',
-    transition: 'all 0.3s ease'
-  },
-  loadingDot: {
-    display: 'inline-block',
-    width: '4px',
-    height: '4px',
-    borderRadius: '50%',
-    backgroundColor: '#000000',
-    margin: '0 2px',
-    opacity: '0.4',
-    animation: 'loadingPulse 1.4s infinite ease-in-out'
-  },
-  // Modal styles
-  modalOverlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    backdropFilter: 'blur(10px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000,
-    padding: '20px'
-  },
-  modal: {
-    backgroundColor: 'rgba(17, 24, 39, 0.95)',
-    backdropFilter: 'blur(20px)',
-    borderRadius: '16px',
-    padding: '32px',
-    border: '1px solid rgba(55, 65, 81, 0.5)',
-    width: '100%',
-    maxWidth: '400px',
-    position: 'relative',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-    animation: 'modalSlideIn 0.3s ease-out'
-  },
-  modalHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '24px'
-  },
-  modalTitle: {
-    fontSize: '20px',
-    fontWeight: '600',
-    color: '#ffffff'
-  },
-  closeButton: {
-    background: 'none',
-    border: 'none',
-    color: '#9ca3af',
-    cursor: 'pointer',
-    padding: '4px',
-    borderRadius: '4px',
-    transition: 'all 0.3s ease'
-  },
-  modalDescription: {
-    color: '#9ca3af',
-    fontSize: '14px',
-    marginBottom: '24px',
-    lineHeight: '1.5'
-  },
-  successMessage: {
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    border: '1px solid rgba(16, 185, 129, 0.3)',
-    borderRadius: '8px',
-    padding: '12px 16px',
-    color: '#10b981',
-    fontSize: '14px',
-    marginTop: '16px',
-    textAlign: 'center'
-  }
-};
+import axios from 'axios';
+import '../styles/login.css';
 
 const FloatingOrbs = () => {
   return (
-    <div style={styles.backgroundOrbs}>
-      {/* More pronounced main orbs */}
-      <div style={{
-        ...styles.orb,
-        width: '450px',
-        height: '450px',
-        top: '-120px',
-        left: '-120px',
-        background: 'radial-gradient(circle, rgba(253, 224, 71, 0.15) 0%, rgba(251, 191, 36, 0.08) 50%, transparent 70%)',
-        filter: 'blur(60px)',
-        animationDelay: '0s'
-      }} />
-      <div style={{
-        ...styles.orb,
-        width: '350px',
-        height: '350px',
-        top: '25%',
-        right: '-100px',
-        background: 'radial-gradient(circle, rgba(251, 191, 36, 0.18) 0%, rgba(253, 224, 71, 0.06) 50%, transparent 70%)',
-        filter: 'blur(50px)',
-        animationDelay: '3s'
-      }} />
-      <div style={{
-        ...styles.orb,
-        width: '300px',
-        height: '300px',
-        bottom: '-80px',
-        left: '15%',
-        background: 'radial-gradient(circle, rgba(253, 224, 71, 0.12) 0%, rgba(251, 191, 36, 0.05) 50%, transparent 70%)',
-        filter: 'blur(55px)',
-        animationDelay: '6s'
-      }} />
+    <div className="background-orbs">
+      {/* Main orbs */}
+      <div className="orb main-orb-1" />
+      <div className="orb main-orb-2" />
+      <div className="orb main-orb-3" />
       
-      {/* Multiple animated geometric circles with hover effects */}
-      <div style={{
-        position: 'absolute',
-        top: '18%',
-        right: '12%',
-        width: '80px',
-        height: '80px',
-        border: '1.5px solid rgba(253, 224, 71, 0.3)',
-        borderRadius: '50%',
-        animation: 'spin 20s linear infinite',
-        boxShadow: '0 0 15px rgba(253, 224, 71, 0.1)',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        pointerEvents: 'auto'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.transform = 'scale(1.3) rotate(180deg)';
-        e.target.style.borderColor = 'rgba(253, 224, 71, 0.8)';
-        e.target.style.boxShadow = '0 0 30px rgba(253, 224, 71, 0.4)';
-        e.target.style.animationPlayState = 'paused';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.transform = 'scale(1) rotate(0deg)';
-        e.target.style.borderColor = 'rgba(253, 224, 71, 0.3)';
-        e.target.style.boxShadow = '0 0 15px rgba(253, 224, 71, 0.1)';
-        e.target.style.animationPlayState = 'running';
-      }}
-      />
+      {/* Interactive geometric circles */}
+      <div className="geometric-circle geometric-circle-1" />
+      <div className="geometric-circle geometric-circle-2" />
+      <div className="geometric-circle geometric-circle-3" />
+      <div className="geometric-circle geometric-circle-4" />
+      <div className="geometric-circle geometric-circle-5" />
       
-      <div style={{
-        position: 'absolute',
-        top: '60%',
-        left: '8%',
-        width: '60px',
-        height: '60px',
-        border: '1px solid rgba(251, 191, 36, 0.4)',
-        borderRadius: '50%',
-        animation: 'spinReverse 15s linear infinite',
-        boxShadow: '0 0 12px rgba(251, 191, 36, 0.08)',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        pointerEvents: 'auto'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.transform = 'scale(1.4) translateY(-20px)';
-        e.target.style.borderColor = 'rgba(251, 191, 36, 0.9)';
-        e.target.style.boxShadow = '0 0 25px rgba(251, 191, 36, 0.3)';
-        e.target.style.animationPlayState = 'paused';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.transform = 'scale(1) translateY(0px)';
-        e.target.style.borderColor = 'rgba(251, 191, 36, 0.4)';
-        e.target.style.boxShadow = '0 0 12px rgba(251, 191, 36, 0.08)';
-        e.target.style.animationPlayState = 'running';
-      }}
-      />
+      {/* Twinkling dots */}
+      <div className="twinkle-dot twinkle-dot-1" />
+      <div className="twinkle-dot twinkle-dot-2" />
       
-      <div style={{
-        position: 'absolute',
-        top: '35%',
-        left: '15%',
-        width: '40px',
-        height: '40px',
-        border: '1px solid rgba(253, 224, 71, 0.25)',
-        borderRadius: '50%',
-        animation: 'floatSpin 12s ease-in-out infinite',
-        boxShadow: '0 0 8px rgba(253, 224, 71, 0.06)',
-        cursor: 'pointer',
-        transition: 'all 0.4s ease',
-        pointerEvents: 'auto'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.transform = 'scale(2) rotate(360deg)';
-        e.target.style.borderColor = 'rgba(253, 224, 71, 0.7)';
-        e.target.style.boxShadow = '0 0 20px rgba(253, 224, 71, 0.2)';
-        e.target.style.animationPlayState = 'paused';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.transform = 'scale(1) rotate(0deg)';
-        e.target.style.borderColor = 'rgba(253, 224, 71, 0.25)';
-        e.target.style.boxShadow = '0 0 8px rgba(253, 224, 71, 0.06)';
-        e.target.style.animationPlayState = 'running';
-      }}
-      />
-      
-      <div style={{
-        position: 'absolute',
-        bottom: '25%',
-        right: '20%',
-        width: '50px',
-        height: '50px',
-        border: '1px solid rgba(251, 191, 36, 0.35)',
-        borderRadius: '50%',
-        animation: 'pulse 8s ease-in-out infinite',
-        boxShadow: '0 0 10px rgba(251, 191, 36, 0.07)',
-        cursor: 'pointer',
-        transition: 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-        pointerEvents: 'auto'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.transform = 'scale(1.6) translateX(-30px) rotate(720deg)';
-        e.target.style.borderColor = 'rgba(251, 191, 36, 0.9)';
-        e.target.style.boxShadow = '0 0 35px rgba(251, 191, 36, 0.4)';
-        e.target.style.animationPlayState = 'paused';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.transform = 'scale(1) translateX(0px) rotate(0deg)';
-        e.target.style.borderColor = 'rgba(251, 191, 36, 0.35)';
-        e.target.style.boxShadow = '0 0 10px rgba(251, 191, 36, 0.07)';
-        e.target.style.animationPlayState = 'running';
-      }}
-      />
-      
-      <div style={{
-        position: 'absolute',
-        top: '8%',
-        left: '35%',
-        width: '30px',
-        height: '30px',
-        border: '1px solid rgba(253, 224, 71, 0.2)',
-        borderRadius: '50%',
-        animation: 'drift 18s ease-in-out infinite',
-        boxShadow: '0 0 6px rgba(253, 224, 71, 0.05)',
-        cursor: 'pointer',
-        transition: 'all 0.5s ease',
-        pointerEvents: 'auto'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.transform = 'scale(1.8) translateY(40px) rotate(-180deg)';
-        e.target.style.borderColor = 'rgba(253, 224, 71, 0.8)';
-        e.target.style.boxShadow = '0 0 25px rgba(253, 224, 71, 0.3)';
-        e.target.style.animationPlayState = 'paused';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.transform = 'scale(1) translateY(0px) rotate(0deg)';
-        e.target.style.borderColor = 'rgba(253, 224, 71, 0.2)';
-        e.target.style.boxShadow = '0 0 6px rgba(253, 224, 71, 0.05)';
-        e.target.style.animationPlayState = 'running';
-      }}
-      />
-      
-      {/* More visible dots */}
-      <div style={{
-        position: 'absolute',
-        top: '15%',
-        left: '85%',
-        width: '4px',
-        height: '4px',
-        backgroundColor: 'rgba(253, 224, 71, 0.6)',
-        borderRadius: '50%',
-        boxShadow: '0 0 12px rgba(253, 224, 71, 0.4)',
-        animation: 'twinkle 3s ease-in-out infinite'
-      }} />
-      
-      <div style={{
-        position: 'absolute',
-        top: '70%',
-        left: '8%',
-        width: '3px',
-        height: '3px',
-        backgroundColor: 'rgba(251, 191, 36, 0.7)',
-        borderRadius: '50%',
-        boxShadow: '0 0 10px rgba(251, 191, 36, 0.3)',
-        animation: 'twinkle 2s ease-in-out infinite 1s'
-      }} />
-      
-      {/* Subtle gradient line */}
-      <div style={{
-        position: 'absolute',
-        top: '40%',
-        left: '-10%',
-        width: '300px',
-        height: '1px',
-        background: 'linear-gradient(90deg, transparent, rgba(253, 224, 71, 0.1) 50%, transparent)',
-        transform: 'rotate(45deg)',
-        animation: 'fadeInOut 4s ease-in-out infinite'
-      }} />
+      {/* Gradient line */}
+      <div className="gradient-line" />
     </div>
   );
 };
@@ -487,26 +32,76 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState('');
   const [focusedField, setFocusedField] = useState('');
+
+  useEffect(() => {
+    if (!isOpen) {
+      setEmail('');
+      setError('');
+      setIsSuccess(false);
+      setIsLoading(false);
+    }
+  }, [isOpen]);
 
   const handleSubmit = async () => {
     if (!email) {
-      alert('Please enter your email address');
+      setError('Please enter your email address');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError('Please enter a valid email address');
       return;
     }
     
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    setIsLoading(false);
-    setIsSuccess(true);
+    setError('');
     
-    // Auto close after 3 seconds
-    setTimeout(() => {
-      onClose();
-      setIsSuccess(false);
-      setEmail('');
-    }, 3000);
+    try {
+      const response = await axios.post('http://localhost:3000/user/send-forgot-mail', {
+        email: email
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000, // 10 second timeout
+      });
+
+      if (response.status === 200 && response.data.success) {
+        setIsLoading(false);
+        setIsSuccess(true);
+        
+        // Auto close after 4 seconds
+        setTimeout(() => {
+          onClose();
+          setIsSuccess(false);
+          setEmail('');
+          setError('');
+        }, 4000);
+      } else {
+        setIsLoading(false);
+        setError(response.data.message || 'An error occurred. Please try again.');
+      }
+    } catch (err) {
+      setIsLoading(false);
+      
+      if (err.code === 'ECONNABORTED') {
+        setError('Request timed out. Please try again.');
+      } else if (err.response) {
+        // Server responded with error status
+        const errorMessage = err.response.data?.message || 'Server error. Please try again later.';
+        setError(errorMessage);
+      } else if (err.request) {
+        // Network error
+        setError('Network error. Please check your connection and try again.');
+      } else {
+        // Other error
+        setError('An unexpected error occurred. Please try again.');
+      }
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -520,49 +115,35 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
 
   return (
     <div 
-      style={styles.modalOverlay}
+      className="modal-overlay"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div style={styles.modal}>
-        <div style={styles.modalHeader}>
-          <h2 style={styles.modalTitle}>Reset Password</h2>
+      <div className="modal">
+        <div className="modal-header">
+          <h2 className="modal-title">Reset Password</h2>
           <button 
             onClick={onClose}
-            style={styles.closeButton}
-            onMouseEnter={(e) => {
-              e.target.style.color = 'hsl(45, 100%, 85%)';
-              e.target.style.backgroundColor = 'rgba(253, 224, 71, 0.1)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#9ca3af';
-              e.target.style.backgroundColor = 'transparent';
-            }}
+            className="close-button"
           >
             <X size={20} />
           </button>
         </div>
 
-        <p style={styles.modalDescription}>
+        <p className="modal-description">
           Enter your email address and we'll send you a link to reset your password.
         </p>
 
-        <div style={styles.formGroup}>
+        <div className="form-group">
           <label 
             htmlFor="reset-email" 
-            style={{
-              ...styles.label,
-              color: focusedField === 'reset-email' ? 'hsl(45, 100%, 85%)' : '#d1d5db'
-            }}
+            className={`label ${focusedField === 'reset-email' ? 'focused' : ''}`}
           >
             Email Address
           </label>
-          <div style={styles.inputContainer}>
+          <div className="input-container">
             <Mail 
               size={18} 
-              style={{
-                ...styles.inputIcon,
-                color: focusedField === 'reset-email' ? 'hsl(45, 100%, 85%)' : '#6b7280'
-              }}
+              className={`input-icon ${focusedField === 'reset-email' ? 'focused' : ''}`}
             />
             <input
               type="email"
@@ -571,12 +152,7 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
               onChange={(e) => setEmail(e.target.value)}
               onKeyPress={handleKeyPress}
               disabled={isLoading || isSuccess}
-              style={{
-                ...styles.input,
-                borderColor: focusedField === 'reset-email' ? 'hsl(45, 100%, 85%)' : 'rgba(55, 65, 81, 0.5)',
-                boxShadow: focusedField === 'reset-email' ? '0 0 0 3px rgba(253, 224, 71, 0.1)' : 'none',
-                opacity: isLoading || isSuccess ? 0.6 : 1
-              }}
+              className="input"
               placeholder="your.email@example.com"
               onFocus={() => setFocusedField('reset-email')}
               onBlur={() => setFocusedField('')}
@@ -587,31 +163,16 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         <button
           onClick={handleSubmit}
           disabled={isLoading || isSuccess}
-          style={{
-            ...styles.submitButton,
-            opacity: isLoading || isSuccess ? 0.8 : 1,
-            cursor: isLoading || isSuccess ? 'not-allowed' : 'pointer',
-            marginTop: '24px'
-          }}
-          onMouseEnter={(e) => {
-            if (!isLoading && !isSuccess) {
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 10px 25px -5px rgba(253, 224, 71, 0.4)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!isLoading && !isSuccess) {
-              e.target.style.transform = 'translateY(0px)';
-              e.target.style.boxShadow = 'none';
-            }
-          }}
+          className="submit-button"
+          style={{ marginTop: '24px' }}
         >
+          <div className="submit-button-glow" />
           {isLoading ? (
             <>
               Sending Reset Link
-              <span className="loading-dot" style={styles.loadingDot} />
-              <span className="loading-dot" style={styles.loadingDot} />
-              <span className="loading-dot" style={styles.loadingDot} />
+              <span className="loading-dot" />
+              <span className="loading-dot" />
+              <span className="loading-dot" />
             </>
           ) : isSuccess ? (
             'Reset Link Sent!'
@@ -621,8 +182,14 @@ const ForgotPasswordModal = ({ isOpen, onClose }) => {
         </button>
 
         {isSuccess && (
-          <div style={styles.successMessage}>
+          <div className="success-message">
             A password reset link has been sent to your email address. Please check your inbox and follow the instructions.
+          </div>
+        )}
+
+        {error && (
+          <div className="error-message">
+            {error}
           </div>
         )}
       </div>
@@ -639,63 +206,6 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
   const [isLoading, setIsLoading] = useState(false);
   const [focusedField, setFocusedField] = useState('');
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-
-  useEffect(() => {
-    // Add keyframes for animations
-    const styleSheet = document.createElement('style');
-    styleSheet.type = 'text/css';
-    styleSheet.innerText = `
-      @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
-      }
-      @keyframes loadingPulse {
-        0%, 80%, 100% { opacity: 0.4; }
-        40% { opacity: 1; }
-      }
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
-      @keyframes spinReverse {
-        from { transform: rotate(360deg); }
-        to { transform: rotate(0deg); }
-      }
-      @keyframes floatSpin {
-        0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
-        25% { transform: translateY(-15px) rotate(90deg) scale(1.1); }
-        50% { transform: translateY(-10px) rotate(180deg) scale(0.95); }
-        75% { transform: translateY(-20px) rotate(270deg) scale(1.05); }
-      }
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.3; }
-        50% { transform: scale(1.2); opacity: 0.6; }
-      }
-      @keyframes drift {
-        0%, 100% { transform: translateX(0px) translateY(0px) rotate(0deg); }
-        25% { transform: translateX(20px) translateY(-10px) rotate(45deg); }
-        50% { transform: translateX(10px) translateY(-25px) rotate(90deg); }
-        75% { transform: translateX(-15px) translateY(-15px) rotate(135deg); }
-      }
-      @keyframes twinkle {
-        0%, 100% { opacity: 0.2; }
-        50% { opacity: 0.6; }
-      }
-      @keyframes fadeInOut {
-        0%, 100% { opacity: 0; }
-        50% { opacity: 0.3; }
-      }
-      @keyframes modalSlideIn {
-        from { opacity: 0; transform: translateY(-20px) scale(0.95); }
-        to { opacity: 1; transform: translateY(0) scale(1); }
-      }
-      .loading-dot:nth-child(1) { animation-delay: 0s; }
-      .loading-dot:nth-child(2) { animation-delay: 0.2s; }
-      .loading-dot:nth-child(3) { animation-delay: 0.4s; }
-    `;
-    document.head.appendChild(styleSheet);
-    return () => document.head.removeChild(styleSheet);
-  }, []);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -724,61 +234,37 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
   };
 
   return (
-    <div style={styles.container}>
+    <div className="login-container">
       <FloatingOrbs />
       
-      <div style={styles.formContainer}>
+      <div className="form-container">
         <button 
           onClick={tolanding}
-          style={{
-            ...styles.backButton,
-            backgroundColor: focusedField === 'back' ? 'rgba(253, 224, 71, 0.1)' : 'transparent'
-          }}
-          onMouseEnter={(e) => {
-            setFocusedField('back');
-            e.target.style.background = 'linear-gradient(135deg, hsl(45, 100%, 85%) 0%, hsl(35, 90%, 68%) 100%)';
-            e.target.style.webkitBackgroundClip = 'text';
-            e.target.style.webkitTextFillColor = 'transparent';
-            e.target.style.backgroundClip = 'text';
-          }}
-          onMouseLeave={(e) => {
-            setFocusedField('');
-            e.target.style.background = 'none';
-            e.target.style.webkitBackgroundClip = 'initial';
-            e.target.style.webkitTextFillColor = 'initial';
-            e.target.style.backgroundClip = 'initial';
-            e.target.style.color = '#9ca3af';
-          }}
+          className="back-button"
         >
           <ArrowLeft size={20} />
           <span>Back to Home</span>
         </button>
 
-        <div style={styles.logo}>
-          <div style={styles.logoGlow} />
-          <div style={styles.logoText}>CLIQUE</div>
+        <div className="logo">
+          <div className="logo-glow" />
+          <div className="logo-text">CLIQUE</div>
         </div>
 
-        <h1 style={styles.title}>Welcome Back</h1>
+        <h1 className="title">Welcome Back</h1>
 
-        <div style={styles.formDiv}>
-          <div style={styles.formGroup}>
+        <div className="form-div">
+          <div className="form-group">
             <label 
               htmlFor="email" 
-              style={{
-                ...styles.label,
-                color: focusedField === 'email' ? 'hsl(45, 100%, 85%)' : '#d1d5db'
-              }}
+              className={`label ${focusedField === 'email' ? 'focused' : ''}`}
             >
               Email
             </label>
-            <div style={styles.inputContainer}>
+            <div className="input-container">
               <Mail 
                 size={18} 
-                style={{
-                  ...styles.inputIcon,
-                  color: focusedField === 'email' ? 'hsl(45, 100%, 85%)' : '#6b7280'
-                }}
+                className={`input-icon ${focusedField === 'email' ? 'focused' : ''}`}
               />
               <input
                 type="email"
@@ -788,11 +274,7 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 required
-                style={{
-                  ...styles.input,
-                  borderColor: focusedField === 'email' ? 'hsl(45, 100%, 85%)' : 'rgba(55, 65, 81, 0.5)',
-                  boxShadow: focusedField === 'email' ? '0 0 0 3px rgba(253, 224, 71, 0.1)' : 'none'
-                }}
+                className="input"
                 placeholder="your.email@example.com"
                 onFocus={() => setFocusedField('email')}
                 onBlur={() => setFocusedField('')}
@@ -800,23 +282,17 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
             </div>
           </div>
 
-          <div style={styles.formGroup}>
+          <div className="form-group">
             <label 
               htmlFor="password" 
-              style={{
-                ...styles.label,
-                color: focusedField === 'password' ? 'hsl(45, 100%, 85%)' : '#d1d5db'
-              }}
+              className={`label ${focusedField === 'password' ? 'focused' : ''}`}
             >
               Password
             </label>
-            <div style={styles.inputContainer}>
+            <div className="input-container">
               <Lock 
                 size={18} 
-                style={{
-                  ...styles.inputIcon,
-                  color: focusedField === 'password' ? 'hsl(45, 100%, 85%)' : '#6b7280'
-                }}
+                className={`input-icon ${focusedField === 'password' ? 'focused' : ''}`}
               />
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -826,12 +302,7 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
                 onChange={handleInputChange}
                 onKeyPress={handleKeyPress}
                 required
-                style={{
-                  ...styles.input,
-                  paddingRight: '48px',
-                  borderColor: focusedField === 'password' ? 'hsl(45, 100%, 85%)' : 'rgba(55, 65, 81, 0.5)',
-                  boxShadow: focusedField === 'password' ? '0 0 0 3px rgba(253, 224, 71, 0.1)' : 'none'
-                }}
+                className="input password"
                 placeholder="Your password"
                 onFocus={() => setFocusedField('password')}
                 onBlur={() => setFocusedField('')}
@@ -839,12 +310,7 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  ...styles.eyeButton,
-                  color: showPassword ? 'hsl(45, 100%, 85%)' : '#6b7280'
-                }}
-                onMouseEnter={(e) => e.target.style.color = 'hsl(45, 100%, 85%)'}
-                onMouseLeave={(e) => e.target.style.color = showPassword ? 'hsl(45, 100%, 85%)' : '#6b7280'}
+                className={`eye-button ${showPassword ? 'active' : ''}`}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -855,35 +321,15 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
             type="button"
             onClick={handleSubmit}
             disabled={isLoading}
-            style={{
-              ...styles.submitButton,
-              opacity: isLoading ? 0.8 : 1,
-              cursor: isLoading ? 'not-allowed' : 'pointer'
-            }}
-            onMouseEnter={(e) => {
-              if (!isLoading) {
-                e.target.style.transform = 'translateY(-2px)';
-                e.target.style.boxShadow = '0 10px 25px -5px rgba(253, 224, 71, 0.4)';
-                const glow = e.target.querySelector('.submit-glow');
-                if (glow) glow.style.left = '100%';
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!isLoading) {
-                e.target.style.transform = 'translateY(0px)';
-                e.target.style.boxShadow = 'none';
-                const glow = e.target.querySelector('.submit-glow');
-                if (glow) glow.style.left = '-100%';
-              }
-            }}
+            className="submit-button"
           >
-            <div className="submit-glow" style={styles.submitButtonGlow} />
+            <div className="submit-button-glow" />
             {isLoading ? (
               <>
                 Signing In
-                <span className="loading-dot" style={styles.loadingDot} />
-                <span className="loading-dot" style={styles.loadingDot} />
-                <span className="loading-dot" style={styles.loadingDot} />
+                <span className="loading-dot" />
+                <span className="loading-dot" />
+                <span className="loading-dot" />
               </>
             ) : (
               'Sign In'
@@ -891,36 +337,20 @@ function LoginPage({ tolanding, onLogin, tosignup, onGoogleLogin, sellerKind }) 
           </button>
         </div>
 
-        <div style={styles.forgotPassword}>
+        <div className="forgot-password">
           <span 
             onClick={() => setShowForgotPassword(true)}
-            style={styles.forgotPasswordLink}
-            onMouseEnter={(e) => {
-              e.target.style.color = 'hsl(45, 100%, 85%)';
-              e.target.style.textShadow = '0 0 8px rgba(253, 224, 71, 0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.color = '#9ca3af';
-              e.target.style.textShadow = 'none';
-            }}
+            className="forgot-password-link"
           >
             Forgot your password?
           </span>
         </div>
 
-        <div style={styles.switchText}>
+        <div className="switch-text">
           Don't have an account?{' '}
           <span 
             onClick={tosignup}
-            style={styles.switchLink}
-            onMouseEnter={(e) => {
-              e.target.style.opacity = '0.8';
-              e.target.style.textShadow = '0 0 8px rgba(253, 224, 71, 0.5)';
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.opacity = '1';
-              e.target.style.textShadow = 'none';
-            }}
+            className="switch-link"
           >
             Sign up
           </span>

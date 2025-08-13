@@ -5,6 +5,7 @@ const { fetchUserData } = require('../APIs/fetchProfile')
 const { verifyJWT,  looseVerification} = require('../middlewares/auth.middleware');
 const { isLoggedIn } = require('../APIs/checkLoginStatus');
 const { fetchLength } = require('../APIs/cartAndWishCount'); // Who wants to fetch the whole data when all i require are these babies? #GoldDigger
+const { sendForgotMail } = require('../APIs/password.api');
 const router = express.Router();
 
 router.get('/auth/google', (req, res) => {
@@ -21,6 +22,7 @@ router.get('/getCWL', looseVerification, fetchLength); //CWL: Cart Wish Length ,
 router.get('/profile', verifyJWT, fetchUserData); 
 router.patch('/editProfile', verifyJWT, userControllers.updateUser);
 router.post('/logout', verifyJWT, userControllers.logoutUser);
+router.post('/send-forgot-mail', sendForgotMail);
 // router.delete('/delete_account/:id', verifyJWT, userControllers.deleteUser);
 
 // router.patch('/ban_user/:id', verifyJWT, userControllers.banUser);
