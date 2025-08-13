@@ -26,7 +26,6 @@ const ContactPage = React.lazy(() => import("./components/ContactPage"));
 const Checkout = React.lazy(() => import("./components/CheckoutPage"));
 const Offers = React.lazy(() => import("./components/OffersPage"));
 const OrderConfirmedPage = React.lazy(() => import('./components/OrderConfirmed'));
-const Offers = React.lazy(() => import("./components/OffersPage"));
 
 function AppContent() {
   const location = useLocation();

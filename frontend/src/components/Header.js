@@ -1,9 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { 
-  Search, User, ShoppingBag, Menu, Heart, 
-  Package, BarChart3, Plus, Store, Settings 
-} from 'lucide-react';
+import { User, ShoppingBag, Menu, Heart, Package, BarChart3, Plus, Store, Settings } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/clique_logo.png';
 import { useEffect, useState } from 'react';
@@ -76,7 +73,7 @@ function Header({ menumove }) {
   // Listen for route changes and check auth status
   useEffect(() => {
     fetchData();
-  }, [location.pathname, fetchData]); // Re-run when route changes
+  }, [location.pathname, fetchData]);
 
   // Also listen for focus events to update when user returns to the tab
   useEffect(() => {
@@ -104,13 +101,11 @@ function Header({ menumove }) {
     
     if (path === '/') return 'home';
     
-    // Handle seller routes
     if (path.startsWith('/seller/')) {
       const sellerPath = path.replace('/seller/', '');
       return sellerPath || 'dashboard';
     }
     
-    // Handle buyer routes
     return path.slice(1) || 'home';
   }, [location.pathname]);
 
@@ -178,19 +173,14 @@ function Header({ menumove }) {
         </nav>
 
         <div className="headerActions">
-          <button className="iconb" onMouseEnter={(e) => e.target.style.color = '#ffffff'} onMouseLeave={(e) => e.target.style.color = '#9ca3af'}>
-            <Search size={20} />
-          </button>
 
           <button onClick={() => safenav('/wishlist')} className={iconclass('wishlist')}>
             <Heart size={20} />
             <span className="cartthingy">{wishlistCount}</span>
           </button>
-
           <button onClick={() => safenav('/profile')} className={iconclass('profile')}>
             <User size={20} />
           </button>
-
           <button onClick={() => safenav('/cart')} className={iconclass('cart')}>
             <ShoppingBag size={20} />
             <span className="cartthingy">{cartCount}</span>
