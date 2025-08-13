@@ -40,8 +40,25 @@ const sendForgotMail = asyncHandler(async (req, res) => {
     }
 });
 
-const updatePassword
+const updatePassword = asyncHandler(async(req, res)=>{
+    const { email } = req.body;
+    const user = await BaseUser.findOne({email:email});
+    if(!user) throw new ApiError(404, 'User not found');
+
+    const { new_password } = req.body;
+    user.password = new_password;
+    user.passwordToken = undefined;
+    user.passwordTokenExpire = undefined;
+    
+    await user.save();
+    
+    res.status(200).json({
+        success: true,
+        message: 'Password updated successfully'
+    })
+});
 
 module.exports = {
-    sendForgotMail
+    sendForgotMail,
+    updatePassword
 };
