@@ -63,8 +63,8 @@ function AppContent() {
             <Route path="/seller/profile" element={<Layout><SellerProfile /></Layout>} />
             <Route path="/product/:product_id" element={<Layout><ProductDescriptionPage/></Layout>} />
             <Route path="/seller/analysis/product/:product_id" element={<Layout><ProductAnalytics/></Layout>} />
-            <Route path="/admin/portal" element={<Layout><AdminPortal/></Layout>} />
-            <Route path="/admin/stats" element={<Layout><AnalyticsDashboard/></Layout>} />
+            <Route path="/admin/portal" element={<Layout><Admin/></Layout>} />
+            <Route path="/admin/stats" element={<Layout><Analytics/></Layout>} />
             <Route path="/work-with-us" element={<Layout><WorkWithUsPage/></Layout>} />
             <Route path="/contact" element={<Layout><ContactPage/></Layout>} />
             <Route path="/checkout" element={<Layout><Checkout/></Layout>} />
