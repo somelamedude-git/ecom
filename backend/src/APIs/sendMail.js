@@ -10,14 +10,14 @@ const sendMail = asyncHandler(async (req, res) => {
         }
     })
 
-    const {firstName, lastName, email, message} = req.body
+    const {firstname, lastname, email, msg} = req.body
 
     const mailOptions = {
         from: email,
         to: process.env.EMAIL_USER,
         subject: 'Message from the Clique User',
-        html: `<h1>${firstName} ${lastName}</h1>
-        <h2>${message}</h2>`
+        html: `<h1>${firstname} ${lastname}</h1>
+        <h2>${msg}</h2>`
     }
 
     const info = await transporter.sendMail(mailOptions)
