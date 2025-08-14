@@ -1,7 +1,7 @@
 const { asyncHandler } = require('../utils/asyncHandler')
-const {nodemailer} = require('nodemailer')
+const nodemailer = require('nodemailer')
 
-const mail = asyncHandler(async (req, res) => {
+const sendMail = asyncHandler(async (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -21,7 +21,7 @@ const mail = asyncHandler(async (req, res) => {
     }
 
     const info = await transporter.sendMail(mailOptions)
-    console.log(info.response)
+    return res.status(200).json({status: true, response: info.response})
 })
 
 module.exports = {
