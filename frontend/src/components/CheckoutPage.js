@@ -25,7 +25,7 @@ function CheckoutPage({
   const [addresses, setAddresses] = useState([]);
   const [cartLoading, setCartLoading] = useState(true);
   const [userProfile, setUserProfile] = useState({});
-  const [loggedin, setLoggedin] = useState(false);
+  const [loggedin, setLoggedin] = useState(true);
   const [wishlistcount, setWishlistCount] = useState(0);
   const [cartcount, setCartCount] = useState(0);
 
@@ -109,7 +109,9 @@ function CheckoutPage({
   const fetchCartItems = async () => {
     try {
       setCartLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/cart/getItems`);
+      const response = await axios.get(`${API_BASE_URL}/cart/getItems`, {
+        withCredentials: true
+      });
       
       if (response.data.status) {
         // Transform cart data to match our orderItems format
@@ -131,6 +133,7 @@ function CheckoutPage({
         throw new Error(response.data.message || 'Failed to fetch cart items');
       }
     } catch (error) {
+      console.log(error)
       handleApiError(error, 'Cart fetch');
       navigate('/cart');
     } finally {
@@ -566,6 +569,8 @@ function CheckoutPage({
       </div>
     );
   }
+
+  console.log(loggedin)
 
   return (
     <div className="checkout-container">
