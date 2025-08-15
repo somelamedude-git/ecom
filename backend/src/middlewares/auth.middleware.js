@@ -54,11 +54,14 @@ const looseVerification = asyncHandler(async(req, res, next)=>{
 });
 
 const adminCheck = asyncHandler(async (req, res, next) => {
+    console.log('Entered admin check');
     const id = req.user._id
     const admin = await Admin.findById(id.toString())
 
-    if(admin)
-        next()
+    if(admin){
+         console.log(admin, 'woohoo we found the admin')
+        return next()
+    }
 
     throw new ApiError(404, "Admin not found")
 })
