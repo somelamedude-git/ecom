@@ -69,6 +69,7 @@ function AppContent() {
             <Route path="/checkout" element={<Layout><Checkout/></Layout>} />
             <Route path="/confirmation" element={<Layout><OrderConfirmedPage/></Layout>} />
             <Route path='/offers' element={<Layout><Offers/></Layout>}></Route>
+            <Route path='/analytics' element={<Layout><Analytics/></Layout>}></Route>
           </Routes>
         </Suspense>
       )}

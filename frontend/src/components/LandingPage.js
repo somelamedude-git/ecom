@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { TrendingUp, Package, Users, DollarSign, Plus, BarChart3, ShoppingBag, Eye } from 'lucide-react';
+import { TrendingUp, Package, Users, DollarSign, Plus, BarChart3, ShoppingBag, Eye, Settings, UserCheck } from 'lucide-react';
 import axios from 'axios';
 import '../styles/LandingPage.css';
 import image from '../assets/image.png';
+
 function LandingPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,6 +32,12 @@ function LandingPage() {
       if (res.data.isLoggedIn) {
         setLoggedIn(true);
         setUserType(res.data.userType || 'Buyer');
+        
+        // Handle Admin user type - redirect to analytics
+        if (res.data.userType === 'Admin') {
+          navigate('/analytics');
+          return;
+        }
         
         // Only fetch seller stats if user is a seller
         if (res.data.userType === 'Seller') {
@@ -93,7 +100,7 @@ function LandingPage() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [navigate]);
 
   // Listen for route changes and check auth status
   useEffect(() => {
@@ -151,6 +158,54 @@ function LandingPage() {
       </div>
     );
   }
+
+  // Admin Landing Page (redirects to analytics)
+  const AdminLandingPage = () => {
+    useEffect(() => {
+      navigate('/analytics');
+    }, []);
+
+    return (
+      <div className="landing-container" style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #111827 0%, #1f2937 50%, #374151 100%)'
+      }}>
+        <div style={{
+          textAlign: 'center',
+          color: '#f9fafb'
+        }}>
+          <div style={{
+            background: 'rgba(31, 41, 55, 0.8)',
+            border: '1px solid #374151',
+            borderRadius: '16px',
+            padding: '40px',
+            backdropFilter: 'blur(10px)',
+            maxWidth: '400px'
+          }}>
+            <UserCheck size={48} color="#8b5cf6" style={{ marginBottom: '20px' }} />
+            <h2 style={{ marginBottom: '10px', fontSize: '24px', fontWeight: '600' }}>
+              Admin Access
+            </h2>
+            <p style={{ color: '#9ca3af', marginBottom: '20px' }}>
+              Redirecting to analytics dashboard...
+            </p>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px'
+            }}>
+              <BarChart3 size={20} color="#8b5cf6" />
+              <span>Analytics Dashboard</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   // Buyer Landing Page
   const BuyerLandingPage = () => (
@@ -465,9 +520,17 @@ function LandingPage() {
     return <BuyerLandingPage />;
   }
 
-  return userType === 'Seller' ? <SellerLandingPage /> : <BuyerLandingPage />;
+  // Handle different user types
+  switch (userType) {
+    case 'Admin':
+      return <AdminLandingPage />;
+    case 'Seller':
+      return <SellerLandingPage />;
+    case 'Buyer':
+    default:
+      return <BuyerLandingPage />;
+  }
 }
-
 
 function Carousel() {
   const navigate = useNavigate();
@@ -478,7 +541,7 @@ function Carousel() {
       title: 'MIN. 50% OFF',
       subtitle: 'Extra 20% off on Indianwear',
       code: 'with code ETHNIC20',
-      image:{image},
+      image: image,
       badge: { title: 'CLIQUE', subtitle: 'Moments that CLiQ', footer: 'SALE NOW LIVE' },
     },
   ];
@@ -555,4 +618,5 @@ function Carousel() {
     </section>
   );
 }
+
 export default LandingPage;
