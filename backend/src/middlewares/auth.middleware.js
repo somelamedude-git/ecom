@@ -55,7 +55,7 @@ const looseVerification = asyncHandler(async(req, res, next)=>{
 
 const adminCheck = asyncHandler(async (req, res, next) => {
     const id = req.user._id
-    const admin = await Admin.findById(id)
+    const admin = await Admin.findById(id.toString())
 
     if(admin)
         next()
