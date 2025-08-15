@@ -25,28 +25,36 @@ function CheckoutPage({
   const [addresses, setAddresses] = useState([]);
   const [cartLoading, setCartLoading] = useState(true);
   const [userProfile, setUserProfile] = useState({});
-  const [loggedin, setLoggedin] = useState(true);
+  const [loggedin, setLoggedin] = useState(null); // Changed to null for proper loading state
+  const [authLoading, setAuthLoading] = useState(true); // New loading state for auth
   const [wishlistcount, setWishlistCount] = useState(0);
   const [cartcount, setCartCount] = useState(0);
 
   const fetchData = useCallback(async()=>{
     try{
-       const res_login_status = await axios.get('http://localhost:3000/user/verifyLogin', {
-              withCredentials: true
-            });
+      setAuthLoading(true);
+      const res_login_status = await axios.get('http://localhost:3000/user/verifyLogin', {
+        withCredentials: true
+      });
 
-            if(res_login_status.data.isLoggedIn){
-              setLoggedin(true);
-            }
+      if(res_login_status.data.isLoggedIn){
+        setLoggedin(true);
+        
+        // Fetch cart and wishlist counts only if logged in
+        const res_CWL = await axios.get('http://localhost:3000/user/getCWL', {
+          withCredentials: true
+        });
 
-            const res_CWL = await axios.get('http://localhost:3000/user/getCWL', {
-            withCredentials: true
-          });
-
-          setWishlistCount(res_CWL.data.wish_length);
-          setCartCount(res_CWL.data.cart_length);
+        setWishlistCount(res_CWL.data.wish_length);
+        setCartCount(res_CWL.data.cart_length);
+      } else {
+        setLoggedin(false);
+      }
     }catch(error){
-      console.log(error);
+      console.log('Auth check error:', error);
+      setLoggedin(false);
+    } finally {
+      setAuthLoading(false);
     }
   }, []);
   
@@ -77,7 +85,7 @@ function CheckoutPage({
     
     if (error.response?.status === 401) {
       toast.error('Session expired. Please login again.');
-      console.log(loggedin)
+      setLoggedin(false); // Update login state
       navigate('/login');
     } else if (error.response?.status === 404) {
       toast.error(`${context}: Resource not found`);
@@ -88,23 +96,26 @@ function CheckoutPage({
     }
   };
 
-  // Fetch cart items and user data on component mount
+  // Initial auth check
   useEffect(() => {
-    // Call fetchData to verify login status
     fetchData();
   }, [fetchData]);
 
+  // Handle authentication state changes
   useEffect(() => {
-    if (!loggedin) {
+    if (authLoading) return; // Wait for auth check to complete
+    
+    if (loggedin === false) {
       toast.error('Please login to continue');
-      console.log(loggedin)
       navigate('/login');
       return;
     }
     
-    fetchCartItems();
-    fetchUserProfile();
-  }, [loggedin, navigate]);
+    if (loggedin === true) {
+      fetchCartItems();
+      fetchUserProfile();
+    }
+  }, [loggedin, authLoading, navigate]);
 
   const fetchCartItems = async () => {
     try {
@@ -113,7 +124,7 @@ function CheckoutPage({
         withCredentials: true
       });
       
-      if (response.data.status) {
+      if (response.data.success) { // Fixed: should be 'success' not 'status'
         // Transform cart data to match our orderItems format
         const transformedItems = response.data.cart.map(item => ({
           id: item.product._id,
@@ -133,9 +144,17 @@ function CheckoutPage({
         throw new Error(response.data.message || 'Failed to fetch cart items');
       }
     } catch (error) {
-      console.log(error)
-      handleApiError(error, 'Cart fetch');
-      navigate('/cart');
+      console.log('Cart fetch error:', error);
+      
+      // Don't navigate to /cart on auth errors, let handleApiError handle it
+      if (error.response?.status === 401) {
+        handleApiError(error, 'Cart fetch');
+      } else {
+        // For non-auth errors, you might want to show the cart is empty or navigate to cart
+        toast.error('Failed to load cart items');
+        // Only navigate to cart for non-auth errors if needed
+        // navigate('/cart');
+      }
     } finally {
       setCartLoading(false);
     }
@@ -143,7 +162,9 @@ function CheckoutPage({
 
   const fetchUserProfile = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/auth/profile`);
+      const response = await axios.get(`${API_BASE_URL}/user/profile`, { // Fixed endpoint
+        withCredentials: true
+      });
       
       if (response.data.status) {
         const user = response.data.user;
@@ -283,7 +304,9 @@ function CheckoutPage({
         type: 'shipping'
       };
 
-      const response = await axios.post(`${API_BASE_URL}/address/ChangeAddress`, addressData);
+      const response = await axios.post(`${API_BASE_URL}/address/ChangeAddress`, addressData, {
+        withCredentials: true
+      });
       
       if (response.data.success) {
         toast.success('Address saved successfully');
@@ -322,6 +345,8 @@ function CheckoutPage({
       const response = await axios.patch(`${API_BASE_URL}/promo/apply`, {
         total_cost: currentTotal,
         code_used: promoCode.trim()
+      }, {
+        withCredentials: true
       });
 
       if (response.data.success) {
@@ -357,7 +382,9 @@ function CheckoutPage({
 
   const createOrderFromCart = async () => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/order/cart`);
+      const response = await axios.post(`${API_BASE_URL}/orders/cart`, {
+        withCredentials: true
+      });
       return response.data;
     } catch (error) {
       console.error('Error creating order from cart:', error);
@@ -367,8 +394,10 @@ function CheckoutPage({
 
   const createRazorpayOrder = async (orderId) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/payment/pay`, {
+      const response = await axios.post(`${API_BASE_URL}/api/payment/pay`, {
         order_id: orderId
+      }, {
+        withCredentials: true
       });
       return response.data;
     } catch (error) {
@@ -425,7 +454,7 @@ function CheckoutPage({
         order_id: paymentData.order_id,
         handler: function (response) {
           toast.success('Payment successful!');
-          navigate('/order-confirmed', {
+          navigate('/confirmation', { // Fixed navigation path
             state: {
               orderId: orderId,
               paymentId: response.razorpay_payment_id,
@@ -486,7 +515,7 @@ function CheckoutPage({
       }
 
       toast.success('Order placed successfully!');
-      navigate('/order-confirmed', {
+      navigate('/confirmation', { // Fixed navigation path
         state: {
           orderId: orderResponse.successOrders[0],
           paymentMethod: 'cod',
@@ -533,6 +562,24 @@ function CheckoutPage({
     discount = appliedPromoData.discount;
   }
 
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="checkout-container">
+        <Header
+          currentPage="checkout"
+          cartcount={cartcount}
+          wishlistcount={wishlistcount}
+          loggedin={loggedin}
+          menumove={menumove}
+        />
+        <div className="checkout-loading">
+          <p>Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (cartLoading) {
     return (
       <div className="checkout-container">
@@ -562,15 +609,13 @@ function CheckoutPage({
         />
         <div className="checkout-empty">
           <h2>Your cart is empty</h2>
-          <button onClick={() => navigate('/shop')} className="checkout-shop-button">
+          <button onClick={() => navigate('/products')} className="checkout-shop-button">
             Continue Shopping
           </button>
         </div>
       </div>
     );
   }
-
-  console.log(loggedin)
 
   return (
     <div className="checkout-container">
