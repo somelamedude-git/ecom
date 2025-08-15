@@ -24,7 +24,7 @@ function ContactPage({ loggedin, menumove, cartcount = 0, wishlistcount = 0 }) {
     e.preventDefault();
 
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch('/connect/mail', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

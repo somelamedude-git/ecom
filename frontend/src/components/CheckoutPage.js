@@ -9,7 +9,6 @@ import image from '../assets/checkout-image.jpg';
 
 function CheckoutPage({ 
   menumove, 
-  cartcount = 0, 
 }) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);

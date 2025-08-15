@@ -19,8 +19,8 @@ const AddProductForm = React.lazy(() => import("./components/AddProduct"));
 const SellerProfile = React.lazy(() => import("./components/sellerProfile"));
 const ProductDescriptionPage = React.lazy(() => import("./components/SingleProduct"));
 const ProductAnalytics = React.lazy(() => import("./components/productAnalytics"));
-const AdminPortal = React.lazy(() => import('./components/Admin'));
-const AnalyticsDashboard = React.lazy(() => import('./components/Analytics'));
+const Admin = React.lazy(() => import('./components/Admin'));
+const Analytics = React.lazy(() => import('./components/Analytics'));
 const WorkWithUsPage = React.lazy(() => import("./pages/workwithusPage"));
 const ContactPage = React.lazy(() => import("./components/ContactPage")); 
 const Checkout = React.lazy(() => import("./components/CheckoutPage"));
@@ -63,8 +63,7 @@ function AppContent() {
             <Route path="/seller/profile" element={<Layout><SellerProfile /></Layout>} />
             <Route path="/product/:product_id" element={<Layout><ProductDescriptionPage/></Layout>} />
             <Route path="/seller/analysis/product/:product_id" element={<Layout><ProductAnalytics/></Layout>} />
-            <Route path="/admin/portal" element={<Layout><Admin/></Layout>} />
-            <Route path="/admin/stats" element={<Layout><Analytics/></Layout>} />
+            
             <Route path="/work-with-us" element={<Layout><WorkWithUsPage/></Layout>} />
             <Route path="/contact" element={<Layout><ContactPage/></Layout>} />
             <Route path="/checkout" element={<Layout><Checkout/></Layout>} />

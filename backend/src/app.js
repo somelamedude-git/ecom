@@ -18,6 +18,7 @@ const orderRoutes = require('./routes/orders.routes');
 const paymentRoutes = require('./routes/paymentVerification');
 const sellerRoutes = require('./routes/seller.routes');
 const promoRoutes = require('./routes/promo.routes');
+const mailRoutes = require('./routes/mail.routes')
 const path = require('path');
 
 const app = express();
@@ -76,6 +77,7 @@ app.use('/wishlist', wishlistRouter);
 app.use('/orders', orderRoutes);
 app.use('/seller', sellerRoutes);
 app.use('/promo', promoRoutes);
+app.use('/connect', mailRoutes)
 
 app.use(errorHandler);
 
