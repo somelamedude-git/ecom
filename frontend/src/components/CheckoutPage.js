@@ -77,6 +77,7 @@ function CheckoutPage({
     
     if (error.response?.status === 401) {
       toast.error('Session expired. Please login again.');
+      console.log(loggedin)
       navigate('/login');
     } else if (error.response?.status === 404) {
       toast.error(`${context}: Resource not found`);
@@ -96,6 +97,7 @@ function CheckoutPage({
   useEffect(() => {
     if (!loggedin) {
       toast.error('Please login to continue');
+      console.log(loggedin)
       navigate('/login');
       return;
     }
