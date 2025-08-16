@@ -6,7 +6,7 @@ import axios from 'axios';
 import Header from './Header';
 import '../styles/CheckoutPage.css';
 import image from '../assets/checkout-image.jpg';
-
+//random changes backend ke karn he kya? meri cheej dikh nhi rhi
 function CheckoutPage({ 
   menumove, 
 }) {
@@ -59,27 +59,16 @@ function CheckoutPage({
   }, []);
   
   const [formData, setFormData] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
-    address: '',
-    city: '',
-    state: '',
-    pincode: ''
-  });
-
+    email: '',firstName: '',lastName: '',phone: '',address: '',city: '',state: '',pincode: ''});
   const deliveryOptions = [
     { id: 'standard', name: 'Standard Delivery', time: '5-7 business days', price: 0 },
     { id: 'express', name: 'Express Delivery', time: '2-3 business days', price: 15.99 },
     { id: 'overnight', name: 'Overnight Delivery', time: 'Next business day', price: 29.99 }
   ];
-
-  // Configure axios defaults
+  // Caxios defaults
   axios.defaults.withCredentials = true;
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
-  // Helper function for API error handling
   const handleApiError = (error, context) => {
     console.error(`${context} error:`, error);
     
@@ -124,14 +113,12 @@ function CheckoutPage({
         withCredentials: true
       });
       
-      if (response.data.success) { // Fixed: should be 'success' not 'status'
-        // Transform cart data to match our orderItems format
+      if (response.data.success) { 
         const transformedItems = response.data.cart.map(item => ({
           id: item.product._id,
           name: item.product.name,
           price: item.product.price,
           quantity: item.quantity,
-          // Handle array of images or single image
           image: Array.isArray(item.product.productImages) 
             ? item.product.productImages[0] 
             : item.product.productImages,
@@ -146,14 +133,10 @@ function CheckoutPage({
     } catch (error) {
       console.log('Cart fetch error:', error);
       
-      // Don't navigate to /cart on auth errors, let handleApiError handle it
       if (error.response?.status === 401) {
         handleApiError(error, 'Cart fetch');
       } else {
-        // For non-auth errors, you might want to show the cart is empty or navigate to cart
         toast.error('Failed to load cart items');
-        // Only navigate to cart for non-auth errors if needed
-        // navigate('/cart');
       }
     } finally {
       setCartLoading(false);
@@ -174,7 +157,6 @@ function CheckoutPage({
         const fullName = user.name || '';
         const nameParts = fullName.trim().split(' ');
         
-        // Auto-fill form data from user profile
         setFormData(prevData => ({
           ...prevData,
           email: user.email || '',
@@ -183,10 +165,8 @@ function CheckoutPage({
           phone: user.phone_number || ''
         }));
 
-        // Set addresses with better error handling
         if (user.addresses && Array.isArray(user.addresses) && user.addresses.length > 0) {
           const userAddresses = user.addresses.map((addr, index) => {
-            // Ensure all address fields exist
             const street = addr.street || '';
             const city = addr.city || '';
             const state = addr.state || '';
@@ -549,7 +529,6 @@ function CheckoutPage({
     } 
   };
 
-  // Calculate totals with promo consideration
   const subtotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const deliveryPrice = deliveryOptions.find(option => option.id === selectedDelivery)?.price || 0;
   
@@ -557,7 +536,6 @@ function CheckoutPage({
   let total = subtotal + deliveryPrice;
   
   if (promoApplied && appliedPromoData) {
-    // Use the exact discount and total from API response
     total = appliedPromoData.newCost;
     discount = appliedPromoData.discount;
   }
@@ -566,13 +544,6 @@ function CheckoutPage({
   if (authLoading) {
     return (
       <div className="checkout-container">
-        <Header
-          currentPage="checkout"
-          cartcount={cartcount}
-          wishlistcount={wishlistcount}
-          loggedin={loggedin}
-          menumove={menumove}
-        />
         <div className="checkout-loading">
           <p>Checking authentication...</p>
         </div>
@@ -583,13 +554,7 @@ function CheckoutPage({
   if (cartLoading) {
     return (
       <div className="checkout-container">
-        <Header
-          currentPage="checkout"
-          cartcount={cartcount}
-          wishlistcount={wishlistcount}
-          loggedin={loggedin}
-          menumove={menumove}
-        />
+
         <div className="checkout-loading">
           <p>Loading your cart...</p>
         </div>
@@ -600,13 +565,7 @@ function CheckoutPage({
   if (orderItems.length === 0) {
     return (
       <div className="checkout-container">
-        <Header
-          currentPage="checkout"
-          cartcount={cartcount}
-          wishlistcount={wishlistcount}
-          loggedin={loggedin}
-          menumove={menumove}
-        />
+
         <div className="checkout-empty">
           <h2>Your cart is empty</h2>
           <button onClick={() => navigate('/products')} className="checkout-shop-button">
@@ -619,13 +578,6 @@ function CheckoutPage({
 
   return (
     <div className="checkout-container">
-      <Header
-        currentPage="checkout"
-        cartcount={cartcount}
-        wishlistcount={wishlistcount}
-        loggedin={loggedin}
-        menumove={menumove}
-      />
 
       <div className="checkout-main-content">
         <button 
@@ -644,7 +596,7 @@ function CheckoutPage({
           <div className="checkout-section-container">
             {/* Contact Information */}
             <div className="checkout-section">
-              <div className="checkout-section-header">
+              <div className="checkout-section-header">{/*why has this been added here??!!!*/}
                 <div className="checkout-section-title">Contact Information</div>
               </div>
               <div className="checkout-form">
@@ -701,7 +653,6 @@ function CheckoutPage({
               </div>
             </div>
 
-            {/* Shipping Address */}
             <div className="checkout-section">
               <div className="checkout-section-header">
                 <MapPin size={20} className="checkout-section-icon" />
