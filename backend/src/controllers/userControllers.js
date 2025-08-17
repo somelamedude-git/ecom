@@ -53,13 +53,11 @@ const createUser = asyncHandler(async (req, res) => {
     res
         .cookie("accessToken", accessToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: 'lax'
+            secure: true,
         })
         .cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: false,
-            sameSite: 'lax'
+            secure: true,
         })
         .status(201)
         .json({
@@ -123,8 +121,8 @@ const manualLogin = asyncHandler(async (req, res)=>{
 
     const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(user._id);
     res
-        .cookie('accessToken', accessToken, { httpOnly: true, secure: false, sameSite: 'lax' })
-        .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'lax' })
+        .cookie('accessToken', accessToken, { httpOnly: true, secure: true })
+        .cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
         .status(200)
         .json({ 
             success: true, 
