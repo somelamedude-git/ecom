@@ -166,7 +166,7 @@ const AdminPortal = () => {
             <p className="admin-subtitle">Manage user accounts and permissions ({totalUsers} total users)</p>
           </div>
           <button
-            onClick={() => navigate('/admin/stats')}
+            onClick={() => navigate('analytics')}
             className="action-button button-primary"
             style={{
               display: 'flex',
