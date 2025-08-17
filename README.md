@@ -34,7 +34,7 @@ Clique is a desktop-focused, full-stack e-commerce app. It features multi-role a
 ---
 ## Screenshots
 
-*Screenshots will be added here*
+
 
 ----
 ## Getting Started

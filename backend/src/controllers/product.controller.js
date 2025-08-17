@@ -8,38 +8,37 @@ const { Category } = require('../models/category.models');
 const mongoose = require('mongoose');
 
 const addProduct = asyncHandler(async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const userId = req.user._id;
-    const { description, name, price,  status, category } = req.body; // convert the stock into a map in the frontend
+    const { description, name, price, status, category } = req.body;
+    console.log('In add product', req.body);
     const stock = JSON.parse(req.body.stock);
 
-    const categoryDoc = await Category.findOne({ name: category }).session(session);
+   
+    const categoryDoc = await Category.findOne({ name: category });
+    console.log('In categorypROD')
     if (!categoryDoc) throw new ApiError(404, "Category document not found");
 
+   
     let tagNames = req.body.tagNames || [];
-    if (typeof tagNames === 'string') {
-  try {
-    tagNames = JSON.parse(tagNames);
-  } catch (e) {
-    throw new ApiError(400, 'Invalid tag format');
-  }
-}
-    console.log(tagNames);
-    const tags = await Tag.find({ name: { $in: tagNames } }).session(session);
-    console.log(tags);
-    if (tags.length !== tagNames.length) {
-      throw new ApiError(400, 'Some tags are invalid');
+    if (typeof tagNames === "string") {
+      try {
+        tagNames = JSON.parse(tagNames);
+      } catch (e) {
+        throw new ApiError(400, "Invalid tag format");
+      }
     }
 
-    const tagIndexes = tags.map(tag => tag.index);
+    const tags = await Tag.find({ name: { $in: tagNames } });
+    if (tags.length !== tagNames.length) {
+      throw new ApiError(400, "Some tags are invalid");
+    }
+
+    const tagIndexes = tags.map((tag) => tag.index);
 
     let bitmask = 0;
-    for(const index of tagIndexes){
-        let curr = 1<<index;
-        bitmask = bitmask | curr;
+    for (const index of tagIndexes) {
+      bitmask |= 1 << index;
     }
 
     if (!req.file) {
@@ -47,12 +46,16 @@ const addProduct = asyncHandler(async (req, res) => {
     }
     const localPath = req.file.path;
     console.log("local path", localPath);
+
     const imageInfo = await uploadOnCloudinary(localPath);
-    console.log(imageInfo);
-    if (!imageInfo || !imageInfo.secure_url) throw new ApiError(500, "Image Upload Failed");
+    console.log(imageInfo, "testing the cloud");
+    
+    if (!imageInfo || !imageInfo.secure_url) {
+      throw new ApiError(500, "Image Upload Failed");
+    }
     const image_url = imageInfo.secure_url;
 
-    const newProduct = await Product.create([{
+    const newProduct = await Product.create({
       description,
       name,
       productImages: image_url,
@@ -62,34 +65,27 @@ const addProduct = asyncHandler(async (req, res) => {
       category: categoryDoc._id,
       tags: tagIndexes,
       owner: userId,
-      bitmask: bitmask.toString()
-    }], { session });
+      bitmask: bitmask.toString(),
+    });
 
-    await Seller.findByIdAndUpdate(
-      userId.toString(),
-      { $push: { selling_products: newProduct[0]._id } },
-      { new: true, session }
-    );
+    await Seller.findByIdAndUpdate(userId, {
+      $push: { selling_products: newProduct._id },
+    });
 
-    categoryDoc.products.push(newProduct[0]._id);
-    await categoryDoc.save({ session });
 
-    await session.commitTransaction();
-    session.endSession();
+    categoryDoc.products.push(newProduct._id);
+    await categoryDoc.save();
 
     res.status(201).send({
       success: true,
       message: "Product created successfully",
       data: {
-        _id: newProduct[0]._id,
-        name: newProduct[0].name,
-        stock: newProduct[0].stock
-      }
+        _id: newProduct._id,
+        name: newProduct.name,
+        stock: newProduct.stock,
+      },
     });
-
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     throw new ApiError(500, `Failed to create product: ${error.message}`);
   }
 });

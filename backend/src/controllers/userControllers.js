@@ -59,6 +59,7 @@ const createUser = asyncHandler(async (req, res) => {
             httpOnly: true,
             secure: true,
         })
+       
         .status(201)
         .json({
             success: true,
